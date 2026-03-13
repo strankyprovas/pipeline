@@ -235,20 +235,56 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
         # 3. Analyzuj web
         quality_score = 0
         reasons = []
-        if website:
+
+        # Pokud byl email scraped přímo z webu, víme že web existuje –
+        # nemusíme volat check_website znovu (byl reachable před chvílí)
+        email_scraped_from_website = bool(website and not _is_facebook_url(website) and email)
+
+        if website and not _is_facebook_url(website):
             print(f"  🌐 Web: {website}")
-            alive = check_website(website)
+            alive = email_scraped_from_website or check_website(website)
             if alive:
                 quality_score, category, reasons = assess_website(website)
                 for r in reasons:
                     print(f"    {r}")
             else:
-                print(f"  ❌ Web nereaguje")
-                website = ""
-                category = "bez_webu"
+                # Web je v OSM ale nereaguje → přeskočíme, NECHCEME poslat
+                # email "nemáte web" podnikům, kteří web mají (jen je dočasně down)
+                print(f"  ❌ Web nereaguje – přeskakuji (neposíláme špatný email)\n")
+                continue
         else:
-            print(f"  🚫 Bez webu")
-            category = "bez_webu"
+            # Web v OSM není (nebo je to jen Facebook) → zkusíme email doménu
+            _FREE_DOMAINS = {
+                "gmail.com", "googlemail.com", "seznam.cz", "email.cz", "centrum.cz",
+                "volny.cz", "post.cz", "atlas.cz", "yahoo.com", "yahoo.co.uk",
+                "hotmail.com", "hotmail.cz", "outlook.com", "live.com", "icloud.com",
+                "me.com", "tiscali.cz", "quick.cz", "azet.cz",
+            }
+            email_domain_check = email.split("@")[1].lower() if "@" in email else ""
+            if email_domain_check and email_domain_check not in _FREE_DOMAINS:
+                # Custom doména → velká šance, že doménové jméno = jejich web
+                candidate = f"https://{email_domain_check}"
+                candidate_www = f"https://www.{email_domain_check}"
+                found_via_domain = None
+                for candidate_url in [candidate, candidate_www]:
+                    if check_website(candidate_url):
+                        found_via_domain = candidate_url
+                        break
+                if found_via_domain:
+                    print(f"  🌐 Web nalezen přes email doménu: {found_via_domain}")
+                    website = found_via_domain
+                    quality_score, category, reasons = assess_website(website)
+                    for r in reasons:
+                        print(f"    {r}")
+                else:
+                    # Custom doména ale web nereaguje → přeskočíme,
+                    # raději nic nepošleme než špatný email
+                    print(f"  ⚠️  Custom doména {email_domain_check} nereaguje – přeskakuji\n")
+                    continue
+            else:
+                # Volná emailová služba (gmail atd.) a žádný web → OK, posíláme "bez_webu"
+                print(f"  🚫 Bez webu (free email doména)")
+                category = "bez_webu"
 
         slug = slugify(name)
 
