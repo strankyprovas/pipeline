@@ -96,6 +96,11 @@ out tags;
 
     print(f"  ✅ Nalezeno {len(result)} měst/obcí")
 
+    # Pokud Overpass vrátil prázdný výsledek, použij záložní seznam (necachuj prázdno)
+    if not result:
+        print("  ⚠️  Overpass vrátil 0 měst – používám záložní seznam")
+        return _fallback_cities()
+
     # Ulož do cache
     import json
     with open(CITIES_CACHE_FILE, "w", encoding="utf-8") as f:
