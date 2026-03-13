@@ -11,6 +11,7 @@ Použití:
 """
 import argparse
 import os
+import random
 import requests
 import time
 from main import process_restaurants
@@ -222,6 +223,11 @@ if __name__ == "__main__":
         cities = fetch_czech_cities(min_population=args.min_pop)
 
     cities = cities[args.skip:]
+
+    # Náhodné zpoždění startu (0–90s) aby paralelní GitHub Actions joby nestrefily Sheets API najednou
+    startup_delay = random.uniform(0, 90)
+    print(f"⏱️  Startup delay: {startup_delay:.0f}s (aby paralelní joby nestrefily Sheets najednou)")
+    time.sleep(startup_delay)
 
     print(f"🏙️  Zpracovávám {len(cities)} měst, cíl {args.target} demo/město (odvětví: {args.industry})")
     if args.skip:

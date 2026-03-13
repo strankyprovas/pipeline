@@ -14,14 +14,15 @@ import random
 from datetime import datetime
 
 
-def _retry(fn, *args, max_retries=6, **kwargs):
+def _retry(fn, *args, max_retries=12, **kwargs):
     """Volá fn s retry + exponential backoff při 429 (Sheets rate limit)."""
     for attempt in range(max_retries):
         try:
             return fn(*args, **kwargs)
         except gspread.exceptions.APIError as e:
             if e.response.status_code == 429 and attempt < max_retries - 1:
-                wait = (2 ** attempt) + random.uniform(0, 1)
+                # Delší čekání pro paralelní GitHub Actions joby – kvóta se resetuje za ~60s
+                wait = min(60, (2 ** attempt)) + random.uniform(5, 15)
                 print(f"  ⏳ Sheets rate limit – čekám {wait:.1f}s (pokus {attempt+1}/{max_retries})")
                 time.sleep(wait)
             else:
