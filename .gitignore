@@ -1,0 +1,13 @@
+.env
+fb_session.json
+token.pickle
+credentials.json
+*.pyc
+__pycache__/
+output/
+venv/
+demos/
+demos-*/
+logs/
+output/
+deploy/strankyprovas_pipeline.tar.gz

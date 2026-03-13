@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RESTAURANT_NAME — Penzion v RESTAURANT_CITY</title>
+  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
+  <meta name="theme-color" content="#f6ede5" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============ TOKENS ============ */
+    :root {
+      --bg:          #f6ede5;
+      --bg-2:        #efece7;
+      --bg-warm:     #efe3d2;
+      --bg-warm-2:   #f6f0e7;
+      --ink:         #1f2630;
+      --ink-soft:    rgba(31,38,48,.92);
+      --muted:       rgba(31,38,48,.62);
+      --muted-2:     rgba(31,38,48,.45);
+      --accent:      #ff7a2f;
+      --btn:         #2f3947;
+      --card:        #fff;
+      --rule:        rgba(31,38,48,.1);
+      --shadow:      0 18px 60px rgba(17,24,39,.2);
+      --shadow-soft: 0 10px 30px rgba(17,24,39,.12);
+      --radius-xl:   28px;
+      --radius-lg:   20px;
+      --radius:      16px;
+      --wrap:        1200px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.6;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ============ TYPOGRAPHY ============ */
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    h1 { font-size: clamp(44px, 5.5vw, 68px); font-weight: 800; }
+    h2 { font-size: clamp(34px, 4vw, 52px); font-weight: 800; }
+    h3 { font-size: clamp(22px, 2.5vw, 30px); font-weight: 700; }
+    .kicker {
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    /* ============ LAYOUT ============ */
+    .container { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+    /* ============ BUTTONS ============ */
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      height: 56px;
+      padding: 0 16px 0 22px;
+      border-radius: var(--radius);
+      background: var(--btn);
+      color: #fff;
+      font-weight: 700;
+      font-size: .95rem;
+      box-shadow: 0 16px 46px rgba(17,24,39,.18);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+    }
+    .btn-dark:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn-dark .bicon {
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,.12);
+    }
+    .btn-dark .bicon svg { width: 16px; height: 16px; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 56px;
+      padding: 0 22px;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: .95rem;
+      border: 1.5px solid var(--rule);
+      transition: all .15s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ============ NAV ============ */
+    .nav {
+      position: sticky;
+      top: 0; z-index: 50;
+      background: rgba(246,237,229,.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(17,24,39,.08);
+      box-shadow: 0 2px 16px rgba(17,24,39,.07);
+      color: var(--ink);
+      transition: box-shadow .25s;
+    }
+    .nav.scrolled {
+      box-shadow: 0 8px 28px rgba(17,24,39,.12);
+    }
+    .nav-inner {
+      height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: .01em;
+      color: inherit;
+      white-space: nowrap;
+    }
+    .brand em { font-style: normal; color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      flex: 1;
+      justify-content: center;
+    }
+    .nav-links a {
+      font-size: .88rem;
+      font-weight: 500;
+      color: var(--ink);
+      opacity: .75;
+      padding: 8px 2px;
+      border-bottom: 2px solid transparent;
+      transition: opacity .2s, border-color .2s;
+    }
+    .nav-links a:hover { opacity: 1; border-color: var(--accent); color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-phone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--ink);
+      opacity: .75;
+      white-space: nowrap;
+    }
+    .nav-pill {
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      background: var(--btn);
+      border: 1px solid rgba(255,255,255,.1);
+      color: #fff;
+      transition: all .2s;
+    }
+    .nav-pill:hover { transform: translateY(-1px); box-shadow: var(--shadow-soft); }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: currentColor; border-radius: 2px; transition: all .3s;
+    }
+    .mobile-nav {
+      display: none;
+      flex-direction: column;
+      padding: 14px 24px 20px;
+      border-top: 1px solid var(--rule);
+      background: rgba(246,237,229,.97);
+      gap: 2px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      padding: 10px 12px;
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--ink);
+      border-radius: 10px;
+      transition: background .2s;
+    }
+    .mobile-nav a:hover { background: var(--bg-2); }
+
+    /* ============ HERO ============ */
+    .hero-wrap {
+      position: relative;
+      isolation: isolate;
+      min-height: 92vh;
+      background: var(--bg);
+      overflow: clip;
+    }
+    .hero-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url('../stock_photos/PHOTO_1');
+      background-size: cover;
+      background-position: center;
+      z-index: -2;
+      transform: scale(1.02);
+    }
+    .hero-wrap::after {
+      content: '';
+      position: absolute; inset: 0; z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.18) 0%, rgba(0,0,0,.32) 50%, rgba(0,0,0,.52) 100%),
+        rgba(0,0,0,.28);
+    }
+    .hero {
+      padding: 48px 0 72px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 64px;
+      align-items: center;
+      min-height: calc(92vh - 84px);
+    }
+    .hero-left { max-width: 580px; }
+    .hero-rating {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .hero-stars { display: flex; gap: 4px; }
+    .hero-stars span { font-size: 20px; color: var(--accent); }
+    .hero-score {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.92);
+    }
+    .hero-reviews {
+      font-size: .9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.75);
+    }
+    .hero h1 {
+      color: rgba(255,255,255,.94);
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,.78);
+      line-height: 1.75;
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      height: 58px;
+      padding: 0 18px 0 24px;
+      border-radius: var(--radius);
+      background: var(--btn);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 22px 70px rgba(17,24,39,.3); }
+    .hero-cta .arrow {
+      width: 38px; height: 38px;
+      border-radius: 999px;
+      display: grid; place-items: center;
+      background: rgba(255,255,255,.12);
+    }
+    .hero-cta .arrow svg { width: 18px; height: 18px; }
+    .hero-right { display: flex; justify-content: flex-end; }
+    .hero-card {
+      width: min(520px, 100%);
+      aspect-ratio: 1/1;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    .hero-card img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.03); }
+
+    /* ============ FEATURES ============ */
+    .features {
+      background: var(--bg-2);
+      padding: 84px 0 58px;
+      position: relative;
+      overflow: hidden;
+    }
+    .features::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: -140px;
+      transform: translateX(-50%);
+      width: 760px; height: 760px;
+      border-radius: 999px;
+      border: 18px solid rgba(255,122,47,.18);
+      pointer-events: none;
+    }
+    .features-kicker { margin-bottom: 32px; }
+    .card-scroller {
+      display: flex;
+      gap: 28px;
+      overflow-x: auto;
+      padding: 16px 24px 28px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(17,24,39,.35) rgba(17,24,39,.08);
+    }
+    .card-scroller::-webkit-scrollbar { height: 10px; }
+    .card-scroller::-webkit-scrollbar-track { background: rgba(17,24,39,.08); border-radius: 999px; }
+    .card-scroller::-webkit-scrollbar-thumb { background: rgba(17,24,39,.35); border-radius: 999px; }
+    .feat-card {
+      flex: 0 0 420px;
+      min-height: 280px;
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 16px 40px rgba(17,24,39,.1);
+      padding: 34px 34px 28px;
+      scroll-snap-align: start;
+    }
+    .feat-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .feat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .feat-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    .feat-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ============ POKOJE ============ */
+    .rooms {
+      background: var(--bg-warm);
+      padding: 84px 0 96px;
+      overflow: hidden;
+    }
+    .rooms-header { margin-bottom: 48px; }
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .room-card {
+      background: var(--card);
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(31,38,48,.07);
+      box-shadow: var(--shadow-soft);
+      padding: 32px 28px 28px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .room-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .room-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .room-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+      color: var(--ink-soft);
+    }
+    .room-capacity {
+      display: inline-block;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255,122,47,.1);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+    .room-desc {
+      font-size: .93rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .room-features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+    }
+    .room-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .87rem;
+      color: rgba(31,38,48,.75);
+      font-weight: 500;
+    }
+    .room-feature::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* ============ O PENZION ============ */
+    .about-section {
+      background: var(--bg-warm-2);
+      padding: 92px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-section::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: -240px;
+      transform: translateX(-50%);
+      width: 900px; height: 900px;
+      border-radius: 999px;
+      border: 18px solid rgba(255,122,47,.12);
+      pointer-events: none;
+    }
+    .about-grid {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .about-media { display: grid; gap: 18px; }
+    .about-img {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+    .about-img--big { aspect-ratio: 16/10; }
+    .about-img--small { aspect-ratio: 16/11; }
+    .about-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .about-img img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); transition: transform .6s; }
+    .about-img:hover img { transform: scale(1.06); }
+    .about-text .kicker { margin-bottom: 14px; }
+    .about-text h2 { margin-bottom: 16px; }
+    .about-text p { color: var(--muted); font-size: 1.1rem; line-height: 1.75; margin-bottom: 18px; }
+    .about-bullets {
+      padding-left: 20px;
+      color: rgba(31,38,48,.72);
+      line-height: 1.7;
+      font-size: .95rem;
+      margin-bottom: 28px;
+    }
+    .about-bullets li::marker { color: var(--accent); }
+
+    /* ============ OKOLÍ ============ */
+    .around {
+      padding: 92px 0;
+      background:
+        radial-gradient(720px 720px at 18% 30%, rgba(255,122,47,.1), transparent 62%),
+        radial-gradient(860px 860px at 82% 55%, rgba(255,122,47,.08), transparent 62%),
+        #fff;
+    }
+    .around-header { margin-bottom: 36px; }
+    .around-header h2 { margin-top: 10px; margin-bottom: 12px; }
+    .around-header p { color: var(--muted); font-size: 1.1rem; max-width: 600px; }
+    .around-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .around-card {
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(246,240,231,.8));
+      box-shadow: var(--shadow-soft);
+      padding: 26px 24px;
+      border: 1px solid rgba(31,38,48,.06);
+    }
+    .around-head {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 18px;
+    }
+    .around-icon {
+      width: 42px; height: 42px;
+      display: grid; place-items: center;
+      border-radius: 14px;
+      background: rgba(255,122,47,.12);
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+    .around-card h3 {
+      font-family: Inter, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+    .around-list { display: grid; gap: 12px; }
+    .around-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(31,38,48,.08);
+      font-size: .9rem;
+    }
+    .around-item:last-child { border-bottom: 0; padding-bottom: 0; }
+    .around-item-name { color: rgba(31,38,48,.82); font-weight: 600; }
+    .around-item-dist { color: var(--muted-2); font-weight: 700; white-space: nowrap; }
+    .around-photos { display: grid; gap: 14px; margin-top: 8px; }
+    .around-photo {
+      border-radius: 18px;
+      overflow: hidden;
+      aspect-ratio: 16/8;
+      box-shadow: 0 12px 36px rgba(17,24,39,.1);
+    }
+    .around-photo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); transition: transform .6s; }
+    .around-photo:hover img { transform: scale(1.06); }
+
+    /* ============ RECENZE MARQUEE ============ */
+    .testimonials {
+      padding: 96px 0;
+      overflow: hidden;
+      background:
+        radial-gradient(820px 820px at 18% 30%, rgba(255,122,47,.12), transparent 62%),
+        radial-gradient(980px 980px at 82% 58%, rgba(255,122,47,.08), transparent 62%),
+        var(--bg-warm);
+      position: relative;
+    }
+    .testimonials::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 300px;
+      transform: translateX(-50%);
+      width: 1100px; height: 1100px;
+      border-radius: 999px;
+      border: 18px solid rgba(255,122,47,.14);
+      pointer-events: none;
+    }
+    .testi-header {
+      text-align: center;
+      position: relative; z-index: 1;
+      margin-bottom: 56px;
+    }
+    .testi-header h2 { margin-bottom: 14px; }
+    .testi-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .testi-stars span { color: var(--accent); font-size: 1.2rem; }
+    .marquee {
+      position: relative; z-index: 1;
+      overflow: hidden;
+      padding: 16px 0 10px;
+    }
+    .marquee-track {
+      display: flex;
+      align-items: flex-start;
+      gap: 36px;
+      will-change: transform;
+      animation: marquee-scroll 38s linear infinite;
+    }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .rev-card {
+      flex: 0 0 340px;
+      background: var(--card);
+      border-radius: 36px;
+      box-shadow: 0 18px 55px rgba(17,24,39,.12);
+      padding: 40px 40px 32px;
+    }
+    .rev-stars { color: var(--accent); font-size: 1.5rem; letter-spacing: 3px; margin-bottom: 16px; }
+    .rev-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: var(--ink-soft);
+    }
+    .rev-text { font-size: .93rem; line-height: 1.55; color: var(--muted); margin-bottom: 24px; }
+    .rev-author { font-weight: 800; color: var(--ink-soft); font-size: 1rem; }
+    .rev-date { font-size: .8rem; color: var(--muted-2); font-weight: 600; margin-top: 4px; }
+    .marquee-fade-l, .marquee-fade-r {
+      position: absolute; top: 0; bottom: 0;
+      width: 160px; pointer-events: none;
+    }
+    .marquee-fade-l { left: 0; background: linear-gradient(90deg, var(--bg-warm), rgba(239,227,210,0)); }
+    .marquee-fade-r { right: 0; background: linear-gradient(270deg, var(--bg-warm), rgba(239,227,210,0)); }
+
+    /* ============ KONTAKT ============ */
+    .contact { background: var(--bg); padding: 92px 0; }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .contact-text .kicker { margin-bottom: 14px; }
+    .contact-text h2 { margin-bottom: 16px; }
+    .contact-text p { color: var(--muted); font-size: 1.05rem; margin-bottom: 32px; }
+    .contact-items { display: flex; flex-direction: column; gap: 14px; }
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--bg-2);
+      border-radius: var(--radius);
+      border: 1px solid var(--rule);
+    }
+    .contact-icon {
+      width: 40px; height: 40px;
+      background: var(--btn);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1rem;
+    }
+    .contact-item small {
+      font-size: .72rem;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 600;
+      display: block;
+    }
+    .contact-item strong { font-size: .95rem; display: block; margin-top: 2px; }
+    .contact-map {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      height: 420px;
+      border: 1px solid var(--rule);
+      box-shadow: var(--shadow-soft);
+    }
+    .contact-map iframe { width: 100%; height: 100%; border: none; }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+      padding: 64px 0 28px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand .brand { color: rgba(255,255,255,.9); font-size: 1.3rem; }
+    .footer-brand p { font-size: .88rem; line-height: 1.7; margin-top: 12px; max-width: 300px; }
+    .footer-col h4 {
+      font-family: Inter, sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul a { font-size: .88rem; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .82rem;
+    }
+    .footer-bottom a { color: var(--accent); }
+
+    /* ============ REVEAL ============ */
+    [data-r] { opacity: 0; transform: translateY(20px); transition: opacity .55s, transform .55s; }
+    [data-r].in { opacity: 1; transform: none; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 980px) {
+      .nav-links, .nav-phone { display: none; }
+      .hamburger { display: flex; }
+      .hero-grid { grid-template-columns: 1fr; gap: 36px; min-height: unset; }
+      .hero-right { justify-content: flex-start; }
+      .hero-card { aspect-ratio: 16/10; width: 100%; max-width: 100%; }
+      .about-grid { grid-template-columns: 1fr; gap: 36px; }
+      .around-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .rooms-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .feat-card { flex-basis: 86vw; }
+      .about-row { grid-template-columns: 1fr; }
+      .hero-cta { width: 100%; justify-content: space-between; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .hero { padding: 32px 0 48px; }
+      .features { padding: 48px 0 36px; }
+      .rooms { padding: 48px 0; }
+      .around { padding: 48px 0; }
+      .testimonials { padding: 48px 0; }
+      .contact { padding: 48px 0; }
+      footer { padding: 36px 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="mainNav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="brand">RESTAURANT_NAME</a>
+      <div class="nav-links">
+        <a href="#pokoje">Pokoje</a>
+        <a href="#onas">O nás</a>
+        <a href="#okoli">Okolí</a>
+        <a href="#recenze">Recenze</a>
+        <a href="#kontakt">Kontakt</a>
+      </div>
+      <div class="nav-right">
+        <a href="tel:RESTAURANT_PHONE" class="nav-phone">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.38 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/></svg>
+          RESTAURANT_PHONE
+        </a>
+        <a href="#kontakt" class="nav-pill">Rezervace →</a>
+        <button class="hamburger" id="hambBtn" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#pokoje">Pokoje</a>
+    <a href="#onas">O nás</a>
+    <a href="#okoli">Okolí</a>
+    <a href="#recenze">Recenze</a>
+    <a href="#kontakt">Kontakt</a>
+    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<div class="hero-wrap">
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left" data-r>
+          <div class="hero-rating">
+            <div class="hero-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <span class="hero-score">RESTAURANT_RATING</span>
+            <span class="hero-reviews">· RESTAURANT_REVIEWS hodnocení</span>
+          </div>
+          <h1>RESTAURANT_TAGLINE</h1>
+          <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+          <a href="#kontakt" class="hero-cta">
+            Rezervovat pobyt
+            <span class="arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </a>
+        </div>
+        <div class="hero-right" data-r>
+          <div class="hero-card">
+            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME" loading="eager" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="features">
+  <div class="container features-kicker" data-r>
+    <div class="kicker">Proč si vybrat nás</div>
+  </div>
+  <div class="card-scroller" style="padding-left:max(24px, calc((100vw - 1200px)/2 + 24px))">
+    <div class="feat-card" data-r>
+      <div class="feat-icon">📍</div>
+      <div class="feat-num">RESTAURANT_CITY</div>
+      <div class="feat-title">Skvělá poloha</div>
+      <p class="feat-text">Penzion se nachází v klidné části RESTAURANT_CITY_LOC s výbornou dostupností k místním atrakcím a přírodě.</p>
+    </div>
+    <div class="feat-card" data-r>
+      <div class="feat-icon">🛏️</div>
+      <div class="feat-num">Komfort</div>
+      <div class="feat-title">Útulné pokoje</div>
+      <p class="feat-text">Každý pokoj je zařízený s láskou k detailu. Čisté lůžkoviny, pohodlné postele a vše co potřebujete pro odpočinek.</p>
+    </div>
+    <div class="feat-card" data-r>
+      <div class="feat-icon">🍳</div>
+      <div class="feat-num">Snídaně</div>
+      <div class="feat-title">Domácí snídaně</div>
+      <p class="feat-text">Každé ráno čerstvá domácí snídaně – pečivo, vejce, jogurt, ovoce a teplé nápoje. Nejlepší start do výletního dne.</p>
+    </div>
+    <div class="feat-card" data-r>
+      <div class="feat-icon">⭐</div>
+      <div class="feat-num">RESTAURANT_RATING/5</div>
+      <div class="feat-title">Hodnocení hostů</div>
+      <p class="feat-text">RESTAURANT_REVIEWS spokojených hostů nám svěřilo svůj pobyt. Jejich spokojenost je naší největší odměnou.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POKOJE ===== -->
+<section class="rooms" id="pokoje">
+  <div class="container">
+    <div class="rooms-header" data-r>
+      <div class="kicker">Ubytování</div>
+      <h2>Naše pokoje</h2>
+    </div>
+    <div class="rooms-grid">
+      <div class="room-card" data-r>
+        <div class="room-icon">🛏️</div>
+        <div class="room-name">Dvoulůžkový pokoj</div>
+        <span class="room-capacity">2 osoby</span>
+        <p class="room-desc">Útulný pokoj s manželskou postelí, výhledem do zahrady a vlastní koupelnou. Ideální pro páry i pracovní cesty.</p>
+        <div class="room-features">
+          <div class="room-feature">Manželská postel 160×200 cm</div>
+          <div class="room-feature">Vlastní koupelna se sprchovým koutem</div>
+          <div class="room-feature">TV, Wi-Fi zdarma</div>
+          <div class="room-feature">Výhled do zahrady</div>
+        </div>
+      </div>
+      <div class="room-card" data-r>
+        <div class="room-icon">🏡</div>
+        <div class="room-name">Rodinný apartmán</div>
+        <span class="room-capacity">2–4 osoby</span>
+        <p class="room-desc">Prostorný apartmán s oddělenými lůžky a kuchyňským koutem. Perfektní volba pro rodiny s dětmi.</p>
+        <div class="room-features">
+          <div class="room-feature">Oddělená ložnice + obývací část</div>
+          <div class="room-feature">Kuchyňský kout (mikrovlnka, lednice)</div>
+          <div class="room-feature">TV, Wi-Fi zdarma</div>
+          <div class="room-feature">Přistýlka pro děti k dispozici</div>
+        </div>
+      </div>
+      <div class="room-card" data-r>
+        <div class="room-icon">🌿</div>
+        <div class="room-name">Jednolůžkový pokoj</div>
+        <span class="room-capacity">1 osoba</span>
+        <p class="room-desc">Klidný pokoj s pracovním stolem pro sólo cestovatele nebo pracovní pobyty. Vše co potřebujete po ruce.</p>
+        <div class="room-features">
+          <div class="room-feature">Jednolůžko 120×200 cm</div>
+          <div class="room-feature">Pracovní stůl a židle</div>
+          <div class="room-feature">TV, Wi-Fi zdarma</div>
+          <div class="room-feature">Sdílená koupelna na chodbě</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;" data-r>
+      <a href="#kontakt" class="btn-dark">
+        Zjistit ceny a dostupnost
+        <span class="bicon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== O PENZION ===== -->
+<section class="about-section" id="onas">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-media" data-r>
+        <div class="about-img about-img--big">
+          <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – exteriér" loading="lazy" />
+        </div>
+        <div class="about-row">
+          <div class="about-img about-img--small">
+            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – interiér" loading="lazy" />
+          </div>
+          <div class="about-img about-img--small">
+            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – snídaně" loading="lazy" style="filter:saturate(1.1) brightness(.98)" />
+          </div>
+        </div>
+      </div>
+      <div class="about-text" data-r>
+        <div class="kicker">O nás</div>
+        <h2>RESTAURANT_NAME v RESTAURANT_CITY_LOC</h2>
+        <p>RESTAURANT_ABOUT</p>
+        <ul class="about-bullets">
+          <li>Rodinná atmosféra a individuální přístup</li>
+          <li>Čerstvá snídaně každé ráno</li>
+          <li>Bezplatné parkování u penzion</li>
+          <li>Pomoc s plánováním výletů</li>
+          <li>Možnost ubytování se zvířetem</li>
+        </ul>
+        <a href="#kontakt" class="btn-dark">
+          Kontaktovat nás
+          <span class="bicon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OKOLÍ ===== -->
+<section class="around" id="okoli">
+  <div class="container">
+    <div class="around-header" data-r>
+      <div class="kicker">Co najdete v okolí</div>
+      <h2>Výlety a atrakce</h2>
+      <p>RESTAURANT_CITY je skvělou základnou pro poznávání regionu. Tady jsou tipy, kam vyrazit.</p>
+    </div>
+    <div class="around-grid">
+      <div class="around-card" data-r>
+        <div class="around-head">
+          <div class="around-icon">🏔️</div>
+          <h3>Příroda a turistika</h3>
+        </div>
+        <ul class="around-list">
+          <li class="around-item"><span class="around-item-name">Turistické stezky</span><span class="around-item-dist">0,5 km</span></li>
+          <li class="around-item"><span class="around-item-name">Přírodní rezervace</span><span class="around-item-dist">3 km</span></li>
+          <li class="around-item"><span class="around-item-name">Cyklostezky</span><span class="around-item-dist">v okolí</span></li>
+          <li class="around-item"><span class="around-item-name">Vyhlídkový bod</span><span class="around-item-dist">5 km</span></li>
+        </ul>
+      </div>
+      <div class="around-card" data-r>
+        <div class="around-head">
+          <div class="around-icon">🏛️</div>
+          <h3>Kultura a památky</h3>
+        </div>
+        <ul class="around-list">
+          <li class="around-item"><span class="around-item-name">Historické centrum</span><span class="around-item-dist">2 km</span></li>
+          <li class="around-item"><span class="around-item-name">Místní muzeum</span><span class="around-item-dist">3 km</span></li>
+          <li class="around-item"><span class="around-item-name">Hrad / Zámek</span><span class="around-item-dist">8 km</span></li>
+          <li class="around-item"><span class="around-item-name">Galerie</span><span class="around-item-dist">4 km</span></li>
+        </ul>
+      </div>
+      <div class="around-card around-card--photos" data-r>
+        <div class="around-head">
+          <div class="around-icon">📸</div>
+          <h3>Fotky z okolí</h3>
+        </div>
+        <div class="around-photos">
+          <div class="around-photo"><img src="../stock_photos/PHOTO_1" alt="Okolí" loading="lazy" /></div>
+          <div class="around-photo"><img src="../stock_photos/PHOTO_2" alt="Krajina" loading="lazy" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECENZE MARQUEE ===== -->
+<section class="testimonials" id="recenze">
+  <div class="testimonials-wrap" style="max-width:2400px;margin:0 auto;padding:0 24px;">
+    <div class="testi-header" data-r>
+      <div class="kicker">Recenze hostů</div>
+      <h2>Co říkají naši hosté</h2>
+      <div class="testi-meta">
+        <div class="testi-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <span>RESTAURANT_RATING z 5</span>
+        <span>·</span>
+        <span>RESTAURANT_REVIEWS hodnocení</span>
+      </div>
+    </div>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track" id="revTrack">
+      <!-- JS duplikuje pro nekonečný scroll -->
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-title">Výborné ubytování</div>
+        <p class="rev-text">Krásný penzion, čisté pokoje, skvělá snídaně. Paní hostitelka velmi milá a ochotná. Určitě se vrátíme!</p>
+        <div class="rev-author">Jana K.</div>
+        <div class="rev-date">Google recenze</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-title">Doporučuji všem</div>
+        <p class="rev-text">Ideální místo pro rodinnou dovolenou. Děti byly nadšené, klid a příroda. Snídaně domácí a výborná.</p>
+        <div class="rev-author">Petr M.</div>
+        <div class="rev-date">Google recenze</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-title">Skvělý základ pro výlety</div>
+        <p class="rev-text">Perfektní poloha, ochotný personál a krásné pokoje. Každé ráno čerstvá snídaně – lepší start do dne si neumím představit.</p>
+        <div class="rev-author">Markéta V.</div>
+        <div class="rev-date">Google recenze</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★☆</div>
+        <div class="rev-title">Vrátíme se</div>
+        <p class="rev-text">Příjemné prostředí, čisté pokoje a výborná cena. Okolí nabízí spoustu možností pro turistiku. Doporučuji!</p>
+        <div class="rev-author">Tomáš H.</div>
+        <div class="rev-date">Google recenze</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-stars">★★★★★</div>
+        <div class="rev-title">Jako doma</div>
+        <p class="rev-text">Rodinná atmosféra, nádherné prostředí a skvělé přijetí. Po dvou dnech jsme se cítili jako starí přátelé. Moc děkujeme!</p>
+        <div class="rev-author">Eva S.</div>
+        <div class="rev-date">Google recenze</div>
+      </div>
+    </div>
+    <div class="marquee-fade-l"></div>
+    <div class="marquee-fade-r"></div>
+  </div>
+</section>
+
+<!-- ===== KONTAKT ===== -->
+<section class="contact" id="kontakt">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-text" data-r>
+        <div class="kicker">Kontakt & Rezervace</div>
+        <h2>Rezervujte pobyt v RESTAURANT_CITY_LOC</h2>
+        <p>Rádi vás přivítáme. Napište nám nebo zavolejte – odpovíme do 24 hodin a pomůžeme vám naplánovat perfektní pobyt.</p>
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <small>Adresa</small>
+              <strong>RESTAURANT_ADDRESS</strong>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <small>Telefon</small>
+              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <small>Email</small>
+              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🕐</div>
+            <div>
+              <small>Check-in / Check-out</small>
+              <strong>Check-in od 14:00 · Check-out do 11:00</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-map" data-r>
+        <iframe
+          src="GOOGLE_MAPS_EMBED"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa RESTAURANT_NAME"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="brand">RESTAURANT_NAME</a>
+        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigace</h4>
+        <ul>
+          <li><a href="#pokoje">Pokoje</a></li>
+          <li><a href="#onas">O nás</a></li>
+          <li><a href="#okoli">Okolí</a></li>
+          <li><a href="#recenze">Recenze</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
+          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
+          <li>RESTAURANT_ADDRESS_SHORT</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 RESTAURANT_NAME</span>
+      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== JS ===== -->
+<script>
+  /* --- Nav scroll --- */
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+
+  /* --- Hamburger --- */
+  const hambBtn = document.getElementById('hambBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  hambBtn.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    hambBtn.setAttribute('aria-expanded', open);
+  });
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    hambBtn.setAttribute('aria-expanded', false);
+  }));
+
+  /* --- Reveal --- */
+  const revObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
+
+
+  /* --- Recenze marquee duplikace --- */
+  const track = document.getElementById('revTrack');
+  if (track) {
+    const cards = Array.from(track.children);
+    cards.forEach(card => track.appendChild(card.cloneNode(true)));
+  }
+</script>
+
+</body>
+</html>

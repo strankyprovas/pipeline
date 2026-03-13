@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RESTAURANT_NAME — Autoservis RESTAURANT_CITY</title>
+  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
+  <meta name="theme-color" content="#0d0f14" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============ TOKENS ============ */
+    :root {
+      --dark:        #0d0f14;
+      --dark-2:      #13161e;
+      --dark-3:      #1a1e28;
+      --dark-4:      #222636;
+      --orange:      #e8760a;
+      --orange-2:    #f0981a;
+      --orange-dim:  rgba(232, 118, 10, 0.15);
+      --orange-glow: rgba(232, 118, 10, 0.28);
+      --text:        #e8eaf0;
+      --text-muted:  #8a90a0;
+      --border:      rgba(255,255,255,0.07);
+      --card:        #13161e;
+      --radius:      14px;
+      --shadow:      0 8px 32px rgba(0,0,0,.45);
+    }
+
+    /* ============ RESET ============ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ============ TYPOGRAPHY ============ */
+    h1, h2, h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      line-height: 1.1;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      color: var(--text);
+    }
+    h1 { font-size: clamp(2rem, 4.5vw, 3.4rem); font-weight: 800; }
+    h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 28px; height: 2px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.02rem;
+      max-width: 560px;
+      margin-top: .75rem;
+      line-height: 1.75;
+    }
+
+    /* ============ LAYOUT ============ */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 6rem 0; }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      border-radius: 6px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all .22s;
+    }
+    .btn--fill {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 4px 20px var(--orange-glow);
+    }
+    .btn--fill:hover { background: var(--orange-2); transform: translateY(-2px); box-shadow: 0 8px 28px var(--orange-glow); }
+    .btn--outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn--outline:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ============ PROGRESS BAR ============ */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--orange), var(--orange-2));
+      z-index: 9999;
+      transition: width .1s linear;
+    }
+
+    /* ============ HEADER ============ */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(13, 15, 20, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    header.scrolled { border-color: var(--border); box-shadow: 0 2px 24px rgba(0,0,0,.5); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+    }
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text);
+    }
+    .nav-logo span { color: var(--orange); }
+    nav ul { display: flex; align-items: center; gap: 2rem; }
+    nav a {
+      font-size: 0.82rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--text-muted); transition: color .2s;
+    }
+    nav a:hover { color: var(--orange); }
+    .nav-cta { display: flex; align-items: center; gap: 1rem; }
+    .nav-phone {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--orange);
+      padding: 8px 20px;
+      border: 1.5px solid var(--orange);
+      border-radius: 6px;
+      transition: all .2s;
+    }
+    .nav-phone:hover { background: var(--orange); color: #fff; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 8px; background: none; border: none;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--text); border-radius: 2px; transition: all .3s;
+    }
+    .mobile-menu {
+      display: none; flex-direction: column;
+      padding: 16px 20px 20px;
+      border-top: 1px solid var(--border);
+      background: rgba(13,15,20,.98); gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      padding: 10px 12px; font-size: 0.95rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-muted); border-radius: 6px; transition: all .2s;
+    }
+    .mobile-menu a:hover { background: var(--dark-3); color: var(--orange); }
+
+    /* ============ HERO ============ */
+    #hero {
+      padding: 5rem 0 4rem;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(232,118,10,.08) 0%, transparent 65%),
+        var(--dark);
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4rem; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange-dim);
+      border: 1px solid rgba(232,118,10,.3);
+      color: var(--orange);
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge::before { content: '●'; font-size: .5rem; }
+    .hero-title { margin-bottom: 1.25rem; }
+    .hero-title em {
+      font-style: normal;
+      color: var(--orange);
+      display: block;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-muted);
+      margin-bottom: 2rem; max-width: 460px; line-height: 1.75;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .hero-rating {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.85rem; color: var(--text-muted);
+      padding: 10px 16px;
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: 8px; width: fit-content;
+    }
+    .hero-rating .stars { color: #f0b429; letter-spacing: 2px; }
+    .hero-rating strong { color: var(--text); }
+    .hero-visual { position: relative; }
+    .visual-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 270px 180px;
+      gap: 10px;
+    }
+    .visual-stack .img-main {
+      grid-column: 1 / -1; grid-row: 1;
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .visual-stack .img-main img,
+    .visual-stack .img-sub img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .visual-stack .img-sub { border-radius: var(--radius); overflow: hidden; }
+    .visual-float {
+      position: absolute; bottom: -14px; left: -16px;
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.82rem;
+    }
+    .visual-float .pulse {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #4ade80; flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(74,222,128,.2);
+    }
+    .visual-float strong { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: .04em; }
+
+    /* ============ STATS BAR ============ */
+    #stats {
+      padding: 2.5rem 0;
+      background: var(--orange);
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2rem; text-align: center;
+    }
+    .stat-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3rem; font-weight: 800; color: #fff; line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.75rem; color: rgba(255,255,255,.75);
+      margin-top: 5px; text-transform: uppercase; letter-spacing: .09em; font-weight: 600;
+    }
+
+    /* ============ O NÁS ============ */
+    #onas { background: var(--dark-2); }
+    .onas-grid {
+      display: grid; grid-template-columns: 0.9fr 1.1fr;
+      gap: 4rem; align-items: center;
+    }
+    .onas-img {
+      border-radius: var(--radius); overflow: hidden;
+      height: 500px; position: relative;
+      border: 1px solid var(--border);
+    }
+    .onas-img img { width: 100%; height: 100%; object-fit: cover; }
+    .onas-img-badge {
+      position: absolute; bottom: 20px; right: 20px;
+      background: var(--orange);
+      border-radius: 10px; padding: 14px 18px;
+      text-align: center; color: #fff;
+    }
+    .onas-img-badge strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2rem; font-weight: 800; line-height: 1;
+    }
+    .onas-img-badge span { font-size: 0.78rem; font-weight: 600; opacity: .85; }
+    .onas-text h2 { margin-bottom: 1rem; }
+    .onas-text p { color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.8; }
+    .onas-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.25rem; }
+    .chip {
+      display: inline-block; padding: 6px 14px;
+      background: var(--dark-3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+      font-family: 'Barlow Condensed', sans-serif;
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .chip.accent { background: var(--orange-dim); border-color: rgba(232,118,10,.3); color: var(--orange); }
+
+    /* ============ SLUŽBY ============ */
+    #sluzby { background: var(--dark); }
+    .sluzby-header { text-align: center; max-width: 580px; margin: 0 auto 3rem; }
+    .sluzby-header .section-label { justify-content: center; }
+    .sluzby-header .section-label::before { display: none; }
+    .filter-bar {
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 8px; margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      padding: 7px 18px; border-radius: 4px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      cursor: pointer; border: 1.5px solid var(--border);
+      background: var(--dark-2); color: var(--text-muted); transition: all .2s;
+    }
+    .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+    .sluzby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .sluzba-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: transform .22s, box-shadow .22s, border-color .22s;
+    }
+    .sluzba-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5); border-color: rgba(232,118,10,.3); }
+    .sluzba-img { height: 160px; overflow: hidden; }
+    .sluzba-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+    .sluzba-card:hover .sluzba-img img { transform: scale(1.07); }
+    .sluzba-body { padding: 16px 18px; }
+    .sluzba-tag {
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--orange); background: var(--orange-dim);
+      padding: 3px 10px; border-radius: 3px; margin-bottom: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+    .sluzba-body h3 { font-size: 1rem; margin-bottom: 5px; }
+    .sluzba-body p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
+    .sluzba-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-top: 1px solid var(--border);
+    }
+    .sluzba-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; color: var(--orange); font-size: 1.2rem;
+    }
+    .sluzba-time { font-size: 0.77rem; color: var(--text-muted); }
+
+    /* ============ GALERIE ============ */
+    #galerie { background: var(--dark-2); overflow: hidden; }
+    .galerie-header { margin-bottom: 2.5rem; }
+    .marquee-wrap { position: relative; }
+    .marquee-track {
+      display: flex; gap: 12px;
+      animation: marquee 36s linear infinite;
+      width: max-content;
+    }
+    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+    .marquee-track .gal-img {
+      width: 290px; height: 200px;
+      border-radius: var(--radius); overflow: hidden; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .marquee-track .gal-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+    .marquee-track .gal-img:hover img { transform: scale(1.07); }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .marquee-fade-l, .marquee-fade-r {
+      position: absolute; top: 0; bottom: 0; width: 100px;
+      z-index: 2; pointer-events: none;
+    }
+    .marquee-fade-l { left: 0; background: linear-gradient(to right, var(--dark-2), transparent); }
+    .marquee-fade-r { right: 0; background: linear-gradient(to left, var(--dark-2), transparent); }
+
+    /* ============ RECENZE ============ */
+    #recenze { background: var(--dark); }
+    .recenze-header { text-align: center; margin-bottom: 2.5rem; }
+    .recenze-header .section-label { justify-content: center; }
+    .recenze-header .section-label::before { display: none; }
+    .slider { overflow: hidden; }
+    .slider-track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+    .review-slide {
+      min-width: 100%; display: grid;
+      grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    .review-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: border-color .2s;
+    }
+    .review-card:hover { border-color: rgba(232,118,10,.25); }
+    .review-stars { color: #f0b429; font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
+    .review-text {
+      font-size: 0.95rem; color: var(--text-muted); line-height: 1.7;
+      font-style: italic; margin-bottom: 1rem;
+    }
+    .review-author { font-size: 0.78rem; font-weight: 600; color: var(--orange); letter-spacing: .06em; text-transform: uppercase; }
+    .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: 1.5rem; }
+    .dot-btn {
+      width: 7px; height: 7px; border-radius: 50%;
+      border: none; background: var(--dark-4);
+      cursor: pointer; transition: all .2s;
+    }
+    .dot-btn.active { background: var(--orange); width: 22px; border-radius: 4px; }
+
+    /* ============ CTA ============ */
+    #cta {
+      background: linear-gradient(135deg, var(--dark-3) 0%, var(--dark-2) 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cta-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+    .cta-text .section-label { color: var(--orange); }
+    .cta-text h2 { color: var(--text); margin-bottom: 1rem; }
+    .cta-text p { color: var(--text-muted); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.75; }
+    .cta-img {
+      border-radius: var(--radius); overflow: hidden;
+      height: 360px; box-shadow: 0 20px 50px rgba(0,0,0,.5);
+      border: 1px solid var(--border);
+    }
+    .cta-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ============ KONTAKT ============ */
+    #kontakt { background: var(--dark-2); }
+    .kontakt-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: start;
+    }
+    .kontakt-info h2 { margin-bottom: 1rem; }
+    .kontakt-info > p { color: var(--text-muted); margin-bottom: 1.5rem; }
+    .kontakt-items { display: flex; flex-direction: column; gap: 1rem; }
+    .kontakt-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 18px;
+      background: var(--dark-3);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+    .kontakt-item:hover { border-color: rgba(232,118,10,.25); }
+    .kontakt-icon {
+      width: 42px; height: 42px;
+      background: var(--orange-dim);
+      border: 1px solid rgba(232,118,10,.25);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 1.1rem;
+    }
+    .kontakt-item-text small {
+      font-size: 0.7rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: .09em; font-weight: 600;
+    }
+    .kontakt-item-text strong { display: block; font-size: 0.95rem; margin-top: 3px; color: var(--text); }
+    .kontakt-map {
+      border-radius: var(--radius); overflow: hidden;
+      height: 420px; border: 1px solid var(--border);
+    }
+    .kontakt-map iframe { width: 100%; height: 100%; border: none; }
+
+    /* ============ FOOTER ============ */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 3rem 0 1.5rem;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 2.5rem;
+    }
+    .footer-brand .nav-logo { color: var(--text); font-size: 1.1rem; margin-bottom: .75rem; }
+    .footer-brand p { font-size: 0.87rem; line-height: 1.75; }
+    .footer-col h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem; font-weight: 700; color: var(--text);
+      letter-spacing: .1em; text-transform: uppercase; margin-bottom: .75rem;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul a { font-size: 0.87rem; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--orange); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 1.25rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem;
+    }
+    .footer-bottom a { color: var(--orange); }
+
+    /* ============ REVEAL ============ */
+    [data-r] { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    [data-r].in { opacity: 1; transform: none; }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1000px) {
+      .sluzby-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) {
+      nav ul, .nav-phone { display: none; }
+      .hamburger { display: flex; }
+      .hero-grid, .onas-grid, .cta-grid, .kontakt-grid { grid-template-columns: 1fr; }
+      .hero-visual { order: -1; }
+      .visual-stack { grid-template-rows: 220px 150px; }
+      .visual-float { display: none; }
+      .review-slide { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      .sluzby-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .onas-img { height: 280px; }
+      .cta-img { height: 220px; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
+      section { padding: 3.5rem 0; }
+      h1 { font-size: 2rem; }
+      h2 { font-size: 2rem; }
+      .kontakt-map { height: 260px; }
+      .stat-num { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ===== HEADER ===== -->
+<header id="header">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">🔧 <span>RESTAURANT_SHORT_NAME</span></a>
+      <nav aria-label="Hlavní navigace">
+        <ul>
+          <li><a href="#onas">O nás</a></li>
+          <li><a href="#sluzby">Služby</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#recenze">Recenze</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+      <div class="nav-cta">
+        <a href="tel:RESTAURANT_PHONE" class="nav-phone">📞 Zavolat</a>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Otevřít menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#onas">O nás</a>
+    <a href="#sluzby">Služby</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#recenze">Recenze</a>
+    <a href="#kontakt">Kontakt</a>
+    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-text" data-r>
+        <div class="hero-badge">RESTAURANT_CITY · Autoservis</div>
+        <h1 class="hero-title">
+          RESTAURANT_TAGLINE<br>
+          <em>RESTAURANT_NAME</em>
+        </h1>
+        <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+        <div class="hero-actions">
+          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
+          <a href="#sluzby" class="btn btn--outline">Naše služby ↓</a>
+        </div>
+        <div class="hero-rating">
+          <span class="stars">★★★★★</span>
+          <strong>RESTAURANT_RATING / 5</strong>
+          <span>· RESTAURANT_REVIEWS recenzí na Google</span>
+        </div>
+      </div>
+      <div class="hero-visual" data-r>
+        <div class="visual-stack">
+          <div class="img-main">
+            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – autoservis" loading="lazy" />
+          </div>
+          <div class="img-sub">
+            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – dílna" loading="lazy" />
+          </div>
+          <div class="img-sub">
+            <img src="../stock_photos/PHOTO_3" alt="RESTAURANT_NAME – vozidla" loading="lazy" />
+          </div>
+        </div>
+        <div class="visual-float">
+          <span class="pulse"></span>
+          <div>
+            <strong>Přijímáme zakázky</strong><br>
+            <span style="font-size:.78rem;color:var(--text-muted)">RESTAURANT_CITY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div data-r>
+        <div class="stat-num" data-count="RESTAURANT_REVIEWS">0</div>
+        <div class="stat-label">Spokojených zákazníků</div>
+      </div>
+      <div data-r>
+        <div class="stat-num" data-count="RESTAURANT_RATING" data-decimal>0</div>
+        <div class="stat-label">Hvězd na Google</div>
+      </div>
+      <div data-r>
+        <div class="stat-num" data-count="15">0</div>
+        <div class="stat-label">Let zkušeností</div>
+      </div>
+      <div data-r>
+        <div class="stat-num" data-count="6">0</div>
+        <div class="stat-label">Dní v týdnu</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== O NÁS ===== -->
+<section id="onas">
+  <div class="container">
+    <div class="onas-grid">
+      <div class="onas-img" data-r>
+        <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – servisní tým" loading="lazy" />
+        <div class="onas-img-badge">
+          <strong>15+</strong>
+          <span>let v oboru</span>
+        </div>
+      </div>
+      <div class="onas-text" data-r>
+        <div class="section-label">O nás</div>
+        <h2>Váš spolehlivý autoservis v RESTAURANT_CITY_LOC</h2>
+        <p>RESTAURANT_ABOUT</p>
+        <p class="section-desc">RESTAURANT_ABOUT_SHORT</p>
+        <div class="onas-chips">
+          <span class="chip accent">🔧 Servis & opravy</span>
+          <span class="chip accent">🛞 Pneuservis</span>
+          <span class="chip accent">🔍 Diagnostika</span>
+          <span class="chip">📍 RESTAURANT_CITY</span>
+          <span class="chip">✅ Záruční i pozáruční</span>
+        </div>
+        <div style="margin-top:2rem;">
+          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">Objednat vozidlo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SLUŽBY ===== -->
+<section id="sluzby">
+  <div class="container">
+    <div class="sluzby-header" data-r>
+      <div class="section-label">Naše služby</div>
+      <h2>Co u nás opravíme</h2>
+      <p class="section-desc">Kompletní péče o vaše vozidlo na jednom místě – od výměny oleje až po složité opravy.</p>
+    </div>
+    <div class="filter-bar" data-r>
+      <button class="filter-btn active" data-filter="all">Vše</button>
+      <button class="filter-btn" data-filter="servis">🔧 Servis</button>
+      <button class="filter-btn" data-filter="pneu">🛞 Pneuservis</button>
+      <button class="filter-btn" data-filter="diag">🔍 Diagnostika</button>
+      <button class="filter-btn" data-filter="karos">🚗 Karoserie</button>
+    </div>
+    <div class="sluzby-grid" id="sluzbyGrid">
+
+      <div class="sluzba-card" data-cat="servis" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Výměna oleje a filtrů" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Servis</span>
+          <h3>Výměna oleje a filtrů</h3>
+          <p>Pravidelná výměna motorového oleje, olejového, vzduchového a kabinového filtru. Prodloužíte životnost motoru.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">od 890 Kč</span>
+          <span class="sluzba-time">⏱ 30–60 min</span>
+        </div>
+      </div>
+
+      <div class="sluzba-card" data-cat="servis" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Brzdy a spojka" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Servis</span>
+          <h3>Brzdy a spojka</h3>
+          <p>Výměna brzdových destiček, kotoučů a čelistí. Oprava a seřízení spojkového systému. Bezpečnost na prvním místě.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">od 1 200 Kč</span>
+          <span class="sluzba-time">⏱ 1–2 hod</span>
+        </div>
+      </div>
+
+      <div class="sluzba-card" data-cat="pneu" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Přezutí a vyvážení kol" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Pneuservis</span>
+          <h3>Přezutí a vyvážení kol</h3>
+          <p>Sezónní přezutí pneumatik, vyvážení kol, oprava defektů. Uskladnění pneumatik k dispozici.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">od 500 Kč</span>
+          <span class="sluzba-time">⏱ 30–45 min</span>
+        </div>
+      </div>
+
+      <div class="sluzba-card" data-cat="diag" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Počítačová diagnostika" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Diagnostika</span>
+          <h3>Počítačová diagnostika</h3>
+          <p>Profesionální diagnostika všech systémů vozidla. Přesné odhalení závad pomocí moderního vybavení.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">od 490 Kč</span>
+          <span class="sluzba-time">⏱ 30 min</span>
+        </div>
+      </div>
+
+      <div class="sluzba-card" data-cat="servis" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Klimatizace" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Servis</span>
+          <h3>Klimatizace a topení</h3>
+          <p>Plnění a servis klimatizace, výměna chladiva, čištění a dezinfekce klimatizačního systému.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">od 890 Kč</span>
+          <span class="sluzba-time">⏱ 45 min</span>
+        </div>
+      </div>
+
+      <div class="sluzba-card" data-cat="karos" data-r>
+        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Karosářské práce" loading="lazy" /></div>
+        <div class="sluzba-body">
+          <span class="sluzba-tag">Karoserie</span>
+          <h3>Opravy karoserie</h3>
+          <p>Odstraňování škrábanců, promáčklin a poškození laku. Lokální opravy i kompletní přelakování.</p>
+        </div>
+        <div class="sluzba-footer">
+          <span class="sluzba-price">dle rozsahu</span>
+          <span class="sluzba-time">⏱ po dohodě</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALERIE ===== -->
+<section id="galerie">
+  <div class="container">
+    <div class="galerie-header" data-r>
+      <div class="section-label">Galerie</div>
+      <h2>Naše dílna a práce</h2>
+    </div>
+  </div>
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack"></div>
+    <div class="marquee-fade-l"></div>
+    <div class="marquee-fade-r"></div>
+  </div>
+</section>
+
+<!-- ===== RECENZE ===== -->
+<section id="recenze">
+  <div class="container">
+    <div class="recenze-header" data-r>
+      <div class="section-label">Recenze zákazníků</div>
+      <h2>Co říkají naši zákazníci</h2>
+      <p class="section-desc" style="margin:.5rem auto 0;">Hodnocení RESTAURANT_RATING / 5 na základě RESTAURANT_REVIEWS recenzí na Google.</p>
+    </div>
+    <div class="slider" data-r>
+      <div class="slider-track" id="sliderTrack">
+        <div class="review-slide">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">„Skvělý servis, rychlá a kvalitní práce. Auto opravili přesně dle domluvy a za rozumnou cenu. Rozhodně doporučuji!"</p>
+            <div class="review-author">— Tomáš K. · Google</div>
+          </div>
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">„Přezutí kol hotové do půl hodiny, personál příjemný a ochotný. Cena odpovídá kvalitě. Budu se vracet každou sezónu."</p>
+            <div class="review-author">— Martin S. · Google</div>
+          </div>
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">„Opravili mi auto po nehodě – výsledek byl skvělý, ani by neřekl, že tam něco bylo. Profi přístup a férová cena."</p>
+            <div class="review-author">— Petr N. · Google</div>
+          </div>
+        </div>
+        <div class="review-slide">
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">„Diagnostika odhalila závadu, kterou jiný servis přehlédl. Rychlá oprava, auto jede skvěle. Moc děkuji za profesionální přístup."</p>
+            <div class="review-author">— Jakub V. · Google</div>
+          </div>
+          <div class="review-card">
+            <div class="review-stars">★★★★☆</div>
+            <p class="review-text">„Pravidelně sem jezdím na servis – vždy spokojen. Poctivá práce, férové ceny a ochotný personál. Doporučuji všem v okolí."</p>
+            <div class="review-author">— Ondřej M. · Google</div>
+          </div>
+          <div class="review-card">
+            <div class="review-stars">★★★★★</div>
+            <p class="review-text">„Výměna brzd provedena rychle a kvalitně. Cena byla nižší než u konkurence. Opravdu solidní servis, vrátím se."</p>
+            <div class="review-author">— David B. · Google</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slider-dots" id="sliderDots">
+      <button class="dot-btn active" data-idx="0" aria-label="Slide 1"></button>
+      <button class="dot-btn" data-idx="1" aria-label="Slide 2"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-grid">
+      <div class="cta-text" data-r>
+        <div class="section-label">Objednávky</div>
+        <h2>Objednejte své vozidlo ještě dnes</h2>
+        <p>Neodkládejte servis vašeho auta. Zavolejte nám nebo nás navštivte – postaráme se o vaše vozidlo rychle a spolehlivě.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
+          <a href="#kontakt" class="btn btn--outline">Kde nás najdete</a>
+        </div>
+      </div>
+      <div class="cta-img" data-r>
+        <img src="../stock_photos/PHOTO_1" alt="Objednejte servis – RESTAURANT_NAME" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KONTAKT ===== -->
+<section id="kontakt">
+  <div class="container">
+    <div class="kontakt-grid">
+      <div class="kontakt-info" data-r>
+        <div class="section-label">Kontakt</div>
+        <h2>Najdete nás v RESTAURANT_CITY_LOC</h2>
+        <p>Rádi přijmeme vaše vozidlo. Zavolejte nebo přijeďte přímo k nám.</p>
+        <div class="kontakt-items">
+          <div class="kontakt-item">
+            <div class="kontakt-icon">📍</div>
+            <div class="kontakt-item-text">
+              <small>Adresa</small>
+              <strong>RESTAURANT_ADDRESS</strong>
+            </div>
+          </div>
+          <div class="kontakt-item">
+            <div class="kontakt-icon">📞</div>
+            <div class="kontakt-item-text">
+              <small>Telefon</small>
+              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
+            </div>
+          </div>
+          <div class="kontakt-item">
+            <div class="kontakt-icon">✉️</div>
+            <div class="kontakt-item-text">
+              <small>Email</small>
+              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
+            </div>
+          </div>
+          <div class="kontakt-item">
+            <div class="kontakt-icon">🕐</div>
+            <div class="kontakt-item-text">
+              <small>Otevírací doba</small>
+              <strong>Po–Pá 7:30–17:00 · So 8:00–12:00</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kontakt-map" data-r>
+        <iframe
+          src="GOOGLE_MAPS_EMBED"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa RESTAURANT_NAME"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">🔧 <span>RESTAURANT_NAME</span></div>
+        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigace</h4>
+        <ul>
+          <li><a href="#onas">O nás</a></li>
+          <li><a href="#sluzby">Služby</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#recenze">Recenze</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
+          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
+          <li>RESTAURANT_ADDRESS_SHORT</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 RESTAURANT_NAME · Všechna práva vyhrazena</span>
+      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  /* Progress bar */
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  /* Sticky header */
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 10));
+
+  /* Hamburger */
+  const btn = document.getElementById('hamburgerBtn');
+  const menu = document.getElementById('mobileMenu');
+  btn.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', false);
+  }));
+
+  /* Reveal on scroll */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
+
+  /* Stats counter */
+  const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseFloat(el.dataset.count);
+      const isDecimal = 'decimal' in el.dataset;
+      const steps = 1400 / 16;
+      let current = 0;
+      const inc = target / steps;
+      const timer = setInterval(() => {
+        current = Math.min(current + inc, target);
+        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+        if (current >= target) clearInterval(timer);
+      }, 16);
+      statsObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('[data-count]').forEach(el => statsObs.observe(el));
+
+  /* Filtr služeb */
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const filter = b.dataset.filter;
+      document.querySelectorAll('.sluzba-card').forEach(card => {
+        card.style.display = filter === 'all' || card.dataset.cat === filter ? '' : 'none';
+      });
+    });
+  });
+
+  /* Galerie marquee */
+  const photos = [GALLERY_PHOTOS_JS];
+  const track = document.getElementById('marqueeTrack');
+  if (photos.length > 0 && photos[0]) {
+    [...photos, ...photos].forEach(src => {
+      const div = document.createElement('div');
+      div.className = 'gal-img';
+      div.innerHTML = `<img src="${src}" alt="Autoservis RESTAURANT_NAME" loading="lazy" />`;
+      track.appendChild(div);
+    });
+    if (photos.length < 4) track.style.animationDuration = '20s';
+  } else {
+    ['PHOTO_1','PHOTO_2','PHOTO_3','PHOTO_1','PHOTO_2'].forEach(src => {
+      const div = document.createElement('div');
+      div.className = 'gal-img';
+      div.innerHTML = `<img src="photos/${src}" alt="Autoservis" loading="lazy" />`;
+      track.appendChild(div);
+    });
+  }
+
+  /* Recenze slider */
+  const sliderTrack = document.getElementById('sliderTrack');
+  const slides = sliderTrack.querySelectorAll('.review-slide');
+  const dots = document.getElementById('sliderDots');
+  let current = 0;
+  function goTo(idx) {
+    current = idx;
+    sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
+    dots.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === idx));
+  }
+  dots.querySelectorAll('.dot-btn').forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+  if (slides.length > 1) setInterval(() => goTo((current + 1) % slides.length), 5000);
+</script>
+
+</body>
+</html>
