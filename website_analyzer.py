@@ -142,7 +142,10 @@ def analyze_technical(url):
 
 def take_screenshot(url, save_path):
     """Pořídí screenshot pomocí Playwright"""
-    from playwright.sync_api import sync_playwright
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        return False  # Playwright není nainstalován (např. GitHub Actions bez chromium)
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
