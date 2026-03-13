@@ -35,7 +35,7 @@ INDUSTRY_TEMPLATES = {
     "kosmetika":    "kosmetika.html",
     "autoservis":   "autoservis.html",
     "masaze":       "masaze.html",
-    # psycholog – přidat až bude šablona hotová
+    "psycholog":    "psycholog.html",
 }
 
 def get_template_path(industry: str) -> str:
