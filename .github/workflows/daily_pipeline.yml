@@ -1,0 +1,105 @@
+name: Daily Outreach Pipeline
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # každý den v 8:00 CET (7:00 UTC)
+  workflow_dispatch:        # možnost spustit ručně z GitHubu
+
+jobs:
+  run-industry:
+    name: ${{ matrix.industry }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360   # max 6 hodin na odvětví
+    strategy:
+      fail-fast: false      # pokud jedno odvětví selže, ostatní pokračují
+      matrix:
+        industry:
+          - restaurace
+          - kavarna
+          - penzion
+          - kosmetika
+          - kadernictvi
+          - zubni
+          - masaze
+          - autoservis
+          - psycholog
+
+    steps:
+      - name: Checkout pipeline kódu
+        uses: actions/checkout@v4
+
+      - name: Nastav Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Instaluj závislosti
+        run: |
+          pip install -q \
+            requests gspread google-auth google-auth-oauthlib \
+            google-auth-httplib2 google-api-python-client \
+            anthropic beautifulsoup4 dnspython
+
+      - name: Obnov Google credentials
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > credentials.json
+          echo "${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}" | base64 -d > token.pickle
+
+      - name: Nastav Git pro push demos
+        run: |
+          git config --global user.name "StrankyProVas Bot"
+          git config --global user.email "matyas.vrbaa@gmail.com"
+          # Použij PAT pro push do strankyprovas/* repozitářů
+          git config --global url."https://x-access-token:${{ secrets.GH_PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Naklonuj demo repo pro toto odvětví
+        run: |
+          python3 - <<'EOF'
+          import subprocess, os
+
+          REPOS = {
+            "restaurace":  "restaurace",
+            "kavarna":     "kavarny",
+            "penzion":     "penzion",
+            "kadernictvi": "kadernictvi",
+            "kosmetika":   "kosmetika",
+            "autoservis":  "autoservis",
+            "masaze":      "masaze",
+            "zubni":       "zubni",
+            "psycholog":   "psycholog",
+          }
+
+          industry = "${{ matrix.industry }}"
+          repo = REPOS[industry]
+          demo_dir = {
+            "restaurace":  "demos",
+            "kavarna":     "demos-kavarny",
+            "penzion":     "demos-penziony",
+            "kadernictvi": "demos-kadernictvi",
+            "kosmetika":   "demos-kosmetika",
+            "autoservis":  "demos-autoservis",
+            "masaze":      "demos-masaze",
+            "zubni":       "demos-zubni",
+            "psycholog":   "demos-psycholog",
+          }[industry]
+
+          url = f"https://github.com/strankyprovas/{repo}.git"
+          subprocess.run(["git", "clone", "--depth=1", url, demo_dir], check=True)
+          print(f"Naklonováno: {demo_dir}")
+          EOF
+
+      - name: Spusť pipeline – ${{ matrix.industry }}
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python3 run_all_cities.py \
+            --industry ${{ matrix.industry }} \
+            --target 2
+
+      - name: Souhrn draftů
+        if: always()
+        run: |
+          echo "=== Výsledky pro ${{ matrix.industry }} ==="
+          # Projde logy a spočítá drafty (výsledky jsou v Google Sheetu)
+          echo "Pipeline doběhl. Drafty jsou v Gmail."
