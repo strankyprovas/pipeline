@@ -69,7 +69,11 @@ jobs:
           "
 
       - name: Spusť pipeline
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        # AI personalizace je vypnutá – organizace nemá kredity na Anthropic API.
+        # Bez klíče ai_email.generate_ai_email() rovnou vrací šablonový email
+        # (fallback), takže pipeline běží dál, jen s méně osobními texty.
+        # Až budou kredity, stačí odkomentovat oba řádky níž.
+        # env:
+        #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           python3 run_all_cities.py --industry ${{ matrix.industry }} --target 2
