@@ -52,16 +52,29 @@ area["ISO3166-1"="CZ"][admin_level=2]->.czechia;
 );
 out tags;
 """
-    try:
-        resp = requests.post(
-            "https://overpass-api.de/api/interpreter",
-            data={"data": query},
-            timeout=90,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as e:
-        print(f"  ⚠️  Overpass API selhalo ({e}), používám záložní seznam")
+    # ⚠️ User-Agent je POVINNÝ (bez něj 406), + víc mirrorů pro případ přetížení
+    _UA = {"User-Agent": "StrankyProVas/1.0 outreach-pipeline"}
+    _MIRRORS = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.openstreetmap.fr/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+        "https://overpass.osm.ch/api/interpreter",
+    ]
+    data = None
+    for server in _MIRRORS:
+        try:
+            resp = requests.post(server, data={"data": query},
+                                 headers=_UA, timeout=120)
+            if resp.status_code == 200 and resp.content:
+                candidate = resp.json()
+                if candidate.get("elements"):
+                    data = candidate
+                    break
+            print(f"  ⚠️  Overpass {server.split('/')[2]}: {resp.status_code}")
+        except Exception as e:
+            print(f"  ⚠️  Overpass {server.split('/')[2]}: {str(e)[:60]}")
+    if data is None:
+        print("  ⚠️  Overpass API selhalo, používám záložní seznam")
         return _fallback_cities()
 
     # Parsuj výsledky – filtruj, odstraň duplikáty, seřaď podle počtu obyvatel

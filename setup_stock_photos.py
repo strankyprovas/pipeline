@@ -36,6 +36,8 @@ INDUSTRY_KEYWORDS = {
     "masaze":       [],  # řeší se přes PEXELS_IDS
     "autoservis":   [],  # řeší se přes PEXELS_IDS
     "psycholog":    [],  # řeší se přes PEXELS_IDS
+    "pekarna":      ["bakery bread", "fresh bread", "croissant pastry", "baker bakery", "bread loaf", "bakery shop"],
+    "kvetinarstvi": ["flower shop", "flower bouquet", "florist flowers", "roses bouquet", "flower arrangement", "flowers colorful"],
 }
 
 HEADERS = {"User-Agent": "StrankyProVas/1.0"}

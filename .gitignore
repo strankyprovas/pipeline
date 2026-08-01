@@ -1,7 +1,10 @@
 .env
 fb_session.json
 token.pickle
+token.pickle.lock
+token_replies.pickle
 credentials.json
+credentials.json?*
 *.pyc
 __pycache__/
 output/
@@ -11,3 +14,16 @@ demos-*/
 logs/
 output/
 deploy/strankyprovas_pipeline.tar.gz
+
+# Logy obsahují e-maily a telefony scrapnutých podniků – do veřejného repa nepatří.
+outreach-logs/
+pipeline-logs/
+send_log*.txt
+logs_*.txt
+watchdog.log
+
+# Pracovní smetí
+*.bak
+*.bak[0-9]
+fb_debug*.png
+cms-demo/

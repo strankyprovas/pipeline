@@ -15,14 +15,14 @@ from industries import get_industry
 # A = zvědavost, B = hodnota, C = problém
 SUBJECT_VARIANTS = {
     "bez_webu": {
-        "A": lambda name, domain: f"Udělal jsem něco pro {name}",
-        "B": lambda name, domain: f"Připravil jsem web pro {name} – podívejte se",
-        "C": lambda name, domain: f"Proč {name} přichází o hosty?",
+        "A": lambda name, domain: f"{name} – připravil jsem vám ukázku webu",
+        "B": lambda name, domain: "Váš nový web je hotový – podívejte se",
+        "C": lambda name, domain: "Zákazníci vás hledají na Googlu a nenajdou vás",
     },
     "spatny_web": {
-        "A": lambda name, domain: f"Udělal jsem něco pro váš web",
-        "B": lambda name, domain: f"Modernizace {domain} – ukázka zdarma",
-        "C": lambda name, domain: f"Váš web ztrácí hosty na mobilech",
+        "A": lambda name, domain: f"{name} – připravil jsem vám ukázku nového webu",
+        "B": lambda name, domain: "Váš nový web je hotový – podívejte se",
+        "C": lambda name, domain: "Zákazníci vás hledají na Googlu – co najdou?",
     },
 }
 
@@ -122,32 +122,59 @@ def generate_ai_email(restaurant: dict, demo_url: str = "", city: str = "Praha")
         if extra_context:
             web_context += f" {extra_context}"
 
-    demo_line = f"\nUkázka nového webu: {demo_url}" if demo_url else ""
+    demo_line = f"\n- Demo URL: {demo_url}" if demo_url else ""
     extra_line = f"\n- Zajímavé detaily o podniku k zmínění: {extra_context}" if extra_context else ""
 
-    cta_phrase = ind.get("email_cta", "Pracujeme s podniky v regionu.").format(
-        city_phrase=f"v {city}"
-    )
-    prompt = f"""Napiš krátký cold email (max 5 vět) v češtině.
+    # Portfolio reference podle odvětví
+    INDUSTRY_PORTFOLIO = {
+        "restaurace":  "piavarestaurace.cz a padthairestaurace.cz, aktuálně připravujeme web pro grasehaus.cz",
+        "kavarna":     "piavarestaurace.cz (kavárna/bistro) a padthairestaurace.cz, aktuálně připravujeme web pro grasehaus.cz",
+        "penzion":     "jakubsojka.cz (poradenství) a piavarestaurace.cz, aktuálně připravujeme weby pro penzionyv regionu",
+        "kadernictvi": "piavarestaurace.cz a strankyprovas.github.io/kadernictvi (ukázky pro kadeřnictví)",
+        "kosmetika":   "piavarestaurace.cz a strankyprovas.github.io/kosmetika (ukázky pro kosmetické salony)",
+        "autoservis":  "piavarestaurace.cz a strankyprovas.github.io/autoservis (ukázky pro autoservisy)",
+        "masaze":      "piavarestaurace.cz a strankyprovas.github.io/masaze (ukázky pro masážní salony)",
+        "zubni":       "jakubsojka.cz (zdravotnictví/poradenství) a strankyprovas.github.io/zubni (ukázky pro zubní ordinace)",
+        "psycholog":   "jakubsojka.cz (zdravotnictví/poradenství) a strankyprovas.github.io/psycholog (ukázky pro psychology)",
+    }
+    portfolio = INDUSTRY_PORTFOLIO.get(industry_key, INDUSTRY_PORTFOLIO["restaurace"])
 
-Kontext:
-- Jsi Matyáš Vrba z firmy StránkyProVás (webdesign pro místní podniky)
-- {web_context}
-- Píšeš majiteli/provozovateli poprvé
-{demo_line}
+    prompt = f"""Napiš krátký cold email v češtině (max 5–8 vět, příjemce čte na mobilu). Drž se této struktury, ale piš stručně:
 
-Požadavky:
-- Email musí být v ich-formě jako Matyáš Vrba
-- Zmíň konkrétní problém: {problem_hint}{extra_line}
-- Pokud je demo_url, přilož ho jako odkaz s šipkou →
-- NIKDY nepiš "s vašimi fotkami" – jsou to ukázkové fotografie připravené pro demo
-- CTA: {cta_phrase} Požádej o odpověď jestli by je demo zaujalo.
-- Max 5 vět, bez formálního nadpisu "Dobrý den,"
-- Začni slovem "Dobrý den," na prvním řádku, pak prázdný řádek, pak tělo
-- Podpis NEVKLÁDEJ, bude přidán automaticky
-- Emailová adresa odesílatele: matyas.vrbaa@gmail.com
+KONTEXT:
+- Odesílatel: Matyáš Vrba + kamarád Kryštof, firma StránkyProVás (webdesign pro místní podniky)
+- Příjemce: majitel/provozovatel podniku {name} ({ind_name}) v {city}
+- {web_context}{demo_line}{extra_line}
+- Portfolio: {portfolio}
+- Cena: 500 Kč měsíčně – v ceně hosting, správa, úpravy na vyžádání, vše technické
 
-Napiš jen tělo emailu, žádné instrukce ani komentáře."""
+STRUKTURA EMAILU (přesně dodržuj):
+
+1. Začni: "Dobrý den," → prázdný řádek → odstavec kde se představíš jako Matyáš, zmíníš Kryštofa, napíšeš že děláte weby pro {ind_name} v Česku, a konkrétně zmíníš {name} v {city} + proč jim píšeš ({problem_hint})
+
+2. Sekce "Co je teď problém" (nadpis tučně, pak 3–4 odrážky • s konkrétními problémy pro {ind_name})
+
+3. Sekce "Jak to vyřešíme" (nadpis tučně, pak 2–3 odrážky • co konkrétně uděláte)
+
+4. Sekce "Co to přinese" (nadpis tučně, pak 2–3 odrážky • konkrétní přínosy pro jejich byznys)
+
+5. Portfolio + demo odkaz:
+"Naše poslední projekty jsou například {portfolio}."
+Pokud je demo URL: "Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:\\n→ [demo_url]\\nTexty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
+
+6. CTA odstavec: Zmíň cenu 500 Kč/měsíc se vším všudy. Nabídni konkrétní termín: "Hodí se vám krátký hovor v úterý nebo ve středu dopoledne? Stačí odpovědět na tento email." Nepiš nic o "zdarma připravit návrh" ani "cenovou nabídku" – ukázku už posíláme a cenu už zmiňujeme. Srdečný tón. 🙂
+
+DŮLEŽITÉ PRAVIDLA:
+- Piš KRÁTCE – celý email max 5–8 vět. Příjemce čte na mobilu mezi zákazníky.
+- Ich-forma jako Matyáš Vrba
+- Používej správný pád města v češtině (např. "v Ostravě", "v Brně", "v Praze", "v Olomouci" – ne "v Ostrava")
+- Název firmy {name} používej přesně jak je, nesklonávej
+- NIKDY nepiš "s vašimi fotkami" – jsou to ukázkové fotografie
+- Vždy uveď větu o 14denním limitu dema
+- Konči konkrétním CTA: nabídni hovor v úterý nebo středu dopoledne
+- Podpis NEVKLÁDEJ (bude přidán automaticky)
+- Nepiš žádné instrukce ani komentáře
+- Napiš jen tělo emailu"""
 
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -159,7 +186,7 @@ Napiš jen tělo emailu, žádné instrukce ani komentáře."""
         ai_body = message.content[0].text.strip()
 
         # Vždy přidej větu o textech a fotkách hned za demo odkazem
-        PHOTO_NOTE = "Texty i fotografie z ukázky jsou samozřejmě vaše – klidně je použijete i na finálním webu."
+        PHOTO_NOTE = "Texty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
         if demo_url and demo_url in ai_body and PHOTO_NOTE not in ai_body:
             ai_body = ai_body.replace(demo_url, demo_url + "\n" + PHOTO_NOTE)
         elif demo_url and PHOTO_NOTE not in ai_body:

@@ -1,1250 +1,492 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RESTAURANT_NAME — Psycholog & terapeut v RESTAURANT_CITY</title>
-  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
-  <meta name="theme-color" content="#f7f3f9" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESTAURANT_NAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ============ TOKENS ============ */
-    :root {
-      --warm:        #f7f3f9;
-      --warm-2:      #ede6f4;
-      --warm-3:      #d9cce8;
-      --mauve-100:   #c4b0d8;
-      --mauve-300:   #9b7ec4;
-      --mauve-500:   #7b5ea7;
-      --mauve-700:   #5c4484;
-      --ink:         #1c1320;
-      --ink-2:       #2e1f42;
-      --muted:       #6b5878;
-      --card:        #fff;
-      --shadow:      0 8px 28px rgba(91, 68, 132, 0.1);
-      --radius:      16px;
-      --space-1:     0.5rem;
-      --space-2:     1rem;
-      --space-3:     1.5rem;
-      --space-4:     2rem;
-      --space-6:     3rem;
-      --space-8:     4rem;
-      --space-12:    6rem;
-    }
-
-    /* ============ RESET ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--warm);
-      color: var(--ink);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-    img { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    img { max-width: 100%; display: block; }
 
-    /* ============ TYPOGRAPHY ============ */
-    h1, h2, h3 {
-      font-family: 'DM Serif Display', Georgia, serif;
-      line-height: 1.15;
-      color: var(--ink);
+    :root {
+      --cream:  #f6f1ea;
+      --cream2: #ece4d7;
+      --paper:  #fbf8f3;
+      --sage:   #6b7d6a;
+      --sage2:  #4f5f50;
+      --sage3:  #3a4a3f;
+      --sand:   #c9b793;
+      --sand2:  #b09e76;
+      --ink:    #1f241f;
+      --ink2:   #3b403a;
+      --muted:  #6e7570;
+      --line:   #d8cfc1;
+      --ease:   cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 22px 55px rgba(58,74,63,.13);
     }
-    h4 {
-      font-family: 'Inter', sans-serif;
-      line-height: 1.3;
-      color: var(--ink);
-    }
-    h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 400; }
-    h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 400; }
-    h3 { font-size: clamp(1.1rem, 2.2vw, 1.45rem); font-weight: 400; }
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--mauve-500);
-      margin-bottom: var(--space-2);
-    }
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 1.5px;
-      background: var(--mauve-300);
-      border-radius: 2px;
-    }
-    .section-desc {
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin-top: var(--space-2);
-      line-height: 1.75;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--sage3); color: #fff; }
 
-    /* ============ LAYOUT ============ */
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-    section { padding: var(--space-12) 0; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--warm-3);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: var(--space-4);
-    }
-    .grid { display: grid; gap: var(--space-4); }
-    .auto-3 { grid-template-columns: repeat(3, 1fr); }
-    .auto-2 { grid-template-columns: repeat(2, 1fr); }
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--sage); transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
 
-    /* ============ BUTTONS ============ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: 50px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.88rem;
-      letter-spacing: .03em;
-      cursor: pointer;
-      border: none;
-      transition: all .22s;
-    }
-    .btn--fill {
-      background: linear-gradient(135deg, var(--mauve-700), var(--mauve-300));
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(123, 94, 167, 0.33);
-    }
-    .btn--fill:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(123, 94, 167, .45); }
-    .btn--outline {
-      background: transparent;
-      color: var(--mauve-700);
-      border: 1.5px solid var(--mauve-300);
-    }
-    .btn--outline:hover { background: var(--warm-2); border-color: var(--mauve-500); }
+    /* NAV */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.5rem 5%; display: flex; align-items: center; justify-content: space-between; transition: all .4s var(--ease); }
+    #navbar.scrolled { background: rgba(251,248,243,.94); backdrop-filter: blur(14px); padding: .95rem 5%; box-shadow: 0 1px 0 var(--line); }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 600; color: var(--sage3); text-decoration: none; letter-spacing: .01em; line-height: 1; }
+    .nav-logo span { color: var(--sand2); }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; align-items: center; }
+    .nav-links a { color: var(--ink2); text-decoration: none; font-size: .84rem; font-weight: 500; transition: color .25s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 1.5px; background: var(--sage); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
+    .nav-links a:hover { color: var(--sage3); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta { font-family: 'Inter', sans-serif; font-size: .82rem; font-weight: 600; color: #fff; background: var(--sage3); padding: .75rem 1.6rem; border: none; cursor: pointer; text-decoration: none; transition: all .3s; border-radius: 999px; }
+    .nav-cta:hover { background: var(--sage2); transform: translateY(-1px); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--sage3); transition: all .3s; }
 
-    /* ============ TOP PROGRESS BAR ============ */
-    #progress {
-      position: fixed;
-      top: 0; left: 0;
-      height: 2px;
-      width: 0%;
-      background: linear-gradient(90deg, var(--mauve-300), var(--mauve-700));
-      z-index: 9999;
-      transition: width .1s linear;
-    }
+    #mobile-nav { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem; }
+    #mobile-nav.open { display: flex; }
+    #mobile-nav a { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 500; color: var(--sage3); text-decoration: none; }
+    #mobile-nav a:hover { color: var(--sand2); font-style: italic; }
+    .close-nav { position: absolute; top: 2rem; right: 6%; background: none; border: none; color: var(--sage3); font-size: 2rem; cursor: pointer; }
 
-    /* ============ HEADER / NAV ============ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(247, 243, 249, 0.93);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
-      transition: border-color .3s, box-shadow .3s;
-    }
-    header.scrolled { border-color: var(--warm-3); box-shadow: 0 2px 16px rgba(123, 94, 167, .09); }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 68px;
-    }
-    .nav-logo {
-      font-family: 'DM Serif Display', serif;
-      font-weight: 400;
-      font-size: 1.2rem;
-      color: var(--mauve-700);
-      letter-spacing: .02em;
-    }
-    .nav-logo span { color: var(--mauve-500); }
-    nav ul { display: flex; align-items: center; gap: var(--space-4); }
-    nav a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: .04em;
-      color: var(--ink-2);
-      transition: color .2s;
-    }
-    nav a:hover { color: var(--mauve-500); }
-    .nav-cta { display: flex; align-items: center; gap: var(--space-2); }
-    .nav-phone {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.84rem;
-      color: var(--mauve-700);
-      padding: 8px 18px;
-      border: 1.5px solid var(--mauve-300);
-      border-radius: 50px;
-      transition: all .2s;
-    }
-    .nav-phone:hover { background: var(--mauve-300); color: #fff; }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      background: none;
-      border: none;
-    }
-    .hamburger span {
-      display: block;
-      width: 22px;
-      height: 1.5px;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: all .3s;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      padding: 16px 20px 20px;
-      border-top: 1px solid var(--warm-3);
-      background: rgba(247, 243, 249, 0.98);
-      gap: 4px;
-    }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--ink-2);
-      border-radius: 8px;
-      transition: background .2s;
-    }
-    .mobile-menu a:hover { background: var(--warm-2); }
+    /* HERO */
+    #hero { min-height: 100vh; background: linear-gradient(165deg, var(--paper) 0%, var(--cream2) 100%); display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: 4rem; padding: 8rem 8% 4rem; }
+    .hero-left { max-width: 560px; }
+    .hero-eyebrow { font-size: .74rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--sage2); margin-bottom: 1.6rem; display: inline-flex; align-items: center; gap: 1rem; opacity: 0; animation: fadeUp .9s .2s var(--ease) forwards; }
+    .hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--sage); }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.8rem, 5.4vw, 4.8rem); font-weight: 500; line-height: 1.1; letter-spacing: -.005em; color: var(--sage3); margin-bottom: 1.4rem; opacity: 0; animation: fadeUp .9s .34s var(--ease) forwards; }
+    .hero-title em { font-style: italic; color: var(--sand2); }
+    .hero-sub { font-size: 1.05rem; font-weight: 300; line-height: 1.85; color: var(--ink2); max-width: 450px; margin-bottom: 1.6rem; opacity: 0; animation: fadeUp .9s .5s var(--ease) forwards; }
+    .hero-note { display: inline-flex; align-items: center; gap: .55rem; font-size: .86rem; color: var(--sage2); background: rgba(107,125,106,.1); padding: .5rem 1rem; border-radius: 999px; margin-bottom: 2.2rem; opacity: 0; animation: fadeUp .9s .58s var(--ease) forwards; }
+    .hero-note svg { width: 17px; height: 17px; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2.2rem; opacity: 0; animation: fadeUp .9s .66s var(--ease) forwards; }
+    .btn-solid { background: var(--sage3); color: #fff; padding: 1.05rem 2.3rem; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: .88rem; font-weight: 600; text-decoration: none; display: inline-block; border-radius: 999px; transition: all .3s; }
+    .btn-solid:hover { background: var(--sage2); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(58,74,63,.28); }
+    .btn-line { background: transparent; color: var(--sage3); padding: 1.05rem 2.3rem; border: 1px solid var(--sage); font-family: 'Inter', sans-serif; font-size: .88rem; font-weight: 500; text-decoration: none; display: inline-block; border-radius: 999px; transition: all .3s; }
+    .btn-line:hover { background: var(--sage3); color: #fff; border-color: var(--sage3); }
+    .hero-rating { display: inline-flex; align-items: center; gap: .7rem; font-size: .84rem; color: var(--ink2); opacity: 0; animation: fadeUp .9s .8s var(--ease) forwards; }
+    .hero-rating b { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--sage3); }
+    .hero-rating .stars { color: var(--sand2); letter-spacing: 2px; }
+    .hero-right { position: relative; display: flex; justify-content: center; }
+    .hero-img { width: 100%; max-width: 470px; height: 600px; object-fit: cover; border-radius: 18px; box-shadow: var(--shadow); background: linear-gradient(135deg, var(--sage), var(--sage3)); }
+    .hero-chip { position: absolute; bottom: 1.6rem; left: -1rem; background: #fff; border-radius: 14px; box-shadow: var(--shadow); padding: .9rem 1.2rem; display: flex; align-items: center; gap: .7rem; }
+    .hero-chip svg { width: 24px; height: 24px; color: var(--sage2); }
+    .hero-chip strong { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--sage3); display: block; line-height: 1; }
+    .hero-chip span { font-size: .74rem; color: var(--muted); }
 
-    /* ============ HERO ============ */
-    #hero {
-      padding: var(--space-12) 0 var(--space-8);
-      background: linear-gradient(160deg, var(--warm) 55%, var(--warm-2) 100%);
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: var(--warm-3);
-      color: var(--mauve-700);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 50px;
-      margin-bottom: var(--space-3);
-    }
-    .hero-title { margin-bottom: var(--space-3); }
-    .hero-title em {
-      font-style: italic;
-      color: var(--mauve-500);
-    }
-    .hero-sub {
-      font-size: 1.08rem;
-      color: var(--muted);
-      margin-bottom: var(--space-4);
-      max-width: 460px;
-      line-height: 1.75;
-    }
-    .hero-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-    .hero-rating {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: var(--space-4);
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .hero-rating .stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; }
-    .hero-rating strong { color: var(--ink); }
-    .hero-visual { position: relative; }
-    .visual-stack {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 260px 190px;
-      gap: 12px;
-    }
-    .visual-stack .img-main {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .visual-stack .img-main img,
-    .visual-stack .img-sub img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-    }
-    .visual-stack .img-sub { border-radius: var(--radius); overflow: hidden; }
-    .visual-float {
-      position: absolute;
-      bottom: -16px;
-      left: -20px;
-      background: var(--card);
-      border: 1px solid var(--warm-3);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.83rem;
-    }
-    .visual-float .dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #6dbf6d;
-      flex-shrink: 0;
-    }
-    .visual-float strong { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.88rem; }
+    /* SECTION SHARED */
+    section { padding: 8rem 8%; }
+    .eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--sage2); margin-bottom: 1.1rem; display: inline-flex; align-items: center; gap: .8rem; }
+    .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--sage); }
+    .eyebrow.center { justify-content: center; }
+    .eyebrow.center::before { display: none; }
+    h2.title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.3rem, 4.2vw, 3.6rem); font-weight: 500; line-height: 1.12; margin-bottom: 1.3rem; color: var(--sage3); }
+    h2.title em { font-style: italic; color: var(--sand2); }
+    .lead { font-size: 1rem; line-height: 1.85; color: var(--ink2); max-width: 560px; }
 
-    /* ============ STATS BAR ============ */
-    #stats {
-      padding: var(--space-6) 0;
-      background: var(--mauve-700);
-      color: #fff;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-4);
-      text-align: center;
-    }
-    .stat-num {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2.8rem;
-      font-weight: 400;
-      color: var(--mauve-100);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,.65);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
+    /* HELP */
+    #pomoc { background: var(--paper); }
+    .help-head { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+    .help-head .eyebrow { justify-content: center; }
+    .help-head .eyebrow::before { display: none; }
+    .help-head .lead { margin: 0 auto; }
+    .help-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; max-width: 1100px; margin: 0 auto; }
+    .help-card { background: var(--cream); border: 1px solid var(--line); border-radius: 16px; padding: 2rem 1.9rem; transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s; }
+    .help-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: transparent; }
+    .help-ico { width: 50px; height: 50px; border-radius: 50%; background: rgba(107,125,106,.14); color: var(--sage2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; }
+    .help-ico svg { width: 24px; height: 24px; }
+    .help-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--sage3); margin-bottom: .4rem; }
+    .help-card p { font-size: .87rem; color: var(--muted); line-height: 1.65; }
 
-    /* ============ O NÁS ============ */
-    #onas { background: var(--warm); }
-    .onas-grid {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .onas-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 500px;
-      position: relative;
-    }
-    .onas-img img { width: 100%; height: 100%; object-fit: cover; }
-    .onas-img-badge {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--warm-3);
-      border-radius: 12px;
-      padding: 12px 16px;
-      box-shadow: var(--shadow);
-      font-size: 0.8rem;
-      text-align: center;
-    }
-    .onas-img-badge strong {
-      display: block;
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.4rem;
-      color: var(--mauve-700);
-    }
-    .onas-text .section-label { margin-bottom: var(--space-2); }
-    .onas-text h2 { margin-bottom: var(--space-3); }
-    .onas-text p { color: var(--muted); margin-bottom: var(--space-3); line-height: 1.8; }
-    .onas-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); }
-    .chip {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--warm-2);
-      border: 1.5px solid var(--warm-3);
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--mauve-700);
-    }
+    /* ABOUT */
+    #onas { background: var(--cream); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 5.5rem; align-items: center; }
+    .about-figure { position: relative; }
+    .about-figure img { width: 100%; height: 580px; object-fit: cover; border-radius: 18px; box-shadow: var(--shadow); background: linear-gradient(135deg, var(--cream2), var(--sage)); }
+    .about-text { font-size: 1rem; line-height: 1.95; color: var(--ink2); margin-bottom: 1.8rem; }
+    .about-checks { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 2rem; list-style: none; }
+    .about-checks li { display: flex; align-items: center; gap: .8rem; font-size: .96rem; color: var(--ink); }
+    .about-checks .ck { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: rgba(107,125,106,.14); color: var(--sage2); display: flex; align-items: center; justify-content: center; }
+    .about-checks .ck svg { width: 15px; height: 15px; }
 
-    /* ============ TERAPIE / SLUŽBY ============ */
-    #sluzby { background: var(--warm-2); }
-    .sluzby-header { text-align: center; max-width: 560px; margin: 0 auto var(--space-6); }
-    .sluzby-header .section-label { justify-content: center; }
-    .sluzby-header .section-label::before { display: none; }
-    .sluzby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-    .sluzba-card {
-      background: var(--card);
-      border: 1px solid var(--warm-3);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: transform .22s, box-shadow .22s;
-    }
-    .sluzba-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-    .sluzba-img { height: 170px; overflow: hidden; }
-    .sluzba-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .sluzba-card:hover .sluzba-img img { transform: scale(1.06); }
-    .sluzba-body { padding: 16px 18px; }
-    .sluzba-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      color: var(--mauve-500);
-      background: var(--warm-2);
-      padding: 3px 10px;
-      border-radius: 50px;
-      margin-bottom: 8px;
-    }
-    .sluzba-body h3 { font-size: 1rem; margin-bottom: 6px; font-family: 'Inter', sans-serif; font-weight: 600; }
-    .sluzba-body p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
-    .sluzba-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-top: 1px solid var(--warm-2);
-    }
-    .sluzba-price {
-      font-family: 'DM Serif Display', serif;
-      font-weight: 400;
-      color: var(--mauve-700);
-      font-size: 1.05rem;
-    }
-    .sluzba-time {
-      font-size: 0.77rem;
-      color: var(--muted);
-    }
+    /* PROCESS */
+    #proces { background: var(--sage3); color: var(--cream); }
+    #proces h2.title { color: #fff; }
+    #proces h2.title em { color: var(--sand); }
+    #proces .eyebrow { color: var(--sand); }
+    #proces .lead { color: rgba(246,241,234,.72); }
+    .proc-head { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+    .proc-head .eyebrow { justify-content: center; }
+    .proc-head .eyebrow::before { display: none; }
+    .proc-head .lead { margin: 0 auto; }
+    .proc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; max-width: 1150px; margin: 0 auto; }
+    .proc-step { background: rgba(255,255,255,.05); border: 1px solid rgba(246,241,234,.14); border-radius: 16px; padding: 2rem 1.7rem; }
+    .proc-num { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 600; color: var(--sand); line-height: 1; margin-bottom: .5rem; }
+    .proc-step h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: #fff; margin-bottom: .4rem; }
+    .proc-step p { font-size: .84rem; color: rgba(246,241,234,.62); line-height: 1.6; }
 
-    /* ============ JAK TO PROBÍHÁ ============ */
-    #jak {
-      padding: var(--space-12) 0;
-      background: var(--mauve-700);
-      color: #fff;
-    }
-    .jak-header {
-      text-align: center;
-      margin-bottom: var(--space-8);
-    }
-    .jak-header .section-label { justify-content: center; color: var(--mauve-100); }
-    .jak-header .section-label::before { background: var(--mauve-100); }
-    .jak-header h2 { color: #fff; }
-    .jak-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-4);
-    }
-    .jak-step {
-      text-align: center;
-      padding: var(--space-4);
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: var(--radius);
-      transition: background .2s;
-    }
-    .jak-step:hover { background: rgba(255,255,255,.13); }
-    .jak-num {
-      font-family: 'DM Serif Display', serif;
-      font-size: 3rem;
-      font-weight: 400;
-      color: var(--mauve-100);
-      line-height: 1;
-      margin-bottom: var(--space-2);
-    }
-    .jak-step h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-    .jak-step p {
-      font-size: 0.84rem;
-      color: rgba(255,255,255,.7);
-      line-height: 1.65;
-    }
+    /* PRICING */
+    #cenik { background: var(--paper); }
+    .cenik-head { text-align: center; max-width: 620px; margin: 0 auto 3rem; }
+    .cenik-head .eyebrow { justify-content: center; }
+    .cenik-head .eyebrow::before { display: none; }
+    .cenik-list { max-width: 720px; margin: 0 auto; }
+    .cenik-row { display: flex; align-items: baseline; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
+    .cenik-row:last-child { border-bottom: none; }
+    .cenik-name { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--sage3); }
+    .cenik-name small { display: block; font-family: 'Inter', sans-serif; font-size: .8rem; color: var(--muted); margin-top: .1rem; }
+    .cenik-dots { flex: 1; border-bottom: 1px dotted var(--line); transform: translateY(-6px); }
+    .cenik-price { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: var(--sand2); white-space: nowrap; }
+    .cenik-note { text-align: center; margin-top: 2.5rem; font-size: .84rem; color: var(--muted); }
 
-    /* ============ GALERIE ============ */
-    #galerie { background: var(--warm); overflow: hidden; }
-    .galerie-header { margin-bottom: var(--space-6); }
-    .marquee-wrap { position: relative; }
-    .marquee-track {
-      display: flex;
-      gap: 14px;
-      animation: marquee 34s linear infinite;
-      width: max-content;
-    }
-    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
-    .marquee-track .gal-img {
-      width: 280px;
-      height: 210px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .marquee-track .gal-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .marquee-track .gal-img:hover img { transform: scale(1.07); }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .marquee-fade-l, .marquee-fade-r {
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 100px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .marquee-fade-l { left: 0; background: linear-gradient(to right, var(--warm), transparent); }
-    .marquee-fade-r { right: 0; background: linear-gradient(to left, var(--warm), transparent); }
+    /* TESTIMONIALS */
+    #recenze { background: var(--cream); }
+    .test-head { text-align: center; max-width: 560px; margin: 0 auto 3rem; }
+    .test-slider { position: relative; max-width: 860px; margin: 0 auto; overflow: hidden; }
+    .test-track { display: flex; transition: transform .7s var(--ease); }
+    .test-slide { min-width: 100%; padding: 2rem 3rem; text-align: center; }
+    .test-stars { color: var(--sand2); font-size: 1rem; letter-spacing: 5px; margin-bottom: 1.4rem; }
+    .test-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 500; font-style: italic; line-height: 1.5; color: var(--sage3); margin-bottom: 1.6rem; }
+    .test-author { font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--sage2); }
+    .test-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(107,125,106,.35); border: none; cursor: pointer; transition: all .3s; padding: 0; }
+    .dot.active { background: var(--sage); transform: scale(1.4); }
 
-    /* ============ RECENZE ============ */
-    #recenze { background: var(--warm-2); }
-    .recenze-header { text-align: center; margin-bottom: var(--space-6); }
-    .recenze-header .section-label { justify-content: center; }
-    .recenze-header .section-label::before { display: none; }
-    .slider { overflow: hidden; }
-    .slider-track {
-      display: flex;
-      transition: transform .5s cubic-bezier(.4,0,.2,1);
-    }
-    .review-slide {
-      min-width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-    }
-    .review-card {
-      background: var(--card);
-      border: 1px solid var(--warm-3);
-      border-radius: var(--radius);
-      padding: var(--space-4);
-    }
-    .review-stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
-    .review-text {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.05rem;
-      color: var(--ink-2);
-      line-height: 1.7;
-      font-style: italic;
-      margin-bottom: var(--space-3);
-    }
-    .review-author { font-size: 0.8rem; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
-    .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: var(--space-4); }
-    .dot-btn {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      border: none;
-      background: var(--warm-3);
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .dot-btn.active { background: var(--mauve-500); width: 20px; border-radius: 4px; }
+    /* CONTACT */
+    #kontakt { background: var(--paper); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 5rem; align-items: start; }
+    .contact-reass { background: var(--cream); border: 1px solid var(--line); border-radius: 14px; padding: 1.3rem 1.5rem; display: flex; gap: .9rem; align-items: flex-start; margin-bottom: 2rem; }
+    .contact-reass svg { width: 22px; height: 22px; color: var(--sage2); flex-shrink: 0; margin-top: 2px; }
+    .contact-reass p { font-size: .88rem; color: var(--ink2); line-height: 1.6; }
+    .contact-item { display: flex; gap: 1.3rem; align-items: flex-start; margin-bottom: 2rem; }
+    .contact-ico { width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; background: var(--cream2); color: var(--sage2); display: flex; align-items: center; justify-content: center; }
+    .contact-ico svg { width: 20px; height: 20px; }
+    .contact-label { font-size: .66rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sage2); margin-bottom: .25rem; }
+    .contact-val { font-size: .96rem; color: var(--ink); line-height: 1.55; }
+    .map-wrap { margin-top: 1.5rem; width: 100%; height: 200px; background: var(--cream2); overflow: hidden; border-radius: 14px; }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; filter: grayscale(.3); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; background: #fff; padding: 2.4rem; border-radius: 18px; box-shadow: var(--shadow); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+    .form-group label { font-size: .66rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select { background: var(--paper); border: 1px solid var(--line); padding: .9rem 1.1rem; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: .9rem; color: var(--ink); outline: none; transition: border-color .3s, box-shadow .3s; resize: none; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(107,125,106,.16); }
+    .form-group textarea { height: 110px; }
+    .form-submit { background: var(--sage3); color: #fff; border: none; padding: 1.05rem 2.5rem; cursor: pointer; border-radius: 999px; font-family: 'Inter', sans-serif; font-size: .88rem; font-weight: 600; transition: all .3s; }
+    .form-submit:hover { background: var(--sage2); box-shadow: 0 10px 26px rgba(58,74,63,.28); }
 
-    /* ============ OBJEDNÁNÍ CTA ============ */
-    #objednani {
-      background: linear-gradient(135deg, var(--mauve-700) 0%, var(--mauve-300) 100%);
-      color: #fff;
-      padding: var(--space-12) 0;
-    }
-    .objednani-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .objednani-text .section-label { color: var(--mauve-100); }
-    .objednani-text .section-label::before { background: var(--mauve-100); }
-    .objednani-text h2 { color: #fff; margin-bottom: var(--space-3); }
-    .objednani-text p { color: rgba(255,255,255,.82); margin-bottom: var(--space-4); font-size: 1.05rem; line-height: 1.75; }
-    .objednani-text .btn--fill {
-      background: #fff;
-      color: var(--mauve-700);
-      box-shadow: 0 4px 16px rgba(0,0,0,.18);
-    }
-    .objednani-text .btn--fill:hover { background: var(--warm); }
-    .objednani-text .btn--outline {
-      color: #fff;
-      border-color: rgba(255,255,255,.5);
-    }
-    .objednani-text .btn--outline:hover { background: rgba(255,255,255,.12); border-color: #fff; }
-    .objednani-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 360px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.22);
-    }
-    .objednani-img img { width: 100%; height: 100%; object-fit: cover; }
+    /* FOOTER */
+    footer { background: var(--sage3); padding: 5rem 8% 2.2rem; color: var(--cream); }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 4rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(246,241,234,.12); margin-bottom: 2rem; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--cream); text-decoration: none; display: block; margin-bottom: 1rem; }
+    .footer-logo span { color: var(--sand); }
+    .footer-desc { font-size: .84rem; color: rgba(246,241,234,.55); line-height: 1.8; margin-bottom: 1.5rem; }
+    .social-links { display: flex; gap: .7rem; }
+    .social-link { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(246,241,234,.2); display: flex; align-items: center; justify-content: center; color: rgba(246,241,234,.6); text-decoration: none; transition: all .3s; }
+    .social-link svg { width: 16px; height: 16px; }
+    .social-link:hover { border-color: var(--sand); color: var(--sand); }
+    .footer-col h4 { font-size: .7rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(246,241,234,.55); margin-bottom: 1.4rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .84rem; color: rgba(246,241,234,.55); text-decoration: none; transition: color .25s; }
+    .footer-col ul a:hover { color: var(--sand); }
+    .footer-hours li { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(246,241,234,.55); padding-bottom: .6rem; margin-bottom: .6rem; border-bottom: 1px solid rgba(246,241,234,.08); }
+    .footer-hours li:last-child { border-bottom: none; }
+    .footer-hours li span:last-child { color: rgba(246,241,234,.8); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-copy { font-size: .76rem; color: rgba(246,241,234,.35); }
+    .footer-copy a { color: var(--sand); text-decoration: none; }
 
-    /* ============ KONTAKT ============ */
-    #kontakt { background: var(--warm); }
-    .kontakt-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-    .kontakt-info h2 { margin-bottom: var(--space-3); }
-    .kontakt-info p { color: var(--muted); margin-bottom: var(--space-4); }
-    .kontakt-items { display: flex; flex-direction: column; gap: var(--space-3); }
-    .kontakt-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 16px 18px;
-      background: var(--warm-2);
-      border-radius: var(--radius);
-      border: 1px solid var(--warm-3);
-    }
-    .kontakt-icon {
-      width: 42px; height: 42px;
-      background: linear-gradient(135deg, var(--mauve-700), var(--mauve-300));
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1.1rem;
-    }
-    .kontakt-item-text small {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 600;
-    }
-    .kontakt-item-text strong { display: block; font-size: 0.95rem; margin-top: 3px; }
-    .kontakt-map {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 400px;
-      border: 1px solid var(--warm-3);
-      box-shadow: var(--shadow);
-    }
-    .kontakt-map iframe { width: 100%; height: 100%; border: none; }
+    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; border-radius: 50%; background: var(--sage3); color: #fff; border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; z-index: 500; }
+    #back-top.show { opacity: 1; visibility: visible; }
+    #back-top:hover { background: var(--sage2); }
 
-    /* ============ FOOTER ============ */
-    footer {
-      background: var(--ink);
-      color: rgba(255,255,255,.7);
-      padding: var(--space-8) 0 var(--space-4);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
-      gap: var(--space-6);
-      margin-bottom: var(--space-6);
-    }
-    .footer-brand .nav-logo { color: var(--mauve-100); font-size: 1.1rem; }
-    .footer-brand p { font-size: 0.87rem; line-height: 1.75; margin-top: var(--space-2); }
-    .footer-col h4 {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: var(--space-2);
-    }
-    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
-    .footer-col ul a { font-size: 0.87rem; transition: color .2s; }
-    .footer-col ul a:hover { color: var(--mauve-100); }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: var(--space-3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-    .footer-bottom a { color: var(--mauve-100); }
+    [data-r] { opacity: 0; transform: translateY(34px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    [data-r="left"] { transform: translateX(-34px); }
+    [data-r="right"] { transform: translateX(34px); }
+    [data-r].visible { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-r] { opacity: 1 !important; transform: none !important; } }
 
-    /* ============ REVEAL ANIMATION ============ */
-    [data-r] {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity .6s ease, transform .6s ease;
+    @media (max-width: 1024px) {
+      section { padding: 5.5rem 6%; }
+      #hero { grid-template-columns: 1fr; padding: 7rem 6% 3rem; }
+      .hero-img { height: 70vw; min-height: 400px; }
+      .help-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-figure img { height: 420px; }
+      .proc-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
-    [data-r].in { opacity: 1; transform: none; }
-
-    /* ============ RESPONSIVE ============ */
-    @media (max-width: 1000px) {
-      .sluzby-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-6); }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-      .jak-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 900px) {
-      nav ul, .nav-phone { display: none; }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
-      .hero-grid, .onas-grid, .objednani-grid, .kontakt-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: -1; }
-      .visual-stack { grid-template-rows: 210px 155px; }
-      .visual-float { display: none; }
-      .review-slide { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      #navbar { padding: 1.3rem 6%; }
+      .help-grid { grid-template-columns: 1fr; }
+      .proc-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     }
-    @media (max-width: 600px) {
-      .sluzby-grid, .auto-3, .auto-2, .jak-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .onas-img { height: 300px; }
-      .objednani-img { height: 230px; }
-      .hero-actions { flex-direction: column; }
-      .hero-actions .btn { width: 100%; justify-content: center; }
-      section { padding: var(--space-6) 0; }
-      footer { padding: var(--space-6) 0 var(--space-3); }
-      .kontakt-map { height: 250px; }
-      .stat-num { font-size: 1.8rem; }
-      .card { padding: var(--space-3); }
-    }
+    @media (max-width: 480px) { section { padding: 4.5rem 5%; } .hero-btns { flex-direction: column; align-items: stretch; } .btn-solid, .btn-line { text-align: center; } }
   </style>
 </head>
 <body>
+<div id="ukazka-banner" style="position:fixed;top:0;left:0;width:100%;background:#6b7d6a;color:#fff;text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box;">
+  ⚡ UKÁZKA – finální web bude s vašimi fotkami a texty
+</div>
+<style>body{margin-top:40px !important;}</style>
 
-<!-- Progress bar -->
 <div id="progress"></div>
 
-<!-- ===== HEADER ===== -->
-<header id="header">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">🧠 <span>RESTAURANT_SHORT_NAME</span></a>
-      <nav aria-label="Hlavní navigace">
-        <ul>
-          <li><a href="#onas">O mně</a></li>
-          <li><a href="#sluzby">Terapie</a></li>
-          <li><a href="#jak">Jak to funguje</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </nav>
-      <div class="nav-cta">
-        <a href="tel:RESTAURANT_PHONE" class="nav-phone">📞 Objednat konzultaci</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Otevřít menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="mobile-menu" id="mobileMenu" role="navigation">
-    <a href="#onas">O mně</a>
-    <a href="#sluzby">Terapie</a>
-    <a href="#jak">Jak to funguje</a>
-    <a href="#recenze">Recenze</a>
-    <a href="#kontakt">Kontakt</a>
-    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
-  </div>
-</header>
+<nav id="navbar">
+  <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#pomoc">S čím pomáhám</a></li>
+    <li><a href="#onas">O mně</a></li>
+    <li><a href="#proces">Jak to probíhá</a></li>
+    <li><a href="#cenik">Ceník</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <a href="#kontakt" class="nav-cta">Objednat se</a>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
 
-<!-- ===== HERO ===== -->
+<div id="mobile-nav">
+  <button class="close-nav" id="close-nav">✕</button>
+  <a href="#pomoc">S čím pomáhám</a>
+  <a href="#onas">O mně</a>
+  <a href="#proces">Jak to probíhá</a>
+  <a href="#cenik">Ceník</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<!-- HERO -->
 <section id="hero">
-  <div class="container">
-    <div class="hero-grid">
-      <div class="hero-text" data-r>
-        <div class="hero-badge">RESTAURANT_CITY · Psychologická poradna</div>
-        <h1 class="hero-title">
-          RESTAURANT_TAGLINE<br>
-          <em>RESTAURANT_NAME</em>
-        </h1>
-        <p class="hero-sub">RESTAURANT_SUBTITLE</p>
-        <div class="hero-actions">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Objednat konzultaci</a>
-          <a href="#sluzby" class="btn btn--outline">Naše terapie ↓</a>
-        </div>
-        <div class="hero-rating">
-          <span class="stars">★★★★★</span>
-          <strong>RESTAURANT_RATING / 5</strong>
-          <span>· RESTAURANT_REVIEWS hodnocení na Google</span>
-        </div>
-      </div>
-      <div class="hero-visual" data-r>
-        <div class="visual-stack">
-          <div class="img-main">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – terapeutická poradna" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – klidné prostředí" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – bezpečný prostor" loading="lazy" style="filter: brightness(.95) saturate(1.02);" />
-          </div>
-        </div>
-        <div class="visual-float">
-          <span class="dot"></span>
-          <div>
-            <strong>Přijímáme nové klienty</strong><br>
-            <span style="font-size:.78rem;color:var(--muted)">RESTAURANT_CITY</span>
-          </div>
-        </div>
-      </div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">RESTAURANT_CITY · i&nbsp;on-line</div>
+    <h1 class="hero-title">RESTAURANT_TAGLINE</h1>
+    <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+    <div class="hero-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Osobně i on-line — nevadí, že jste odjinud</div>
+    <div class="hero-btns">
+      <a href="#kontakt" class="btn-solid">Objednat konzultaci</a>
+      <a href="#pomoc" class="btn-line">S čím mohu pomoci</a>
+    </div>
+    <div class="hero-rating"><span class="stars">★★★★★</span> <b>RESTAURANT_RATING</b> · RESTAURANT_REVIEWS+ ohlasů klientů</div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-img" src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'">
+    <div class="hero-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><div><strong>Bezpečný prostor</strong><span>Diskrétně a bez hodnocení</span></div></div>
+  </div>
+</section>
+
+<!-- HELP -->
+<section id="pomoc">
+  <div class="help-head" data-r>
+    <div class="eyebrow center">S čím pomáhám</div>
+    <h2 class="title">Nemusíte na to <em>být sami</em></h2>
+    <p class="lead">Ať procházíte čímkoliv, společně tomu dáme smysl a najdeme cestu dál — vaším tempem a v bezpečí.</p>
+  </div>
+  <div class="help-grid">
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s5 4 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3s0 2 2 2c0-3 2-5 2-8z"/></svg></div>
+      <h3>Úzkost a stres</h3><p>Vnitřní neklid, obavy a tlak, který vás vyčerpává v práci i doma.</p>
+    </div>
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div>
+      <h3>Vztahové potíže</h3><p>Nedorozumění, odcizení a hledání cesty zpět k blízkosti.</p>
+    </div>
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 22a10 10 0 1 1 0-20M12 8l3 3-3 3-3-3z"/></svg></div>
+      <h3>Životní krize a změny</h3><p>Náročná období, ztráta i rozhodnutí, na která nejste sami.</p>
+    </div>
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3L12 12.8 8.2 14.8l.7-4.3-3.1-3 4.3-.6z"/></svg></div>
+      <h3>Sebevědomí a hranice</h3><p>Posílení vlastní hodnoty a schopnosti říct zdravé „ne".</p>
+    </div>
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div>
+      <h3>Smutek a vyhoření</h3><p>Dlouhodobá únava, ztráta radosti a chuti — a cesta zpět k energii.</p>
+    </div>
+    <div class="help-card" data-r>
+      <div class="help-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M12 10a4 4 0 1 0-4-4M6 20c0-3 3-5 6-5s6 2 6 5"/></svg></div>
+      <h3>Osobní růst</h3><p>Lepší porozumění sobě samému a vědomé kroky ke změně.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== STATS ===== -->
-<section id="stats">
-  <div class="container">
-    <div class="stats-grid">
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_REVIEWS">0</div>
-        <div class="stat-label">Spokojených klientů</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_RATING" data-decimal>0</div>
-        <div class="stat-label">Hvězd na Google</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="10">0</div>
-        <div class="stat-label">Let praxe</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="6">0</div>
-        <div class="stat-label">Oblastí specializace</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== O NÁS ===== -->
+<!-- ABOUT -->
 <section id="onas">
-  <div class="container">
-    <div class="onas-grid">
-      <div class="onas-img" data-r>
-        <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – terapeut" loading="lazy" />
-        <div class="onas-img-badge">
-          <strong>10+</strong>
-          let v oboru
-        </div>
-      </div>
-      <div class="onas-text" data-r>
-        <div class="section-label">O mně</div>
-        <h2>Váš psycholog v RESTAURANT_CITY_LOC</h2>
-        <p>RESTAURANT_ABOUT</p>
-        <p class="section-desc">RESTAURANT_ABOUT_SHORT</p>
-        <div class="onas-chips">
-          <span class="chip">🧠 Individuální terapie</span>
-          <span class="chip">💑 Párové poradenství</span>
-          <span class="chip">🔒 Diskrétní prostředí</span>
-          <span class="chip">💻 Online sezení</span>
-          <span class="chip">📍 RESTAURANT_CITY</span>
-        </div>
-        <div style="margin-top:2rem;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">Objednat konzultaci</a>
-        </div>
-      </div>
+  <div class="about-grid">
+    <div class="about-figure" data-r="left">
+      <img src="../stock_photos/PHOTO_2" alt="O mně – RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
+    </div>
+    <div data-r="right">
+      <div class="eyebrow">O mně</div>
+      <h2 class="title">Bezpečný prostor pro <em>vaše téma</em></h2>
+      <p class="about-text">RESTAURANT_ABOUT</p>
+      <ul class="about-checks">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Individuální a respektující přístup</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Naprostá diskrétnost a mlčenlivost</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Konzultace osobně i on-line pro celou ČR</li>
+      </ul>
+      <a href="#kontakt" class="btn-solid">Domluvit setkání</a>
     </div>
   </div>
 </section>
 
-<!-- ===== TERAPIE / SLUŽBY ===== -->
-<section id="sluzby">
-  <div class="container">
-    <div class="sluzby-header" data-r>
-      <div class="section-label">Nabídka terapií</div>
-      <h2>Jak vám mohu pomoci</h2>
-      <p class="section-desc">Každý člověk je jiný – nabízím různé formy terapie přizpůsobené vašim potřebám a cílům.</p>
-    </div>
-    <div class="sluzby-grid">
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Individuální terapie" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Individuální</span>
-          <h3>Individuální terapie</h3>
-          <p>Soukromá sezení zaměřená na vaše osobní problémy – úzkosti, deprese, stres, životní změny nebo osobní rozvoj.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 1 200 Kč</span>
-          <span class="sluzba-time">⏱ 50 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Párová terapie" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Párová</span>
-          <h3>Párová terapie</h3>
-          <p>Společná sezení pro páry, které chtějí zlepšit komunikaci, překonat krizi nebo posílit svůj vztah.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 1 500 Kč</span>
-          <span class="sluzba-time">⏱ 80 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Krizová intervence" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Krizová pomoc</span>
-          <h3>Krizová intervence</h3>
-          <p>Rychlá pomoc v akutní krizi – burnout, ztráta, rozchod, trauma. Možnost přednostního termínu.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">Dle domluvy</span>
-          <span class="sluzba-time">⏱ Přednostní termín</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Online terapie" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Online</span>
-          <h3>Online terapie</h3>
-          <p>Terapeutická sezení přes video hovor – stejně efektivní jako osobní setkání, odkudkoli a kdykoli.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 1 100 Kč</span>
-          <span class="sluzba-time">⏱ 50 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Rodinné poradenství" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Rodinné</span>
-          <h3>Rodinné poradenství</h3>
-          <p>Sezení pro rodiny procházející konflikty, změnami nebo výchovnými obtížemi. Hledáme řešení společně.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 1 800 Kč</span>
-          <span class="sluzba-time">⏱ 90 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Vstupní konzultace" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Vstupní</span>
-          <h3>Vstupní konzultace</h3>
-          <p>Nezávazné první setkání – zjistíme, co potřebujete, a navrhneme vhodný postup. Bez závazku pokračovat.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">Zdarma / dle ordinace</span>
-          <span class="sluzba-time">⏱ 30 min</span>
-        </div>
-      </div>
-
-    </div>
+<!-- PROCESS -->
+<section id="proces">
+  <div class="proc-head" data-r>
+    <div class="eyebrow center">Jak spolupráce probíhá</div>
+    <h2 class="title">První krok je <em>nejtěžší</em></h2>
+    <p class="lead">A často stačí ho udělat jen jednou. Dál už jdeme společně, ve vašem tempu.</p>
+  </div>
+  <div class="proc-grid">
+    <div class="proc-step" data-r><div class="proc-num">01</div><h3>Nezávazný kontakt</h3><p>Napište nebo zavolejte. V klidu probereme, co vás přivádí.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">02</div><h3>První setkání</h3><p>Seznámíme se a společně pojmenujeme, na čem chcete pracovat.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">03</div><h3>Společná práce</h3><p>Setkáváme se pravidelně tempem, které vám vyhovuje.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">04</div><h3>Váš posun</h3><p>Krok za krokem nacházíte úlevu, jasnost a novou sílu.</p></div>
   </div>
 </section>
 
-<!-- ===== JAK TO PROBÍHÁ ===== -->
-<section id="jak">
-  <div class="container">
-    <div class="jak-header" data-r>
-      <div class="section-label">Postup spolupráce</div>
-      <h2>Jak to u nás funguje</h2>
-    </div>
-    <div class="jak-grid">
-      <div class="jak-step" data-r>
-        <div class="jak-num">1</div>
-        <h4>Kontaktujete nás</h4>
-        <p>Zavolejte nebo napište. Domluvíme termín, který vám vyhovuje – obvykle do týdne.</p>
-      </div>
-      <div class="jak-step" data-r>
-        <div class="jak-num">2</div>
-        <h4>Vstupní konzultace</h4>
-        <p>Povíme si, co vás trápí a co od terapie čekáte. Navrhneme vhodný přístup a frekvenci sezení.</p>
-      </div>
-      <div class="jak-step" data-r>
-        <div class="jak-num">3</div>
-        <h4>Pravidelná sezení</h4>
-        <p>Pracujeme ve vašem tempu – obvykle jednou týdně nebo jednou za dva týdny, prezenčně nebo online.</p>
-      </div>
-      <div class="jak-step" data-r>
-        <div class="jak-num">4</div>
-        <h4>Váš pokrok</h4>
-        <p>Průběžně hodnotíme posun, přizpůsobujeme přístup a slavíme vaše úspěchy – malé i velké.</p>
-      </div>
-    </div>
+<!-- PRICING -->
+<section id="cenik">
+  <div class="cenik-head" data-r>
+    <div class="eyebrow center">Ceník</div>
+    <h2 class="title">Jasné a férové <em>podmínky</em></h2>
   </div>
+  <div class="cenik-list" data-r>
+    <div class="cenik-row"><div class="cenik-name">Individuální konzultace<small>50 minut</small></div><span class="cenik-dots"></span><span class="cenik-price">od 800 Kč</span></div>
+    <div class="cenik-row"><div class="cenik-name">Párová konzultace<small>80 minut</small></div><span class="cenik-dots"></span><span class="cenik-price">od 1 300 Kč</span></div>
+    <div class="cenik-row"><div class="cenik-name">On-line konzultace<small>50 minut, odkudkoliv</small></div><span class="cenik-dots"></span><span class="cenik-price">od 800 Kč</span></div>
+    <div class="cenik-row"><div class="cenik-name">Úvodní telefonát<small>krátké seznámení</small></div><span class="cenik-dots"></span><span class="cenik-price">zdarma</span></div>
+  </div>
+  <p class="cenik-note">Nejste si jistí, co potřebujete? Ozvěte se — v klidu to společně probereme.</p>
 </section>
 
-<!-- ===== GALERIE ===== -->
-<section id="galerie">
-  <div class="container">
-    <div class="galerie-header" data-r>
-      <div class="section-label">Galerie</div>
-      <h2>Naše prostory & atmosféra</h2>
-    </div>
-  </div>
-  <div class="marquee-wrap">
-    <div class="marquee-track" id="marqueeTrack">
-      <!-- JS doplní fotky -->
-    </div>
-    <div class="marquee-fade-l"></div>
-    <div class="marquee-fade-r"></div>
-  </div>
-</section>
-
-<!-- ===== RECENZE ===== -->
+<!-- TESTIMONIALS -->
 <section id="recenze">
-  <div class="container">
-    <div class="recenze-header" data-r>
-      <div class="section-label">Recenze</div>
-      <h2>Co říkají naši klienti</h2>
-      <p class="section-desc" style="margin: 0.5rem auto 0;">Hodnocení RESTAURANT_RATING / 5 na základě RESTAURANT_REVIEWS recenzí na Google.</p>
+  <div class="test-head" data-r>
+    <div class="eyebrow center">Ohlasy klientů</div>
+    <h2 class="title">Slova těch, kterým <em>se ulevilo</em></h2>
+  </div>
+  <div class="test-slider" data-r>
+    <div class="test-track" id="test-track">
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Poprvé jsem měla pocit, že mě někdo opravdu slyší. Bez hodnocení, jen s pochopením. Moc děkuji.</p><div class="test-author">Klientka · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Přišel jsem s úzkostí, se kterou jsem si nevěděl rady. Dnes vím, že na to nejsem sám — a to mění všechno.</p><div class="test-author">Klient · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Vážím si klidného a lidského přístupu. Konečně místo, kam se nebojím přijít i s těžkými tématy.</p><div class="test-author">Klientka · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">On-line konzultace mi umožnily pokračovat i na dálku. Profesionální, vstřícné a moc pomáhající.</p><div class="test-author">Klient · RESTAURANT_CITY</div></div>
     </div>
-    <div class="slider" data-r>
-      <div class="slider-track" id="sliderTrack">
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Konečně jsem našla místo, kde se cítím bezpečně. Terapeut/ka je empatická, trpělivá a profesionální. Po několika sezeních se cítím mnohem lépe."</p>
-            <div class="review-author">— Jana K. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Přišel jsem s burnoutem a pochybami o sobě. Po třech měsících spolupráce mám zase energii a jasno v hlavě. Doporučuji každému, kdo to potřebuje."</p>
-            <div class="review-author">— Tomáš M. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Párová terapie nám doslova zachránila vztah. Naučili jsme se komunikovat a pochopit jeden druhého. Vřelé díky za trpělivost a odborný přístup."</p>
-            <div class="review-author">— Petra a Jakub V. · Google</div>
-          </div>
-        </div>
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Online terapie funguje skvěle – stejně osobní jako osobní setkání, ale ze svého domova. Perfektní řešení pro mě jako rodiče malých dětí."</p>
-            <div class="review-author">— Lucie B. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★☆</div>
-            <p class="review-text">„Přišla jsem s úzkostmi, které mi bránily normálně fungovat. Terapeut/ka mi dala nástroje, jak se s nimi vyrovnat. Prostředí je klidné a příjemné."</p>
-            <div class="review-author">— Markéta S. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Konečně jsem se odhodlal vyhledat pomoc. Nemusel jsem se nic bát – vstupní konzultace mi ukázala, že terapie je normální a pomáhá. Chci pokračovat."</p>
-            <div class="review-author">— Martin N. · Google</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="slider-dots" id="sliderDots">
-      <button class="dot-btn active" data-idx="0" aria-label="Slide 1"></button>
-      <button class="dot-btn" data-idx="1" aria-label="Slide 2"></button>
-    </div>
+  </div>
+  <div class="test-dots" id="test-dots">
+    <button class="dot active" data-i="0"></button><button class="dot" data-i="1"></button><button class="dot" data-i="2"></button><button class="dot" data-i="3"></button>
   </div>
 </section>
 
-<!-- ===== OBJEDNÁNÍ CTA ===== -->
-<section id="objednani">
-  <div class="container">
-    <div class="objednani-grid">
-      <div class="objednani-text" data-r>
-        <div class="section-label">Objednání</div>
-        <h2>Udělejte první krok</h2>
-        <p>Ozvěte se – první krok je nejtěžší, ale nejdůležitější. Rádi vás přivítáme a společně najdeme cestu vpřed.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
-          <a href="#kontakt" class="btn btn--outline">Kde nás najdete</a>
-        </div>
-      </div>
-      <div class="objednani-img" data-r>
-        <img src="../stock_photos/PHOTO_1" alt="Objednání – RESTAURANT_NAME" loading="lazy" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== KONTAKT ===== -->
+<!-- CONTACT -->
 <section id="kontakt">
-  <div class="container">
-    <div class="kontakt-grid">
-      <div class="kontakt-info" data-r>
-        <div class="section-label">Kontakt</div>
-        <h2>Najdete nás v RESTAURANT_CITY_LOC</h2>
-        <p>Neváhejte se ozvat – rádi vás přivítáme a zodpovíme veškeré otázky.</p>
-        <div class="kontakt-items">
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📍</div>
-            <div class="kontakt-item-text">
-              <small>Adresa</small>
-              <strong>RESTAURANT_ADDRESS</strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📞</div>
-            <div class="kontakt-item-text">
-              <small>Telefon</small>
-              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">✉️</div>
-            <div class="kontakt-item-text">
-              <small>Email</small>
-              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">🕐</div>
-            <div class="kontakt-item-text">
-              <small>Ordinační hodiny</small>
-              <strong>Po–Pá 9:00–18:00 · Dle domluvy i jinak</strong>
-            </div>
-          </div>
+  <div class="contact-grid">
+    <div data-r="left">
+      <div class="eyebrow">Objednání</div>
+      <h2 class="title">Ozvěte se, <em>jsem tu pro vás</em></h2>
+      <div class="contact-reass" style="margin-top:1.6rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <p>Vše, co mi napíšete, zůstává důvěrné. Není třeba nic řešit dopředu — stačí první krok.</p>
+      </div>
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><div class="contact-label">Adresa</div><div class="contact-val">RESTAURANT_ADDRESS</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+          <div><div class="contact-label">Telefon</div><div class="contact-val">RESTAURANT_PHONE</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <div><div class="contact-label">E-mail</div><div class="contact-val">RESTAURANT_EMAIL</div></div>
         </div>
       </div>
-      <div class="kontakt-map" data-r>
-        <iframe
-          src="GOOGLE_MAPS_EMBED"
-          allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Mapa RESTAURANT_NAME"
-        ></iframe>
-      </div>
+      <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
     </div>
+    <div data-r="right">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-group"><label>Telefon</label><input type="tel" placeholder="+420…"></div>
+        </div>
+        <div class="form-group"><label>Forma konzultace</label>
+          <select><option>Osobně</option><option>On-line</option><option>Zatím nevím</option></select>
+        </div>
+        <div class="form-group"><label>Zpráva</label><textarea placeholder="Můžete napsat jen pár slov o tom, co vás přivádí. Nemusíte nic vysvětlovat dopředu…"></textarea></div>
+        <button type="submit" class="form-submit">Odeslat nezávaznou zprávu</button>
+      </form>
+    </div>
+  </div>
+  <div style="text-align:center;margin:3rem 0 0;">
+    <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:#3a4a3f;color:#fff;border-radius:999px;padding:15px 40px;font-size:16px;text-decoration:none;font-weight:600;">Chci takový web</a>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
+<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="nav-logo">🧠 <span>RESTAURANT_NAME</span></div>
-        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigace</h4>
-        <ul>
-          <li><a href="#onas">O mně</a></li>
-          <li><a href="#sluzby">Nabídka terapií</a></li>
-          <li><a href="#jak">Jak to funguje</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Kontakt</h4>
-        <ul>
-          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
-          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
-          <li>RESTAURANT_ADDRESS_SHORT</li>
-        </ul>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">RESTAURANT_NAME<span>.</span></a>
+      <p class="footer-desc">RESTAURANT_ABOUT_SHORT</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 RESTAURANT_NAME · Všechna práva vyhrazena</span>
-      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    <div class="footer-col">
+      <h4>Nabízím</h4>
+      <ul><li><a href="#pomoc">S čím pomáhám</a></li><li><a href="#onas">O mně</a></li><li><a href="#proces">Jak to probíhá</a></li><li><a href="#cenik">Ceník</a></li><li><a href="#kontakt">Objednání</a></li></ul>
     </div>
+    <div class="footer-col">
+      <h4>Konzultace</h4>
+      <ul class="footer-hours"><li><span>Po–Pá</span><span>dle objednání</span></li><li><span>Osobně</span><span>RESTAURANT_CITY</span></li><li><span>On-line</span><span>celá ČR</span></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul><li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li><li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li><li><a href="#">RESTAURANT_EMAIL</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
   </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
 <script>
-  /* --- Progress bar --- */
-  window.addEventListener('scroll', () => {
-    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-    document.getElementById('progress').style.width = pct + '%';
-  });
+window.addEventListener('scroll', () => {
+  const s = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  document.getElementById('progress').style.transform = `scaleX(${s/h})`;
+  document.getElementById('navbar').classList.toggle('scrolled', s > 60);
+  document.getElementById('back-top').classList.toggle('show', s > 400);
+}, {passive:true});
 
-  /* --- Sticky header shadow --- */
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 10);
-  });
+const ham = document.getElementById('ham'), mNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => mNav.classList.add('open'));
+document.getElementById('close-nav').addEventListener('click', () => mNav.classList.remove('open'));
+mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mNav.classList.remove('open')));
 
-  /* --- Hamburger --- */
-  const btn = document.getElementById('hamburgerBtn');
-  const menu = document.getElementById('mobileMenu');
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', false);
-  }));
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const el = document.querySelector(a.getAttribute('href')); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } }); });
 
-  /* --- Reveal on scroll --- */
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('[data-r]').forEach(el => observer.observe(el));
+const revObs = new IntersectionObserver(es => { es.forEach((e,i) => { if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*70); revObs.unobserve(e.target); } }); }, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
 
-  /* --- Stats counter --- */
-  const statsObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      const target = parseFloat(el.dataset.count);
-      const isDecimal = 'decimal' in el.dataset;
-      const duration = 1400;
-      const step = 16;
-      const steps = duration / step;
-      let current = 0;
-      const inc = target / steps;
-      const timer = setInterval(() => {
-        current = Math.min(current + inc, target);
-        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
-        if (current >= target) clearInterval(timer);
-      }, step);
-      statsObs.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('[data-count]').forEach(el => statsObs.observe(el));
-
-  /* --- Galerie marquee --- */
-  const photos = [GALLERY_PHOTOS_JS];
-  const track = document.getElementById('marqueeTrack');
-  if (photos.length > 0 && photos[0]) {
-    const doubled = [...photos, ...photos];
-    doubled.forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="${src}" alt="Prostory poradny" loading="lazy" />`;
-      track.appendChild(div);
-    });
-    if (photos.length < 4) track.style.animationDuration = '18s';
-  } else {
-    ['PHOTO_1', 'PHOTO_2', 'PHOTO_1', 'PHOTO_2'].forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="photos/${src}" alt="Psychologická poradna" loading="lazy" />`;
-      track.appendChild(div);
-    });
-  }
-
-  /* --- Recenze slider --- */
-  const sliderTrack = document.getElementById('sliderTrack');
-  const slides = sliderTrack.querySelectorAll('.review-slide');
-  const dots = document.getElementById('sliderDots');
-  let current = 0;
-
-  function goTo(idx) {
-    current = idx;
-    sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
-    dots.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === idx));
-  }
-  dots.querySelectorAll('.dot-btn').forEach((d, i) => d.addEventListener('click', () => goTo(i)));
-  if (slides.length > 1) setInterval(() => goTo((current + 1) % slides.length), 5000);
+let cur=0; const track=document.getElementById('test-track'), dots=document.querySelectorAll('.dot'), slides=track.querySelectorAll('.test-slide');
+function goTo(n){ cur=n; track.style.transform=`translateX(-${n*100}%)`; dots.forEach((d,i)=>d.classList.toggle('active',i===n)); }
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+setInterval(() => goTo((cur+1)%slides.length), 5000);
 </script>
-
 </body>
 </html>

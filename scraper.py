@@ -48,24 +48,41 @@ def search_businesses(city="Praha", num_results=10, osm_filter='["amenity"="rest
 );
 out body center {limit};
 """
-    # Záložní Overpass servery – zkusíme postupně
+    # Záložní Overpass servery – zkusíme postupně.
+    # ⚠️ User-Agent je POVINNÝ: bez něj vrací overpass-api.de 406 Not Acceptable.
     overpass_servers = [
         "https://overpass-api.de/api/interpreter",
+        "https://overpass.openstreetmap.fr/api/interpreter",
+        "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+        "https://overpass.osm.ch/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
         "https://overpass.private.coffee/api/interpreter",
     ]
     data = None
-    for server in overpass_servers:
-        try:
-            resp = requests.post(server, data=query, timeout=90)
-            if resp.status_code == 200 and resp.content:
-                data = resp.json()
-                break
-            print(f"  ⚠️  Overpass {server.split('/')[2]}: {resp.status_code}")
-        except Exception as e:
-            print(f"  ⚠️  Overpass {server.split('/')[2]}: {e}")
+    empty_ok = False  # server odpověděl korektně, jen tam nic není (řídké obory/malé obce)
+    # 2 kola – přetížené servery (504/429) často projdou na druhý pokus
+    for attempt in range(2):
+        for server in overpass_servers:
+            try:
+                resp = requests.post(server, data=query,
+                                     headers=_OSM_HEADERS, timeout=90)
+                if resp.status_code == 200 and resp.content:
+                    candidate = resp.json()
+                    if candidate.get("elements"):
+                        data = candidate
+                        break
+                    empty_ok = True
+                    continue
+                print(f"  ⚠️  Overpass {server.split('/')[2]}: {resp.status_code}")
+            except Exception as e:
+                print(f"  ⚠️  Overpass {server.split('/')[2]}: {str(e)[:60]}")
+        if data is not None or empty_ok:
+            break
+        if attempt == 0:
+            time.sleep(5)
     if data is None:
-        print("  ❌ Všechny Overpass servery selhaly")
+        if not empty_ok:
+            print("  ❌ Všechny Overpass servery selhaly")
         return []
 
     results = []

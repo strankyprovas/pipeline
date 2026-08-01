@@ -1,1061 +1,554 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RESTAURANT_NAME — Autoservis RESTAURANT_CITY</title>
-  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
-  <meta name="theme-color" content="#0d0f14" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESTAURANT_NAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ============ TOKENS ============ */
-    :root {
-      --dark:        #0d0f14;
-      --dark-2:      #13161e;
-      --dark-3:      #1a1e28;
-      --dark-4:      #222636;
-      --orange:      #e8760a;
-      --orange-2:    #f0981a;
-      --orange-dim:  rgba(232, 118, 10, 0.15);
-      --orange-glow: rgba(232, 118, 10, 0.28);
-      --text:        #e8eaf0;
-      --text-muted:  #8a90a0;
-      --border:      rgba(255,255,255,0.07);
-      --card:        #13161e;
-      --radius:      14px;
-      --shadow:      0 8px 32px rgba(0,0,0,.45);
-    }
-
-    /* ============ RESET ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-    img { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    img { max-width: 100%; display: block; }
 
-    /* ============ TYPOGRAPHY ============ */
-    h1, h2, h3 {
-      font-family: 'Barlow Condensed', sans-serif;
-      line-height: 1.1;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .02em;
-      color: var(--text);
+    :root {
+      --graphite: #16181b;
+      --graphite2:#1e2226;
+      --steel:    #292e34;
+      --smoke:    #363c44;
+      --orange:   #f5691f;
+      --orange2:  #d8531a;
+      --paper:    #f3f4f5;
+      --paper2:   #e9ebed;
+      --white:    #ffffff;
+      --ink:      #191b1e;
+      --ink2:     #4a5057;
+      --muted:    #7c848c;
+      --line:     rgba(20,22,25,.12);
+      --line-d:   rgba(255,255,255,.1);
+      --ease:     cubic-bezier(0.4, 0, 0.2, 1);
     }
-    h1 { font-size: clamp(2rem, 4.5vw, 3.4rem); font-weight: 800; }
-    h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); }
-    h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 1rem;
-    }
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 28px; height: 2px;
-      background: var(--orange);
-      border-radius: 2px;
-    }
-    .section-desc {
-      color: var(--text-muted);
-      font-size: 1.02rem;
-      max-width: 560px;
-      margin-top: .75rem;
-      line-height: 1.75;
-    }
+    body { font-family: 'Barlow', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3,h4 { font-family: 'Archivo', sans-serif; }
 
-    /* ============ LAYOUT ============ */
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-    section { padding: 6rem 0; }
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--orange); transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
 
-    /* ============ BUTTONS ============ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 30px;
-      border-radius: 6px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      border: none;
-      transition: all .22s;
-    }
-    .btn--fill {
-      background: var(--orange);
-      color: #fff;
-      box-shadow: 0 4px 20px var(--orange-glow);
-    }
-    .btn--fill:hover { background: var(--orange-2); transform: translateY(-2px); box-shadow: 0 8px 28px var(--orange-glow); }
-    .btn--outline {
-      background: transparent;
-      color: var(--text);
-      border: 1.5px solid var(--border);
-    }
-    .btn--outline:hover { border-color: var(--orange); color: var(--orange); }
-
-    /* ============ PROGRESS BAR ============ */
-    #progress {
-      position: fixed; top: 0; left: 0;
-      height: 3px; width: 0%;
-      background: linear-gradient(90deg, var(--orange), var(--orange-2));
-      z-index: 9999;
-      transition: width .1s linear;
-    }
-
-    /* ============ HEADER ============ */
-    header {
-      position: sticky; top: 0; z-index: 50;
-      background: rgba(13, 15, 20, 0.92);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid transparent;
-      transition: border-color .3s, box-shadow .3s;
-    }
-    header.scrolled { border-color: var(--border); box-shadow: 0 2px 24px rgba(0,0,0,.5); }
-    .nav-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 68px;
-    }
-    .nav-logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800; font-size: 1.3rem;
-      letter-spacing: .06em; text-transform: uppercase;
-      color: var(--text);
-    }
+    /* NAV */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.3rem 5%; display: flex; align-items: center; justify-content: space-between; transition: all .4s var(--ease); }
+    #navbar.scrolled { background: rgba(22,24,27,.96); backdrop-filter: blur(12px); padding: .85rem 5%; box-shadow: 0 1px 0 var(--line-d); }
+    .nav-logo { font-family: 'Archivo', sans-serif; font-size: 1.35rem; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -.01em; text-transform: uppercase; }
     .nav-logo span { color: var(--orange); }
-    nav ul { display: flex; align-items: center; gap: 2rem; }
-    nav a {
-      font-size: 0.82rem; font-weight: 600;
-      letter-spacing: .08em; text-transform: uppercase;
-      color: var(--text-muted); transition: color .2s;
-    }
-    nav a:hover { color: var(--orange); }
-    .nav-cta { display: flex; align-items: center; gap: 1rem; }
-    .nav-phone {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700; font-size: 0.95rem;
-      letter-spacing: .06em; text-transform: uppercase;
-      color: var(--orange);
-      padding: 8px 20px;
-      border: 1.5px solid var(--orange);
-      border-radius: 6px;
-      transition: all .2s;
-    }
-    .nav-phone:hover { background: var(--orange); color: #fff; }
-    .hamburger {
-      display: none; flex-direction: column; gap: 5px;
-      cursor: pointer; padding: 8px; background: none; border: none;
-    }
-    .hamburger span {
-      display: block; width: 22px; height: 1.5px;
-      background: var(--text); border-radius: 2px; transition: all .3s;
-    }
-    .mobile-menu {
-      display: none; flex-direction: column;
-      padding: 16px 20px 20px;
-      border-top: 1px solid var(--border);
-      background: rgba(13,15,20,.98); gap: 4px;
-    }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      padding: 10px 12px; font-size: 0.95rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: .06em;
-      color: var(--text-muted); border-radius: 6px; transition: all .2s;
-    }
-    .mobile-menu a:hover { background: var(--dark-3); color: var(--orange); }
+    .nav-links { display: flex; gap: 2.1rem; list-style: none; align-items: center; }
+    .nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; transition: color .25s; }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-phone { font-family: 'Archivo', sans-serif; font-weight: 700; color: #fff; font-size: .95rem; text-decoration: none; display: inline-flex; align-items: center; gap: .45rem; }
+    .nav-phone svg { width: 16px; height: 16px; color: var(--orange); }
+    .nav-cta { font-family: 'Archivo', sans-serif; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--orange); padding: .78rem 1.5rem; border: none; cursor: pointer; text-decoration: none; transition: all .3s; }
+    .nav-cta:hover { background: var(--orange2); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: #fff; transition: all .3s; }
 
-    /* ============ HERO ============ */
-    #hero {
-      padding: 5rem 0 4rem;
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(232,118,10,.08) 0%, transparent 65%),
-        var(--dark);
-      position: relative; overflow: hidden;
-    }
-    #hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      pointer-events: none;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 4rem; align-items: center;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--orange-dim);
-      border: 1px solid rgba(232,118,10,.3);
-      color: var(--orange);
-      font-size: 0.72rem; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-      padding: 6px 16px; border-radius: 4px;
-      margin-bottom: 1.5rem;
-    }
-    .hero-badge::before { content: '●'; font-size: .5rem; }
-    .hero-title { margin-bottom: 1.25rem; }
-    .hero-title em {
-      font-style: normal;
-      color: var(--orange);
-      display: block;
-    }
-    .hero-sub {
-      font-size: 1.05rem; color: var(--text-muted);
-      margin-bottom: 2rem; max-width: 460px; line-height: 1.75;
-    }
-    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
-    .hero-rating {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.85rem; color: var(--text-muted);
-      padding: 10px 16px;
-      background: var(--dark-2);
-      border: 1px solid var(--border);
-      border-radius: 8px; width: fit-content;
-    }
-    .hero-rating .stars { color: #f0b429; letter-spacing: 2px; }
-    .hero-rating strong { color: var(--text); }
-    .hero-visual { position: relative; }
-    .visual-stack {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 270px 180px;
-      gap: 10px;
-    }
-    .visual-stack .img-main {
-      grid-column: 1 / -1; grid-row: 1;
-      border-radius: var(--radius); overflow: hidden;
-    }
-    .visual-stack .img-main img,
-    .visual-stack .img-sub img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    .visual-stack .img-sub { border-radius: var(--radius); overflow: hidden; }
-    .visual-float {
-      position: absolute; bottom: -14px; left: -16px;
-      background: var(--dark-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      box-shadow: var(--shadow);
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.82rem;
-    }
-    .visual-float .pulse {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: #4ade80; flex-shrink: 0;
-      box-shadow: 0 0 0 3px rgba(74,222,128,.2);
-    }
-    .visual-float strong { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: .04em; }
+    #mobile-nav { display: none; position: fixed; inset: 0; background: var(--graphite); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem; }
+    #mobile-nav.open { display: flex; }
+    #mobile-nav a { font-family: 'Archivo', sans-serif; font-size: 2rem; font-weight: 700; text-transform: uppercase; color: #fff; text-decoration: none; }
+    #mobile-nav a:hover { color: var(--orange); }
+    .close-nav { position: absolute; top: 2rem; right: 6%; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
 
-    /* ============ STATS BAR ============ */
-    #stats {
-      padding: 2.5rem 0;
-      background: var(--orange);
-    }
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 2rem; text-align: center;
-    }
-    .stat-num {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 3rem; font-weight: 800; color: #fff; line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.75rem; color: rgba(255,255,255,.75);
-      margin-top: 5px; text-transform: uppercase; letter-spacing: .09em; font-weight: 600;
-    }
+    /* HERO */
+    #hero { position: relative; min-height: 100vh; background: var(--graphite); display: flex; align-items: center; overflow: hidden; }
+    .hero-media { position: absolute; inset: 0; z-index: 0; }
+    .hero-media img { width: 100%; height: 100%; object-fit: cover; opacity: .5; }
+    .hero-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(105deg, var(--graphite) 0%, rgba(22,24,27,.85) 42%, rgba(22,24,27,.35) 100%); }
+    .hero-stripe { position: absolute; top: 0; bottom: 0; left: 0; width: 6px; background: var(--orange); z-index: 2; }
+    .hero-inner { position: relative; z-index: 3; width: 100%; padding: 8rem 8% 4rem; max-width: 1400px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: .6rem; background: rgba(245,105,31,.14); border: 1px solid rgba(245,105,31,.4); color: var(--orange); font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .5rem 1rem; margin-bottom: 1.8rem; opacity: 0; animation: fadeUp .9s .2s var(--ease) forwards; }
+    .hero-title { font-family: 'Archivo', sans-serif; font-size: clamp(2.8rem, 6.2vw, 6rem); font-weight: 900; line-height: .96; letter-spacing: -.02em; text-transform: uppercase; color: #fff; margin-bottom: 1.5rem; max-width: 15ch; opacity: 0; animation: fadeUp .9s .34s var(--ease) forwards; }
+    .hero-title em { font-style: normal; color: var(--orange); }
+    .hero-sub { font-size: 1.08rem; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,.72); max-width: 500px; margin-bottom: 2.4rem; opacity: 0; animation: fadeUp .9s .48s var(--ease) forwards; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2.6rem; opacity: 0; animation: fadeUp .9s .62s var(--ease) forwards; }
+    .btn-orange { background: var(--orange); color: #fff; padding: 1.1rem 2.4rem; border: none; cursor: pointer; font-family: 'Archivo', sans-serif; font-size: .84rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; display: inline-block; transition: all .3s; }
+    .btn-orange:hover { background: var(--orange2); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(245,105,31,.35); }
+    .btn-ghost { background: transparent; color: #fff; padding: 1.1rem 2.4rem; border: 1px solid rgba(255,255,255,.35); font-family: 'Archivo', sans-serif; font-size: .84rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: .5rem; transition: all .3s; }
+    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+    .btn-ghost svg { width: 17px; height: 17px; }
+    .hero-trust { display: flex; gap: 2rem; flex-wrap: wrap; opacity: 0; animation: fadeUp .9s .76s var(--ease) forwards; }
+    .hero-trust span { display: inline-flex; align-items: center; gap: .5rem; font-size: .85rem; color: rgba(255,255,255,.8); font-weight: 500; }
+    .hero-trust svg { width: 18px; height: 18px; color: var(--orange); }
 
-    /* ============ O NÁS ============ */
-    #onas { background: var(--dark-2); }
-    .onas-grid {
-      display: grid; grid-template-columns: 0.9fr 1.1fr;
-      gap: 4rem; align-items: center;
-    }
-    .onas-img {
-      border-radius: var(--radius); overflow: hidden;
-      height: 500px; position: relative;
-      border: 1px solid var(--border);
-    }
-    .onas-img img { width: 100%; height: 100%; object-fit: cover; }
-    .onas-img-badge {
-      position: absolute; bottom: 20px; right: 20px;
-      background: var(--orange);
-      border-radius: 10px; padding: 14px 18px;
-      text-align: center; color: #fff;
-    }
-    .onas-img-badge strong {
-      display: block;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 2rem; font-weight: 800; line-height: 1;
-    }
-    .onas-img-badge span { font-size: 0.78rem; font-weight: 600; opacity: .85; }
-    .onas-text h2 { margin-bottom: 1rem; }
-    .onas-text p { color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.8; }
-    .onas-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.25rem; }
-    .chip {
-      display: inline-block; padding: 6px 14px;
-      background: var(--dark-3);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
-      font-family: 'Barlow Condensed', sans-serif;
-      text-transform: uppercase; letter-spacing: .06em;
-    }
-    .chip.accent { background: var(--orange-dim); border-color: rgba(232,118,10,.3); color: var(--orange); }
+    /* STATS */
+    .stats-bar { background: var(--graphite2); display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid var(--line-d); }
+    .stat-item { padding: 2.6rem 2.5rem; text-align: center; border-right: 1px solid var(--line-d); }
+    .stat-item:last-child { border-right: none; }
+    .stat-number { font-family: 'Archivo', sans-serif; font-size: 2.9rem; font-weight: 800; line-height: 1; color: #fff; }
+    .stat-suffix { color: var(--orange); }
+    .stat-label { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-top: .7rem; }
 
-    /* ============ SLUŽBY ============ */
-    #sluzby { background: var(--dark); }
-    .sluzby-header { text-align: center; max-width: 580px; margin: 0 auto 3rem; }
-    .sluzby-header .section-label { justify-content: center; }
-    .sluzby-header .section-label::before { display: none; }
-    .filter-bar {
-      display: flex; justify-content: center; flex-wrap: wrap;
-      gap: 8px; margin-bottom: 2.5rem;
-    }
-    .filter-btn {
-      padding: 7px 18px; border-radius: 4px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
-      cursor: pointer; border: 1.5px solid var(--border);
-      background: var(--dark-2); color: var(--text-muted); transition: all .2s;
-    }
-    .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
-    .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
-    .sluzby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-    .sluzba-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-      transition: transform .22s, box-shadow .22s, border-color .22s;
-    }
-    .sluzba-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5); border-color: rgba(232,118,10,.3); }
-    .sluzba-img { height: 160px; overflow: hidden; }
-    .sluzba-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .sluzba-card:hover .sluzba-img img { transform: scale(1.07); }
-    .sluzba-body { padding: 16px 18px; }
-    .sluzba-tag {
-      display: inline-block; font-size: 0.68rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .1em;
-      color: var(--orange); background: var(--orange-dim);
-      padding: 3px 10px; border-radius: 3px; margin-bottom: 8px;
-      font-family: 'Barlow Condensed', sans-serif;
-    }
-    .sluzba-body h3 { font-size: 1rem; margin-bottom: 5px; }
-    .sluzba-body p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.55; }
-    .sluzba-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 18px; border-top: 1px solid var(--border);
-    }
-    .sluzba-price {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700; color: var(--orange); font-size: 1.2rem;
-    }
-    .sluzba-time { font-size: 0.77rem; color: var(--text-muted); }
+    /* SECTION SHARED */
+    section { padding: 7rem 8%; }
+    .eyebrow { font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--orange2); margin-bottom: 1rem; display: inline-flex; align-items: center; gap: .6rem; }
+    .eyebrow::before { content: ''; width: 26px; height: 3px; background: var(--orange); }
+    .eyebrow.center { justify-content: center; }
+    .eyebrow.center::before { display: none; }
+    .eyebrow.light { color: var(--orange); }
+    h2.title { font-family: 'Archivo', sans-serif; font-size: clamp(2.1rem, 4vw, 3.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; text-transform: uppercase; margin-bottom: 1.2rem; color: var(--ink); }
+    h2.title em { font-style: normal; color: var(--orange); }
+    .lead { font-size: 1rem; line-height: 1.8; color: var(--ink2); max-width: 560px; }
 
-    /* ============ GALERIE ============ */
-    #galerie { background: var(--dark-2); overflow: hidden; }
-    .galerie-header { margin-bottom: 2.5rem; }
-    .marquee-wrap { position: relative; }
-    .marquee-track {
-      display: flex; gap: 12px;
-      animation: marquee 36s linear infinite;
-      width: max-content;
-    }
-    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
-    .marquee-track .gal-img {
-      width: 290px; height: 200px;
-      border-radius: var(--radius); overflow: hidden; flex-shrink: 0;
-      border: 1px solid var(--border);
-    }
-    .marquee-track .gal-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .marquee-track .gal-img:hover img { transform: scale(1.07); }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .marquee-fade-l, .marquee-fade-r {
-      position: absolute; top: 0; bottom: 0; width: 100px;
-      z-index: 2; pointer-events: none;
-    }
-    .marquee-fade-l { left: 0; background: linear-gradient(to right, var(--dark-2), transparent); }
-    .marquee-fade-r { right: 0; background: linear-gradient(to left, var(--dark-2), transparent); }
+    /* SERVICES */
+    #sluzby { background: var(--paper); }
+    .svc-head { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+    .svc-head .eyebrow { justify-content: center; }
+    .svc-head .eyebrow::before { display: none; }
+    .svc-head .lead { margin: 0 auto; }
+    .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; max-width: 1150px; margin: 0 auto; }
+    .svc-card { background: var(--white); border: 1px solid var(--line); padding: 2.2rem 2rem; transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s; position: relative; overflow: hidden; }
+    .svc-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--orange); transform: scaleY(0); transform-origin: top; transition: transform .35s var(--ease); }
+    .svc-card:hover { transform: translateY(-5px); box-shadow: 0 20px 44px rgba(20,22,25,.12); }
+    .svc-card:hover::before { transform: scaleY(1); }
+    .svc-ico { width: 52px; height: 52px; background: var(--graphite); color: var(--orange); display: flex; align-items: center; justify-content: center; margin-bottom: 1.3rem; }
+    .svc-ico svg { width: 26px; height: 26px; }
+    .svc-card h3 { font-size: 1.15rem; font-weight: 700; text-transform: uppercase; letter-spacing: -.01em; color: var(--ink); margin-bottom: .5rem; }
+    .svc-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
 
-    /* ============ RECENZE ============ */
-    #recenze { background: var(--dark); }
-    .recenze-header { text-align: center; margin-bottom: 2.5rem; }
-    .recenze-header .section-label { justify-content: center; }
-    .recenze-header .section-label::before { display: none; }
-    .slider { overflow: hidden; }
-    .slider-track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
-    .review-slide {
-      min-width: 100%; display: grid;
-      grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
-    }
-    .review-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.5rem;
-      transition: border-color .2s;
-    }
-    .review-card:hover { border-color: rgba(232,118,10,.25); }
-    .review-stars { color: #f0b429; font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
-    .review-text {
-      font-size: 0.95rem; color: var(--text-muted); line-height: 1.7;
-      font-style: italic; margin-bottom: 1rem;
-    }
-    .review-author { font-size: 0.78rem; font-weight: 600; color: var(--orange); letter-spacing: .06em; text-transform: uppercase; }
-    .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: 1.5rem; }
-    .dot-btn {
-      width: 7px; height: 7px; border-radius: 50%;
-      border: none; background: var(--dark-4);
-      cursor: pointer; transition: all .2s;
-    }
-    .dot-btn.active { background: var(--orange); width: 22px; border-radius: 4px; }
+    /* PROCESS */
+    #proces { background: var(--graphite); color: #fff; }
+    #proces h2.title { color: #fff; }
+    #proces .lead { color: rgba(255,255,255,.62); }
+    .proc-head { text-align: center; max-width: 640px; margin: 0 auto 3.5rem; }
+    .proc-head .eyebrow { justify-content: center; }
+    .proc-head .eyebrow::before { display: none; }
+    .proc-head .lead { margin: 0 auto; }
+    .proc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; max-width: 1150px; margin: 0 auto; }
+    .proc-step { background: var(--steel); border-left: 3px solid var(--orange); padding: 2rem 1.6rem; }
+    .proc-num { font-family: 'Archivo', sans-serif; font-size: 2.6rem; font-weight: 900; color: var(--orange); line-height: 1; margin-bottom: .6rem; }
+    .proc-step h3 { font-size: 1.05rem; font-weight: 700; text-transform: uppercase; color: #fff; margin-bottom: .4rem; }
+    .proc-step p { font-size: .84rem; color: rgba(255,255,255,.6); line-height: 1.6; }
 
-    /* ============ CTA ============ */
-    #cta {
-      background: linear-gradient(135deg, var(--dark-3) 0%, var(--dark-2) 100%);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .cta-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; align-items: center;
-    }
-    .cta-text .section-label { color: var(--orange); }
-    .cta-text h2 { color: var(--text); margin-bottom: 1rem; }
-    .cta-text p { color: var(--text-muted); margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.75; }
-    .cta-img {
-      border-radius: var(--radius); overflow: hidden;
-      height: 360px; box-shadow: 0 20px 50px rgba(0,0,0,.5);
-      border: 1px solid var(--border);
-    }
-    .cta-img img { width: 100%; height: 100%; object-fit: cover; }
+    /* PRICING */
+    #cenik { background: var(--paper2); }
+    .cenik-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; align-items: center; max-width: 1150px; margin: 0 auto; }
+    .cenik-panel { background: var(--graphite); padding: 2.8rem 2.6rem; }
+    .cenik-row { display: flex; align-items: baseline; gap: .8rem; padding: 1rem 0; border-bottom: 1px solid var(--line-d); }
+    .cenik-row:last-child { border-bottom: none; }
+    .cenik-name { font-size: .98rem; color: #fff; font-weight: 500; white-space: nowrap; }
+    .cenik-dots { flex: 1; border-bottom: 1px dotted rgba(255,255,255,.25); transform: translateY(-4px); }
+    .cenik-price { font-family: 'Archivo', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--orange); white-space: nowrap; }
+    .cenik-note { font-size: .84rem; color: var(--ink2); margin-top: 1.8rem; line-height: 1.7; }
 
-    /* ============ KONTAKT ============ */
-    #kontakt { background: var(--dark-2); }
-    .kontakt-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; align-items: start;
-    }
-    .kontakt-info h2 { margin-bottom: 1rem; }
-    .kontakt-info > p { color: var(--text-muted); margin-bottom: 1.5rem; }
-    .kontakt-items { display: flex; flex-direction: column; gap: 1rem; }
-    .kontakt-item {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px 18px;
-      background: var(--dark-3);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      transition: border-color .2s;
-    }
-    .kontakt-item:hover { border-color: rgba(232,118,10,.25); }
-    .kontakt-icon {
-      width: 42px; height: 42px;
-      background: var(--orange-dim);
-      border: 1px solid rgba(232,118,10,.25);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 1.1rem;
-    }
-    .kontakt-item-text small {
-      font-size: 0.7rem; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: .09em; font-weight: 600;
-    }
-    .kontakt-item-text strong { display: block; font-size: 0.95rem; margin-top: 3px; color: var(--text); }
-    .kontakt-map {
-      border-radius: var(--radius); overflow: hidden;
-      height: 420px; border: 1px solid var(--border);
-    }
-    .kontakt-map iframe { width: 100%; height: 100%; border: none; }
+    /* ABOUT */
+    #onas { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-figure { position: relative; }
+    .about-figure img { width: 100%; height: 540px; object-fit: cover; background: var(--steel); }
+    .about-figure .badge { position: absolute; bottom: 0; left: 0; background: var(--orange); color: #fff; padding: 1.3rem 1.8rem; }
+    .about-figure .badge strong { font-family: 'Archivo', sans-serif; font-size: 2rem; font-weight: 800; display: block; line-height: 1; }
+    .about-figure .badge span { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+    .about-text { font-size: 1rem; line-height: 1.9; color: var(--ink2); margin-bottom: 1.8rem; }
+    .about-checks { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 2rem; list-style: none; }
+    .about-checks li { display: flex; align-items: center; gap: .8rem; font-size: .96rem; color: var(--ink); font-weight: 500; }
+    .about-checks .ck { width: 26px; height: 26px; flex-shrink: 0; background: var(--graphite); color: var(--orange); display: flex; align-items: center; justify-content: center; }
+    .about-checks .ck svg { width: 15px; height: 15px; }
 
-    /* ============ FOOTER ============ */
-    footer {
-      background: var(--dark);
-      border-top: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 3rem 0 1.5rem;
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: 1.4fr 1fr 1fr;
-      gap: 3rem; margin-bottom: 2.5rem;
-    }
-    .footer-brand .nav-logo { color: var(--text); font-size: 1.1rem; margin-bottom: .75rem; }
-    .footer-brand p { font-size: 0.87rem; line-height: 1.75; }
-    .footer-col h4 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.88rem; font-weight: 700; color: var(--text);
-      letter-spacing: .1em; text-transform: uppercase; margin-bottom: .75rem;
-    }
-    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
-    .footer-col ul a { font-size: 0.87rem; transition: color .2s; }
+    /* GALLERY */
+    #galerie { padding: 6rem 0; background: var(--graphite2); overflow: hidden; }
+    .gallery-head { text-align: center; padding: 0 8%; margin-bottom: 3rem; }
+    .gallery-head .eyebrow { justify-content: center; }
+    .gallery-head .eyebrow::before { display: none; }
+    .gallery-head h2 { color: #fff; }
+    .marquee-wrap { display: flex; flex-direction: column; gap: .8rem; }
+    .marquee-row { display: flex; gap: .8rem; width: max-content; animation: marquee 44s linear infinite; }
+    .marquee-row.reverse { animation-direction: reverse; animation-duration: 54s; }
+    .marquee-row img { width: 320px; height: 220px; object-fit: cover; flex-shrink: 0; filter: grayscale(.2); transition: filter .4s, transform .4s; }
+    .marquee-row img:hover { filter: none; transform: scale(1.015); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* TESTIMONIALS */
+    #recenze { background: var(--paper); }
+    .test-head { text-align: center; max-width: 560px; margin: 0 auto 3rem; }
+    .test-slider { position: relative; max-width: 840px; margin: 0 auto; overflow: hidden; }
+    .test-track { display: flex; transition: transform .7s var(--ease); }
+    .test-slide { min-width: 100%; padding: 2.5rem 3rem; text-align: center; }
+    .test-stars { color: var(--orange); font-size: 1rem; letter-spacing: 4px; margin-bottom: 1.4rem; }
+    .test-quote { font-family: 'Archivo', sans-serif; font-size: clamp(1.3rem, 2.2vw, 1.7rem); font-weight: 600; line-height: 1.4; color: var(--ink); margin-bottom: 1.6rem; letter-spacing: -.01em; }
+    .test-author { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--orange2); }
+    .test-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
+    .dot { width: 8px; height: 8px; background: rgba(245,105,31,.3); border: none; cursor: pointer; transition: all .3s; padding: 0; }
+    .dot.active { background: var(--orange); transform: scaleX(2.2); }
+
+    /* CONTACT */
+    #kontakt { background: var(--graphite); color: #fff; }
+    #kontakt h2.title { color: #fff; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 5rem; align-items: start; }
+    .contact-item { display: flex; gap: 1.3rem; align-items: flex-start; margin-bottom: 2rem; }
+    .contact-ico { width: 46px; height: 46px; flex-shrink: 0; background: var(--steel); color: var(--orange); display: flex; align-items: center; justify-content: center; }
+    .contact-ico svg { width: 20px; height: 20px; }
+    .contact-label { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--orange); margin-bottom: .25rem; }
+    .contact-val { font-size: .96rem; color: rgba(255,255,255,.85); line-height: 1.55; }
+    .map-wrap { margin-top: 1.5rem; width: 100%; height: 210px; background: var(--steel); overflow: hidden; }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; filter: grayscale(.6) invert(.9) contrast(.9); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; background: var(--steel); padding: 2.4rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+    .form-group label { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+    .form-group input, .form-group textarea, .form-group select { background: var(--graphite); border: 1px solid var(--line-d); padding: .9rem 1.1rem; font-family: 'Barlow', sans-serif; font-size: .9rem; color: #fff; outline: none; transition: border-color .3s; resize: none; }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,.35); }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--orange); }
+    .form-group textarea { height: 100px; }
+    .form-submit { background: var(--orange); color: #fff; border: none; padding: 1.1rem 2.5rem; cursor: pointer; font-family: 'Archivo', sans-serif; font-size: .84rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; transition: all .3s; }
+    .form-submit:hover { background: var(--orange2); }
+
+    /* FOOTER */
+    footer { background: var(--graphite2); padding: 5rem 8% 2.2rem; color: #fff; }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 4rem; padding-bottom: 3.5rem; border-bottom: 1px solid var(--line-d); margin-bottom: 2rem; }
+    .footer-logo { font-family: 'Archivo', sans-serif; font-size: 1.5rem; font-weight: 800; text-transform: uppercase; color: #fff; text-decoration: none; display: block; margin-bottom: 1rem; }
+    .footer-logo span { color: var(--orange); }
+    .footer-desc { font-size: .84rem; color: rgba(255,255,255,.5); line-height: 1.8; margin-bottom: 1.5rem; }
+    .social-links { display: flex; gap: .7rem; }
+    .social-link { width: 38px; height: 38px; border: 1px solid var(--line-d); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.6); text-decoration: none; transition: all .3s; }
+    .social-link svg { width: 16px; height: 16px; }
+    .social-link:hover { border-color: var(--orange); color: var(--orange); }
+    .footer-col h4 { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 1.4rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .84rem; color: rgba(255,255,255,.5); text-decoration: none; transition: color .25s; }
     .footer-col ul a:hover { color: var(--orange); }
-    .footer-bottom {
-      border-top: 1px solid var(--border); padding-top: 1.25rem;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.8rem;
-    }
-    .footer-bottom a { color: var(--orange); }
+    .footer-hours li { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(255,255,255,.5); padding-bottom: .6rem; margin-bottom: .6rem; border-bottom: 1px solid var(--line-d); }
+    .footer-hours li:last-child { border-bottom: none; }
+    .footer-hours li span:last-child { color: rgba(255,255,255,.8); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-copy { font-size: .76rem; color: rgba(255,255,255,.35); }
+    .footer-copy a { color: var(--orange); text-decoration: none; }
 
-    /* ============ REVEAL ============ */
-    [data-r] { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
-    [data-r].in { opacity: 1; transform: none; }
+    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; background: var(--orange); color: #fff; border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; z-index: 500; }
+    #back-top.show { opacity: 1; visibility: visible; }
+    #back-top:hover { background: var(--orange2); }
 
-    /* ============ RESPONSIVE ============ */
-    @media (max-width: 1000px) {
-      .sluzby-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
+    [data-r] { opacity: 0; transform: translateY(34px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    [data-r="left"] { transform: translateX(-34px); }
+    [data-r="right"] { transform: translateX(34px); }
+    [data-r].visible { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-r] { opacity: 1 !important; transform: none !important; } }
+
+    @media (max-width: 1024px) {
+      section { padding: 5rem 6%; }
+      .hero-inner { padding: 7rem 6% 3rem; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .stat-item:nth-child(2) { border-right: none; }
+      .svc-grid { grid-template-columns: 1fr 1fr; }
+      .proc-grid { grid-template-columns: 1fr 1fr; }
+      .cenik-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-figure img { height: 420px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
-    @media (max-width: 900px) {
-      nav ul, .nav-phone { display: none; }
+    @media (max-width: 768px) {
+      .nav-links, .nav-phone { display: none; }
       .hamburger { display: flex; }
-      .hero-grid, .onas-grid, .cta-grid, .kontakt-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: -1; }
-      .visual-stack { grid-template-rows: 220px 150px; }
-      .visual-float { display: none; }
-      .review-slide { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      #navbar { padding: 1.1rem 6%; }
+      .svc-grid { grid-template-columns: 1fr; }
+      .proc-grid { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--line-d); }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     }
-    @media (max-width: 600px) {
-      .sluzby-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .onas-img { height: 280px; }
-      .cta-img { height: 220px; }
-      .hero-actions { flex-direction: column; }
-      .hero-actions .btn { width: 100%; justify-content: center; }
-      section { padding: 3.5rem 0; }
-      h1 { font-size: 2rem; }
-      h2 { font-size: 2rem; }
-      .kontakt-map { height: 260px; }
-      .stat-num { font-size: 2rem; }
-    }
+    @media (max-width: 480px) { section { padding: 4rem 5%; } .hero-btns { flex-direction: column; align-items: stretch; } .btn-orange, .btn-ghost { text-align: center; justify-content: center; } }
   </style>
 </head>
 <body>
+<div id="ukazka-banner" style="position:fixed;top:0;left:0;width:100%;background:#f5691f;color:#fff;text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box;">
+  ⚡ UKÁZKA – finální web bude s vašimi fotkami a texty
+</div>
+<style>body{margin-top:40px !important;}</style>
 
 <div id="progress"></div>
 
-<!-- ===== HEADER ===== -->
-<header id="header">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">🔧 <span>RESTAURANT_SHORT_NAME</span></a>
-      <nav aria-label="Hlavní navigace">
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby</a></li>
-          <li><a href="#galerie">Galerie</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </nav>
-      <div class="nav-cta">
-        <a href="tel:RESTAURANT_PHONE" class="nav-phone">📞 Zavolat</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Otevřít menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
+<nav id="navbar">
+  <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#proces">Jak to probíhá</a></li>
+    <li><a href="#cenik">Ceník</a></li>
+    <li><a href="#onas">O nás</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1.4rem;">
+    <a href="tel:RESTAURANT_PHONE" class="nav-phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>RESTAURANT_PHONE</a>
+    <a href="#kontakt" class="nav-cta">Objednat servis</a>
   </div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#onas">O nás</a>
-    <a href="#sluzby">Služby</a>
-    <a href="#galerie">Galerie</a>
-    <a href="#recenze">Recenze</a>
-    <a href="#kontakt">Kontakt</a>
-    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
-  </div>
-</header>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
 
-<!-- ===== HERO ===== -->
+<div id="mobile-nav">
+  <button class="close-nav" id="close-nav">✕</button>
+  <a href="#sluzby">Služby</a>
+  <a href="#proces">Jak to probíhá</a>
+  <a href="#cenik">Ceník</a>
+  <a href="#onas">O nás</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<!-- HERO -->
 <section id="hero">
-  <div class="container">
-    <div class="hero-grid">
-      <div class="hero-text" data-r>
-        <div class="hero-badge">RESTAURANT_CITY · Autoservis</div>
-        <h1 class="hero-title">
-          RESTAURANT_TAGLINE<br>
-          <em>RESTAURANT_NAME</em>
-        </h1>
-        <p class="hero-sub">RESTAURANT_SUBTITLE</p>
-        <div class="hero-actions">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
-          <a href="#sluzby" class="btn btn--outline">Naše služby ↓</a>
-        </div>
-        <div class="hero-rating">
-          <span class="stars">★★★★★</span>
-          <strong>RESTAURANT_RATING / 5</strong>
-          <span>· RESTAURANT_REVIEWS recenzí na Google</span>
-        </div>
-      </div>
-      <div class="hero-visual" data-r>
-        <div class="visual-stack">
-          <div class="img-main">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – autoservis" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – dílna" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_3" alt="RESTAURANT_NAME – vozidla" loading="lazy" />
-          </div>
-        </div>
-        <div class="visual-float">
-          <span class="pulse"></span>
-          <div>
-            <strong>Přijímáme zakázky</strong><br>
-            <span style="font-size:.78rem;color:var(--text-muted)">RESTAURANT_CITY</span>
-          </div>
-        </div>
-      </div>
+  <div class="hero-media"><img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'"></div>
+  <div class="hero-scrim"></div>
+  <div class="hero-stripe"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">● RESTAURANT_CITY · Autoservis</div>
+    <h1 class="hero-title">RESTAURANT_TAGLINE</h1>
+    <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+    <div class="hero-btns">
+      <a href="#kontakt" class="btn-orange">Objednat termín</a>
+      <a href="tel:RESTAURANT_PHONE" class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>RESTAURANT_PHONE</a>
+    </div>
+    <div class="hero-trust">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Záruka na práci</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Férová cena předem</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Všechny značky</span>
     </div>
   </div>
 </section>
 
-<!-- ===== STATS ===== -->
-<section id="stats">
-  <div class="container">
-    <div class="stats-grid">
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_REVIEWS">0</div>
-        <div class="stat-label">Spokojených zákazníků</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_RATING" data-decimal>0</div>
-        <div class="stat-label">Hvězd na Google</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="15">0</div>
-        <div class="stat-label">Let zkušeností</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="6">0</div>
-        <div class="stat-label">Dní v týdnu</div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item" data-r><div class="stat-number"><span data-count="15">0</span><span class="stat-suffix">+</span></div><div class="stat-label">Let praxe</div></div>
+  <div class="stat-item" data-r><div class="stat-number"><span data-count="6000">0</span><span class="stat-suffix">+</span></div><div class="stat-label">Oprav ročně</div></div>
+  <div class="stat-item" data-r data-stat="reviews"><div class="stat-number"><span data-count="RESTAURANT_REVIEWS">0</span><span class="stat-suffix">+</span></div><div class="stat-label">Recenzí na Googlu</div></div>
+  <div class="stat-item" data-r><div class="stat-number">RESTAURANT_RATING<span class="stat-suffix">★</span></div><div class="stat-label">Hodnocení</div></div>
+</div>
 
-<!-- ===== O NÁS ===== -->
-<section id="onas">
-  <div class="container">
-    <div class="onas-grid">
-      <div class="onas-img" data-r>
-        <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – servisní tým" loading="lazy" />
-        <div class="onas-img-badge">
-          <strong>15+</strong>
-          <span>let v oboru</span>
-        </div>
-      </div>
-      <div class="onas-text" data-r>
-        <div class="section-label">O nás</div>
-        <h2>Váš spolehlivý autoservis v RESTAURANT_CITY_LOC</h2>
-        <p>RESTAURANT_ABOUT</p>
-        <p class="section-desc">RESTAURANT_ABOUT_SHORT</p>
-        <div class="onas-chips">
-          <span class="chip accent">🔧 Servis & opravy</span>
-          <span class="chip accent">🛞 Pneuservis</span>
-          <span class="chip accent">🔍 Diagnostika</span>
-          <span class="chip">📍 RESTAURANT_CITY</span>
-          <span class="chip">✅ Záruční i pozáruční</span>
-        </div>
-        <div style="margin-top:2rem;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">Objednat vozidlo</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SLUŽBY ===== -->
+<!-- SERVICES -->
 <section id="sluzby">
-  <div class="container">
-    <div class="sluzby-header" data-r>
-      <div class="section-label">Naše služby</div>
-      <h2>Co u nás opravíme</h2>
-      <p class="section-desc">Kompletní péče o vaše vozidlo na jednom místě – od výměny oleje až po složité opravy.</p>
+  <div class="svc-head" data-r>
+    <div class="eyebrow center">Naše služby</div>
+    <h2 class="title">Kompletní péče o <em>vaše auto</em></h2>
+    <p class="lead">Od výměny oleje po velké opravy — všechno na jednom místě, rychle a spolehlivě.</p>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l4 4-8 8-4-4z"/><path d="M17 3l4 4-2 2-4-4zM3 21l4-1 1-4"/></svg></div>
+      <h3>Mechanické opravy</h3><p>Motor, brzdy, podvozek, spojka i výfuk — poctivě a se zárukou.</p>
     </div>
-    <div class="filter-bar" data-r>
-      <button class="filter-btn active" data-filter="all">Vše</button>
-      <button class="filter-btn" data-filter="servis">🔧 Servis</button>
-      <button class="filter-btn" data-filter="pneu">🛞 Pneuservis</button>
-      <button class="filter-btn" data-filter="diag">🔍 Diagnostika</button>
-      <button class="filter-btn" data-filter="karos">🚗 Karoserie</button>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10M9 16v4M15 16v4M7 8l2 2 3-4 2 3 3-3"/></svg></div>
+      <h3>Počítačová diagnostika</h3><p>Rychle najdeme příčinu závady moderním diagnostickým přístrojem.</p>
     </div>
-    <div class="sluzby-grid" id="sluzbyGrid">
-
-      <div class="sluzba-card" data-cat="servis" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Výměna oleje a filtrů" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Servis</span>
-          <h3>Výměna oleje a filtrů</h3>
-          <p>Pravidelná výměna motorového oleje, olejového, vzduchového a kabinového filtru. Prodloužíte životnost motoru.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 890 Kč</span>
-          <span class="sluzba-time">⏱ 30–60 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="servis" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Brzdy a spojka" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Servis</span>
-          <h3>Brzdy a spojka</h3>
-          <p>Výměna brzdových destiček, kotoučů a čelistí. Oprava a seřízení spojkového systému. Bezpečnost na prvním místě.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 1 200 Kč</span>
-          <span class="sluzba-time">⏱ 1–2 hod</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="pneu" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Přezutí a vyvážení kol" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Pneuservis</span>
-          <h3>Přezutí a vyvážení kol</h3>
-          <p>Sezónní přezutí pneumatik, vyvážení kol, oprava defektů. Uskladnění pneumatik k dispozici.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 500 Kč</span>
-          <span class="sluzba-time">⏱ 30–45 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="diag" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Počítačová diagnostika" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Diagnostika</span>
-          <h3>Počítačová diagnostika</h3>
-          <p>Profesionální diagnostika všech systémů vozidla. Přesné odhalení závad pomocí moderního vybavení.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 490 Kč</span>
-          <span class="sluzba-time">⏱ 30 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="servis" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Klimatizace" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Servis</span>
-          <h3>Klimatizace a topení</h3>
-          <p>Plnění a servis klimatizace, výměna chladiva, čištění a dezinfekce klimatizačního systému.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 890 Kč</span>
-          <span class="sluzba-time">⏱ 45 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="karos" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Karosářské práce" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Karoserie</span>
-          <h3>Opravy karoserie</h3>
-          <p>Odstraňování škrábanců, promáčklin a poškození laku. Lokální opravy i kompletní přelakování.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">dle rozsahu</span>
-          <span class="sluzba-time">⏱ po dohodě</span>
-        </div>
-      </div>
-
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg></div>
+      <h3>Pneuservis</h3><p>Přezutí, vyvážení, opravy i uskladnění pneumatik.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-1 2-3 3-3 6a3 3 0 0 0 6 0c0-3-2-4-3-6z"/><path d="M5 14c0 4 3 7 7 7s7-3 7-7"/></svg></div>
+      <h3>Servis klimatizace</h3><p>Plnění, dezinfekce a kontrola klimatizace pro svěží vzduch.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2 2 4-4"/><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg></div>
+      <h3>Příprava na STK</h3><p>Prohlídka vozu před technickou kontrolou a odstranění závad.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16h13v-5l-3-3H6l-2 3H2z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M15 11h4l3 3v2h-3"/></svg></div>
+      <h3>Odtahová služba</h3><p>Zůstali jste stát? Postaráme se o odtah i o opravu vašeho vozu.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== GALERIE ===== -->
-<section id="galerie">
-  <div class="container">
-    <div class="galerie-header" data-r>
-      <div class="section-label">Galerie</div>
-      <h2>Naše dílna a práce</h2>
+<!-- PROCESS -->
+<section id="proces">
+  <div class="proc-head" data-r>
+    <div class="eyebrow center light">Jak to u nás probíhá</div>
+    <h2 class="title">Bez zbytečných <em>překvapení</em></h2>
+    <p class="lead">Vždy víte, co se s vaším autem děje a kolik to bude stát — dřív, než začneme.</p>
+  </div>
+  <div class="proc-grid">
+    <div class="proc-step" data-r><div class="proc-num">01</div><h3>Objednání</h3><p>Zavolejte nebo napište. Domluvíme termín, který vám vyhovuje.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">02</div><h3>Diagnostika</h3><p>Zjistíme přesnou příčinu závady a rozsah potřebné opravy.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">03</div><h3>Cenová nabídka</h3><p>Předem odsouhlasíte cenu. Nic neděláme bez vašeho souhlasu.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">04</div><h3>Oprava + záruka</h3><p>Opravíme vůz, předáme ho čistý a s zárukou na provedenou práci.</p></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="cenik">
+  <div class="cenik-wrap">
+    <div data-r="left">
+      <div class="eyebrow">Ceník</div>
+      <h2 class="title">Férové ceny <em>bez překvapení</em></h2>
+      <p class="lead">Orientační ceny nejčastějších úkonů. U složitějších oprav cenu vždy potvrdíme předem podle typu vozidla.</p>
+      <p class="cenik-note">Nejste si jistí, co vaše auto potřebuje? Zavolejte nám na <strong>RESTAURANT_PHONE</strong> — poradíme a nezávazně naceníme.</p>
     </div>
+    <div class="cenik-panel" data-r="right">
+      <div class="cenik-row"><span class="cenik-name">Mechanická práce</span><span class="cenik-dots"></span><span class="cenik-price">od 590 Kč/h</span></div>
+      <div class="cenik-row"><span class="cenik-name">Počítačová diagnostika</span><span class="cenik-dots"></span><span class="cenik-price">od 490 Kč</span></div>
+      <div class="cenik-row"><span class="cenik-name">Výměna oleje a filtru</span><span class="cenik-dots"></span><span class="cenik-price">od 690 Kč</span></div>
+      <div class="cenik-row"><span class="cenik-name">Přezutí kompletu (4 kola)</span><span class="cenik-dots"></span><span class="cenik-price">od 600 Kč</span></div>
+      <div class="cenik-row"><span class="cenik-name">Plnění klimatizace</span><span class="cenik-dots"></span><span class="cenik-price">od 990 Kč</span></div>
+      <div class="cenik-row"><span class="cenik-name">Prohlídka před STK</span><span class="cenik-dots"></span><span class="cenik-price">od 500 Kč</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="onas">
+  <div class="about-grid">
+    <div class="about-figure" data-r="left">
+      <img src="../stock_photos/PHOTO_2" alt="Dílna – RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
+      <div class="badge"><strong>RESTAURANT_RATING</strong><span>hodnocení zákazníků</span></div>
+    </div>
+    <div data-r="right">
+      <div class="eyebrow">O nás</div>
+      <h2 class="title">Servis, kterému <em>můžete věřit</em></h2>
+      <p class="about-text">RESTAURANT_ABOUT</p>
+      <ul class="about-checks">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Zkušení mechanici a moderní vybavení</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Cenu odsouhlasíte předem, žádná překvapení</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Záruka na provedenou práci i díly</li>
+      </ul>
+      <a href="#kontakt" class="btn-orange">Objednat servis</a>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="galerie">
+  <div class="gallery-head" data-r>
+    <div class="eyebrow center light">Z naší dílny</div>
+    <h2 class="title">Práce, za kterou <em>se nestydíme</em></h2>
   </div>
   <div class="marquee-wrap">
-    <div class="marquee-track" id="marqueeTrack"></div>
-    <div class="marquee-fade-l"></div>
-    <div class="marquee-fade-r"></div>
+    <div class="marquee-row" id="row1"></div>
+    <div class="marquee-row reverse" id="row2"></div>
   </div>
 </section>
 
-<!-- ===== RECENZE ===== -->
+<!-- TESTIMONIALS -->
 <section id="recenze">
-  <div class="container">
-    <div class="recenze-header" data-r>
-      <div class="section-label">Recenze zákazníků</div>
-      <h2>Co říkají naši zákazníci</h2>
-      <p class="section-desc" style="margin:.5rem auto 0;">Hodnocení RESTAURANT_RATING / 5 na základě RESTAURANT_REVIEWS recenzí na Google.</p>
+  <div class="test-head" data-r>
+    <div class="eyebrow center">Zkušenosti zákazníků</div>
+    <h2 class="title">Co říkají <em>naši zákazníci</em></h2>
+  </div>
+  <div class="test-slider" data-r>
+    <div class="test-track" id="test-track">
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Konečně servis, kde vám řeknou cenu předem a dodrží ji. Poctivá práce a férový přístup.</p><div class="test-author">Petr K. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Nejlepší autoservis v RESTAURANT_CITY_LOC. Rychlá diagnostika a oprava do druhého dne. Doporučuji.</p><div class="test-author">Martin J. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Vozím sem obě auta už roky. Vždy ochotní, vysvětlí, co a proč, a nikdy nenaúčtují nic navíc.</p><div class="test-author">Jana M. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Zůstal jsem stát na dálnici, odtáhli mě a druhý den bylo hotovo. Profíci na svém místě.</p><div class="test-author">Tomáš B. · RESTAURANT_CITY</div></div>
     </div>
-    <div class="slider" data-r>
-      <div class="slider-track" id="sliderTrack">
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Skvělý servis, rychlá a kvalitní práce. Auto opravili přesně dle domluvy a za rozumnou cenu. Rozhodně doporučuji!"</p>
-            <div class="review-author">— Tomáš K. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Přezutí kol hotové do půl hodiny, personál příjemný a ochotný. Cena odpovídá kvalitě. Budu se vracet každou sezónu."</p>
-            <div class="review-author">— Martin S. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Opravili mi auto po nehodě – výsledek byl skvělý, ani by neřekl, že tam něco bylo. Profi přístup a férová cena."</p>
-            <div class="review-author">— Petr N. · Google</div>
-          </div>
-        </div>
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Diagnostika odhalila závadu, kterou jiný servis přehlédl. Rychlá oprava, auto jede skvěle. Moc děkuji za profesionální přístup."</p>
-            <div class="review-author">— Jakub V. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★☆</div>
-            <p class="review-text">„Pravidelně sem jezdím na servis – vždy spokojen. Poctivá práce, férové ceny a ochotný personál. Doporučuji všem v okolí."</p>
-            <div class="review-author">— Ondřej M. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Výměna brzd provedena rychle a kvalitně. Cena byla nižší než u konkurence. Opravdu solidní servis, vrátím se."</p>
-            <div class="review-author">— David B. · Google</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="slider-dots" id="sliderDots">
-      <button class="dot-btn active" data-idx="0" aria-label="Slide 1"></button>
-      <button class="dot-btn" data-idx="1" aria-label="Slide 2"></button>
-    </div>
+  </div>
+  <div class="test-dots" id="test-dots">
+    <button class="dot active" data-i="0"></button><button class="dot" data-i="1"></button><button class="dot" data-i="2"></button><button class="dot" data-i="3"></button>
   </div>
 </section>
 
-<!-- ===== CTA ===== -->
-<section id="cta">
-  <div class="container">
-    <div class="cta-grid">
-      <div class="cta-text" data-r>
-        <div class="section-label">Objednávky</div>
-        <h2>Objednejte své vozidlo ještě dnes</h2>
-        <p>Neodkládejte servis vašeho auta. Zavolejte nám nebo nás navštivte – postaráme se o vaše vozidlo rychle a spolehlivě.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
-          <a href="#kontakt" class="btn btn--outline">Kde nás najdete</a>
-        </div>
-      </div>
-      <div class="cta-img" data-r>
-        <img src="../stock_photos/PHOTO_1" alt="Objednejte servis – RESTAURANT_NAME" loading="lazy" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== KONTAKT ===== -->
+<!-- CONTACT -->
 <section id="kontakt">
-  <div class="container">
-    <div class="kontakt-grid">
-      <div class="kontakt-info" data-r>
-        <div class="section-label">Kontakt</div>
-        <h2>Najdete nás v RESTAURANT_CITY_LOC</h2>
-        <p>Rádi přijmeme vaše vozidlo. Zavolejte nebo přijeďte přímo k nám.</p>
-        <div class="kontakt-items">
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📍</div>
-            <div class="kontakt-item-text">
-              <small>Adresa</small>
-              <strong>RESTAURANT_ADDRESS</strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📞</div>
-            <div class="kontakt-item-text">
-              <small>Telefon</small>
-              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">✉️</div>
-            <div class="kontakt-item-text">
-              <small>Email</small>
-              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">🕐</div>
-            <div class="kontakt-item-text">
-              <small>Otevírací doba</small>
-              <strong>Po–Pá 7:30–17:00 · So 8:00–12:00</strong>
-            </div>
-          </div>
+  <div class="contact-grid">
+    <div data-r="left">
+      <div class="eyebrow light">Objednání</div>
+      <h2 class="title">Objednejte se do <em>servisu</em></h2>
+      <div class="contact-info" style="margin-top:2rem;">
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><div class="contact-label">Adresa</div><div class="contact-val">RESTAURANT_ADDRESS</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+          <div><div class="contact-label">Telefon</div><div class="contact-val">RESTAURANT_PHONE</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="contact-label">Otevírací doba</div><div class="contact-val">Po–Pá: 7:30–17:00<br>So: po domluvě</div></div>
         </div>
       </div>
-      <div class="kontakt-map" data-r>
-        <iframe
-          src="GOOGLE_MAPS_EMBED"
-          allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Mapa RESTAURANT_NAME"
-        ></iframe>
-      </div>
+      <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
     </div>
+    <div data-r="right">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-group"><label>Telefon</label><input type="tel" placeholder="+420…"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Vozidlo</label><input type="text" placeholder="Značka a model"></div>
+          <div class="form-group"><label>Služba</label>
+            <select><option>Oprava / porucha</option><option>Diagnostika</option><option>Pneuservis</option><option>Servis klimatizace</option><option>Příprava na STK</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>Popis závady</label><textarea placeholder="Co vozidlo potřebuje? S čím vám můžeme pomoci…"></textarea></div>
+        <button type="submit" class="form-submit">Odeslat poptávku</button>
+      </form>
+    </div>
+  </div>
+  <div style="text-align:center;margin:3rem 0 0;">
+    <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:#f5691f;color:#fff;padding:15px 40px;font-size:16px;text-decoration:none;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Chci takový web</a>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
+<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="nav-logo">🔧 <span>RESTAURANT_NAME</span></div>
-        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigace</h4>
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby</a></li>
-          <li><a href="#galerie">Galerie</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Kontakt</h4>
-        <ul>
-          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
-          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
-          <li>RESTAURANT_ADDRESS_SHORT</li>
-        </ul>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">RESTAURANT_NAME<span>.</span></a>
+      <p class="footer-desc">RESTAURANT_ABOUT_SHORT</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 RESTAURANT_NAME · Všechna práva vyhrazena</span>
-      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    <div class="footer-col">
+      <h4>Servis</h4>
+      <ul><li><a href="#sluzby">Služby</a></li><li><a href="#proces">Jak to probíhá</a></li><li><a href="#cenik">Ceník</a></li><li><a href="#onas">O nás</a></li><li><a href="#kontakt">Objednání</a></li></ul>
     </div>
+    <div class="footer-col">
+      <h4>Otevírací doba</h4>
+      <ul class="footer-hours"><li><span>Po–Pá</span><span>7:30–17:00</span></li><li><span>Sobota</span><span>po domluvě</span></li><li><span>Neděle</span><span>zavřeno</span></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul><li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li><li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li><li><a href="#">RESTAURANT_EMAIL</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
   </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
 <script>
-  /* Progress bar */
-  window.addEventListener('scroll', () => {
-    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-    document.getElementById('progress').style.width = pct + '%';
-  });
+window.addEventListener('scroll', () => {
+  const s = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  document.getElementById('progress').style.transform = `scaleX(${s/h})`;
+  document.getElementById('navbar').classList.toggle('scrolled', s > 60);
+  document.getElementById('back-top').classList.toggle('show', s > 400);
+}, {passive:true});
 
-  /* Sticky header */
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 10));
+const ham = document.getElementById('ham'), mNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => mNav.classList.add('open'));
+document.getElementById('close-nav').addEventListener('click', () => mNav.classList.remove('open'));
+mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mNav.classList.remove('open')));
 
-  /* Hamburger */
-  const btn = document.getElementById('hamburgerBtn');
-  const menu = document.getElementById('mobileMenu');
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', false);
-  }));
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const el = document.querySelector(a.getAttribute('href')); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } }); });
 
-  /* Reveal on scroll */
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
+const revObs = new IntersectionObserver(es => { es.forEach((e,i) => { if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*70); revObs.unobserve(e.target); } }); }, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
 
-  /* Stats counter */
-  const statsObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      const target = parseFloat(el.dataset.count);
-      const isDecimal = 'decimal' in el.dataset;
-      const steps = 1400 / 16;
-      let current = 0;
-      const inc = target / steps;
-      const timer = setInterval(() => {
-        current = Math.min(current + inc, target);
-        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
-        if (current >= target) clearInterval(timer);
-      }, 16);
-      statsObs.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('[data-count]').forEach(el => statsObs.observe(el));
+function animCount(el, target){ const dur=2000, start=performance.now(); const tick=now=>{ const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3); el.textContent=Math.floor(e*target).toLocaleString('cs'); if(p<1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+document.querySelectorAll('[data-stat="reviews"]').forEach(item => { const sp=item.querySelector('[data-count]'); if(!sp || !(+sp.dataset.count>0)) item.style.display='none'; });
+const cntObs = new IntersectionObserver(es => { es.forEach(e => { if(e.isIntersecting){ const n=+e.target.dataset.count; if(n) animCount(e.target,n); cntObs.unobserve(e.target); } }); }, {threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
-  /* Filtr služeb */
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      const filter = b.dataset.filter;
-      document.querySelectorAll('.sluzba-card').forEach(card => {
-        card.style.display = filter === 'all' || card.dataset.cat === filter ? '' : 'none';
-      });
-    });
-  });
+const photos = [GALLERY_PHOTOS_JS].filter(s => s && s.length);
+const rows = [document.getElementById('row1'), document.getElementById('row2')];
+if(photos.length > 0){ rows.forEach(row => { [...photos,...photos,...photos,...photos].forEach(src => { const img=document.createElement('img'); img.src=src; img.alt='Dílna'; img.loading='lazy'; img.onerror=function(){ this.remove(); }; row.appendChild(img); }); }); }
+else { document.getElementById('galerie').style.display='none'; }
 
-  /* Galerie marquee */
-  const photos = [GALLERY_PHOTOS_JS];
-  const track = document.getElementById('marqueeTrack');
-  if (photos.length > 0 && photos[0]) {
-    [...photos, ...photos].forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="${src}" alt="Autoservis RESTAURANT_NAME" loading="lazy" />`;
-      track.appendChild(div);
-    });
-    if (photos.length < 4) track.style.animationDuration = '20s';
-  } else {
-    ['PHOTO_1','PHOTO_2','PHOTO_3','PHOTO_1','PHOTO_2'].forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="photos/${src}" alt="Autoservis" loading="lazy" />`;
-      track.appendChild(div);
-    });
-  }
-
-  /* Recenze slider */
-  const sliderTrack = document.getElementById('sliderTrack');
-  const slides = sliderTrack.querySelectorAll('.review-slide');
-  const dots = document.getElementById('sliderDots');
-  let current = 0;
-  function goTo(idx) {
-    current = idx;
-    sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
-    dots.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === idx));
-  }
-  dots.querySelectorAll('.dot-btn').forEach((d, i) => d.addEventListener('click', () => goTo(i)));
-  if (slides.length > 1) setInterval(() => goTo((current + 1) % slides.length), 5000);
+let cur=0; const track=document.getElementById('test-track'), dots=document.querySelectorAll('.dot'), slides=track.querySelectorAll('.test-slide');
+function goTo(n){ cur=n; track.style.transform=`translateX(-${n*100}%)`; dots.forEach((d,i)=>d.classList.toggle('active',i===n)); }
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+setInterval(() => goTo((cur+1)%slides.length), 5000);
 </script>
-
 </body>
 </html>

@@ -29,6 +29,8 @@ TEMPLATE_PATH = os.path.join(TEMPLATE_DIR, "index.html")
 INDUSTRY_TEMPLATES = {
     "restaurace":   "index.html",
     "kavarna":      "kavarna.html",
+    "pekarna":      "pekarna.html",
+    "kvetinarstvi": "kvetinarstvi.html",
     "penzion":      "penzion.html",
     "kadernictvi":  "kadernictvi.html",
     "zubni":        "zubni.html",

@@ -11,7 +11,7 @@ import os
 import pickle
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def _retry(fn, *args, max_retries=12, **kwargs):
@@ -60,6 +60,7 @@ HEADERS = [
     "Facebook URL",  # FB stránka pro manuální oslovení (když není email)
     "Odvětví",       # restaurace / kavarna / penzion / kosmetika / kadernictvi / zubni / psycholog
     "Datum follow-up",  # kdy byl odeslán follow-up email
+    "Follow-up due",    # YYYY-MM-DD – kdy má být odeslán follow-up (5 dní od draftu)
 ]
 
 # Barvy řádků podle stavu
@@ -75,21 +76,55 @@ ROW_COLORS = {
 
 
 def get_client():
-    creds = None
-    # Načti uložený token
-    if os.path.exists(TOKEN_FILE):
-        with open(TOKEN_FILE, "rb") as f:
-            creds = pickle.load(f)
-    # Pokud token není platný, obnov nebo přihlásí znovu
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Ulož token pro příště
-        with open(TOKEN_FILE, "wb") as f:
-            pickle.dump(creds, f)
+    import fcntl
+    import time as _time
+
+    def _load():
+        if os.path.exists(TOKEN_FILE):
+            with open(TOKEN_FILE, "rb") as f:
+                return pickle.load(f)
+        return None
+
+    creds = _load()
+
+    # Pokud je token platný, rovnou ho použij (žádný zámek nepotřeba)
+    if creds and creds.valid:
+        return gspread.authorize(creds)
+
+    # Token je expirovaný/neplatný → obnov POD ZÁMKEM.
+    # Jen JEDEN proces obnovuje naráz; ostatní počkají a načtou už obnovený token.
+    # Tím se zabrání souběžnému refresh, který Google vyhodnotí jako reuse a token revokuje.
+    lock_path = TOKEN_FILE + ".lock"
+    with open(lock_path, "w") as lockf:
+        fcntl.flock(lockf, fcntl.LOCK_EX)  # blokující zámek
+        try:
+            # Re-load – mezitím možná token obnovil jiný proces
+            creds = _load()
+            if creds and creds.valid:
+                return gspread.authorize(creds)
+
+            if creds and creds.expired and creds.refresh_token:
+                # Malá náhodná prodleva pro jistotu, pak refresh
+                for attempt in range(3):
+                    try:
+                        creds.refresh(Request())
+                        break
+                    except Exception:
+                        if attempt == 2:
+                            raise
+                        _time.sleep(2)
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+
+            # Ulož token atomicky
+            tmp = TOKEN_FILE + ".tmp"
+            with open(tmp, "wb") as f:
+                pickle.dump(creds, f)
+            os.replace(tmp, TOKEN_FILE)
+        finally:
+            fcntl.flock(lockf, fcntl.LOCK_UN)
+
     return gspread.authorize(creds)
 
 
@@ -194,6 +229,8 @@ def add_restaurant(sheet, data):
         data.get("ab_variant", ""),  # AB Varianta
         data.get("fb_page_url", ""), # Facebook URL
         data.get("industry", "restaurace"),  # Odvětví
+        "",              # Datum follow-up
+        data.get("follow_up_due", ""),  # Follow-up due
     ]
     _retry(sheet.append_row, row)
 

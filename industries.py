@@ -85,6 +85,86 @@ INDUSTRIES = {
         ],
     },
 
+    "pekarna": {
+        "name_cs": "pekárny",
+        "name_cs_4": "pekárnu",
+        "search_query": "pekárna {city}",
+        "places_type": "bakery",
+        "osm_filter": '["shop"="bakery"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom lidé dnes hledají čerstvé "
+            "pečivo, otevírací dobu i nabídku online ještě před cestou k vám"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe ukázat vaše pečivo a nabídku – zákazníci se rozhodují "
+            "podle online dojmu a fotek ještě doma"
+        ),
+        "email_cta": "Pracujeme s pekárnami {city_phrase}.",
+        "taglines": [
+            "Voní to tu čerstvým chlebem",
+            "Pečeme s láskou každý den",
+            "Chuť poctivého řemesla",
+            "Ráno začíná vůní pečiva",
+            "Tradiční receptury, čerstvé suroviny",
+            "Domácí pečivo jako od babičky",
+        ],
+        "subtitles": [
+            "Přijďte si pro čerstvé pečivo, které pečeme každé ráno z poctivých surovin.",
+            "Křupavé bagety, voňavý chléb a sladké dobroty – všechno vlastní výroby.",
+            "Poctivé řemeslo, tradiční receptury a vůně, která vás přivítá už u dveří.",
+        ],
+        "about_texts": [
+            "Jsme rodinná pekárna, kde se peče poctivě a s láskou. Každé ráno vstáváme dřív než ostatní, abyste měli na stole čerstvý chléb a voňavé pečivo. Používáme kvalitní suroviny a tradiční postupy, které se osvědčily po generace.",
+            "Naše pekárna vznikla z lásky k poctivému řemeslu. Nepoužíváme zbytečné přísady – jen mouku, vodu, kvásek a čas. Přijďte ochutnat rozdíl, který dělá ruční práce a čerstvost.",
+            "V naší pekárně se snoubí tradice s chutí. Pečeme chléb z vlastního kvásku, křupavé bagety i sladké koláče, na které se budete těšit. Každý den čerstvé, každý den s péčí.",
+        ],
+        "about_short": [
+            "Čerstvé pečivo z poctivých surovin, každý den.",
+            "Rodinná pekárna s tradiční recepturou.",
+            "Poctivé řemeslo, které voní na dálku.",
+        ],
+    },
+
+    "kvetinarstvi": {
+        "name_cs": "květinářství",
+        "name_cs_4": "květinářství",
+        "search_query": "květinářství {city}",
+        "places_type": "florist",
+        "osm_filter": '["shop"="florist"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom lidé dnes hledají květiny, "
+            "vazbu i rozvoz online a rozhodují se podle fotek vašich kytic"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe ukázat vaše kytice a vazby – zákazníci si vybírají "
+            "podle fotografií a online dojmu ještě než k vám přijdou"
+        ),
+        "email_cta": "Pracujeme s květinářstvími {city_phrase}.",
+        "taglines": [
+            "Kytice, které potěší srdce",
+            "Květiny pro každý okamžik",
+            "Krása, která rozkvete u vás doma",
+            "Vazby s citem a fantazií",
+            "Čerstvé květiny každý den",
+            "Řekněte to květinou",
+        ],
+        "subtitles": [
+            "Vytvoříme kytici na míru pro každou příležitost – od svateb po drobná potěšení.",
+            "Čerstvé řezané květiny, originální vazby a rozvoz až k vám domů.",
+            "Každá kytice je originál, vytvořený s citem pro barvy a detail.",
+        ],
+        "about_texts": [
+            "Jsme květinářství s láskou k barvám a detailu. Každou kytici vážeme ručně z čerstvých květin a s ohledem na příležitost i přání zákazníka. Věříme, že správná kytice dokáže říct víc než tisíc slov.",
+            "Naše květinářství vzniklo z radosti z květin. Vybíráme čerstvé řezané květiny, vytváříme originální vazby na svatby, oslavy i všední dny a rády poradíme s výběrem. Přijďte si pro kousek krásy.",
+            "V našem květinářství najdete čerstvé květiny, svatební i smuteční vazby a dárkové kytice na míru. Každou vazbu tvoříme s citem a péčí, aby udělala radost obdarovanému i vám.",
+        ],
+        "about_short": [
+            "Čerstvé květiny a originální vazby na míru.",
+            "Kytice s citem pro každou příležitost.",
+            "Ruční vazba z čerstvých květin.",
+        ],
+    },
+
     "penzion": {
         "name_cs": "penziony",
         "name_cs_4": "penzion",

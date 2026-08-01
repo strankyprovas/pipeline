@@ -1,1440 +1,539 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RESTAURANT_NAME — Zubní ordinace v RESTAURANT_CITY</title>
-  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
-  <meta name="theme-color" content="#f0fafa" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESTAURANT_NAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ============ TOKENS ============ */
-    :root {
-      --mint:        #f0fafa;
-      --mint-2:      #e0f5f4;
-      --mint-3:      #c0ecea;
-      --teal-100:    #9de0dd;
-      --teal-300:    #4cc9c6;
-      --teal-500:    #0ea5a0;
-      --teal-700:    #0c7a76;
-      --ink:         #0c1a1a;
-      --ink-2:       #1e3333;
-      --muted:       #4a7070;
-      --card:        #fff;
-      --shadow:      0 8px 28px rgba(14, 165, 160, 0.12);
-      --radius:      16px;
-      --space-1:     0.5rem;
-      --space-2:     1rem;
-      --space-3:     1.5rem;
-      --space-4:     2rem;
-      --space-6:     3rem;
-      --space-8:     4rem;
-      --space-12:    6rem;
-    }
-
-    /* ============ RESET ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--mint);
-      color: var(--ink);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-    img { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    img { max-width: 100%; display: block; }
 
-    /* ============ TYPOGRAPHY ============ */
-    h1, h2, h3 {
-      font-family: 'DM Serif Display', Georgia, serif;
-      line-height: 1.15;
-      color: var(--ink);
+    :root {
+      --paper:  #f5fbfb;
+      --white:  #ffffff;
+      --mint:   #e3f4f1;
+      --sky:    #eaf3f7;
+      --teal:   #0e8f8a;
+      --teal2:  #0a6f6b;
+      --navy:   #123c47;
+      --ink:    #1e2c2f;
+      --ink2:   #4c5c5f;
+      --muted:  #7d8a8c;
+      --line:   rgba(18,60,71,.12);
+      --ease:   cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 20px 50px rgba(14,80,80,.12);
     }
-    h4 {
-      font-family: 'Inter', sans-serif;
-      line-height: 1.3;
-      color: var(--ink);
-    }
-    h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 400; }
-    h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 400; }
-    h3 { font-size: clamp(1.1rem, 2.2vw, 1.45rem); font-weight: 400; }
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--teal-500);
-      margin-bottom: var(--space-2);
-    }
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 1.5px;
-      background: var(--teal-300);
-      border-radius: 2px;
-    }
-    .section-desc {
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin-top: var(--space-2);
-      line-height: 1.75;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    /* ============ LAYOUT ============ */
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-    section { padding: var(--space-12) 0; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: var(--space-4);
-    }
-    .grid { display: grid; gap: var(--space-4); }
-    .auto-3 { grid-template-columns: repeat(3, 1fr); }
-    .auto-2 { grid-template-columns: repeat(2, 1fr); }
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--teal); transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
 
-    /* ============ BUTTONS ============ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: 50px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.88rem;
-      letter-spacing: .03em;
-      cursor: pointer;
-      border: none;
-      transition: all .22s;
-    }
-    .btn--fill {
-      background: linear-gradient(135deg, var(--teal-700), var(--teal-300));
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(14, 165, 160, 0.33);
-    }
-    .btn--fill:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14, 165, 160, .45); }
-    .btn--outline {
-      background: transparent;
-      color: var(--teal-700);
-      border: 1.5px solid var(--teal-300);
-    }
-    .btn--outline:hover { background: var(--mint-2); border-color: var(--teal-500); }
+    /* NAV */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.4rem 5%; display: flex; align-items: center; justify-content: space-between; transition: all .4s var(--ease); }
+    #navbar.scrolled { background: rgba(245,251,251,.94); backdrop-filter: blur(14px); padding: .9rem 5%; box-shadow: 0 1px 0 var(--line); }
+    .nav-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--navy); text-decoration: none; letter-spacing: -.02em; display: flex; align-items: center; gap: .55rem; }
+    .nav-logo .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--teal); display: flex; align-items: center; justify-content: center; }
+    .nav-logo .mark svg { width: 17px; height: 17px; color: #fff; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; align-items: center; }
+    .nav-links a { color: var(--ink2); text-decoration: none; font-size: .88rem; font-weight: 500; transition: color .25s; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-phone { font-weight: 700; color: var(--navy); font-size: .9rem; text-decoration: none; display: inline-flex; align-items: center; gap: .45rem; }
+    .nav-phone svg { width: 16px; height: 16px; color: var(--teal); }
+    .nav-cta { font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 700; color: #fff; background: var(--teal); padding: .72rem 1.5rem; border: none; cursor: pointer; text-decoration: none; transition: all .3s; border-radius: 999px; }
+    .nav-cta:hover { background: var(--teal2); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,143,138,.35); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--navy); transition: all .3s; }
 
-    /* ============ TOP PROGRESS BAR ============ */
-    #progress {
-      position: fixed;
-      top: 0; left: 0;
-      height: 2px;
-      width: 0%;
-      background: linear-gradient(90deg, var(--teal-300), var(--teal-700));
-      z-index: 9999;
-      transition: width .1s linear;
-    }
+    #mobile-nav { display: none; position: fixed; inset: 0; background: var(--white); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem; }
+    #mobile-nav.open { display: flex; }
+    #mobile-nav a { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 700; color: var(--navy); text-decoration: none; }
+    #mobile-nav a:hover { color: var(--teal); }
+    .close-nav { position: absolute; top: 2rem; right: 6%; background: none; border: none; color: var(--navy); font-size: 2rem; cursor: pointer; }
 
-    /* ============ HEADER / NAV ============ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(240, 250, 250, 0.93);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
-      transition: border-color .3s, box-shadow .3s;
-    }
-    header.scrolled { border-color: var(--mint-3); box-shadow: 0 2px 16px rgba(14, 165, 160, .09); }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 68px;
-    }
-    .nav-logo {
-      font-family: 'DM Serif Display', serif;
-      font-weight: 400;
-      font-size: 1.2rem;
-      color: var(--teal-700);
-      letter-spacing: .02em;
-    }
-    .nav-logo span { color: var(--teal-500); }
-    nav ul { display: flex; align-items: center; gap: var(--space-4); }
-    nav a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: .04em;
-      color: var(--ink-2);
-      transition: color .2s;
-    }
-    nav a:hover { color: var(--teal-500); }
-    .nav-cta { display: flex; align-items: center; gap: var(--space-2); }
-    .nav-phone {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.84rem;
-      color: var(--teal-700);
-      padding: 8px 18px;
-      border: 1.5px solid var(--teal-300);
-      border-radius: 50px;
-      transition: all .2s;
-    }
-    .nav-phone:hover { background: var(--teal-300); color: #fff; }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      background: none;
-      border: none;
-    }
-    .hamburger span {
-      display: block;
-      width: 22px;
-      height: 1.5px;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: all .3s;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      padding: 16px 20px 20px;
-      border-top: 1px solid var(--mint-3);
-      background: rgba(240, 250, 250, 0.98);
-      gap: 4px;
-    }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--ink-2);
-      border-radius: 8px;
-      transition: background .2s;
-    }
-    .mobile-menu a:hover { background: var(--mint-2); }
+    /* HERO */
+    #hero { min-height: 100vh; background: linear-gradient(160deg, var(--paper) 0%, var(--mint) 100%); display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; padding: 8rem 8% 4rem; }
+    .hero-left { max-width: 560px; }
+    .hero-chip { display: inline-flex; align-items: center; gap: .5rem; background: var(--white); border: 1px solid var(--line); color: var(--teal2); font-size: .78rem; font-weight: 600; padding: .5rem 1rem; border-radius: 999px; margin-bottom: 1.6rem; box-shadow: 0 4px 14px rgba(14,80,80,.06); opacity: 0; animation: fadeUp .9s .2s var(--ease) forwards; }
+    .hero-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: #37c07a; }
+    .hero-title { font-size: clamp(2.6rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -.025em; color: var(--navy); margin-bottom: 1.4rem; opacity: 0; animation: fadeUp .9s .34s var(--ease) forwards; }
+    .hero-title em { font-style: normal; color: var(--teal); }
+    .hero-sub { font-size: 1.05rem; font-weight: 300; line-height: 1.75; color: var(--ink2); margin-bottom: 2.2rem; opacity: 0; animation: fadeUp .9s .48s var(--ease) forwards; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2.2rem; opacity: 0; animation: fadeUp .9s .62s var(--ease) forwards; }
+    .btn-solid { background: var(--teal); color: #fff; padding: 1.05rem 2.2rem; border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; font-weight: 700; text-decoration: none; display: inline-block; border-radius: 999px; transition: all .3s; }
+    .btn-solid:hover { background: var(--teal2); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(14,143,138,.35); }
+    .btn-line { background: var(--white); color: var(--navy); padding: 1.05rem 2.2rem; border: 1px solid var(--line); font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: .5rem; border-radius: 999px; transition: all .3s; }
+    .btn-line:hover { border-color: var(--teal); color: var(--teal); }
+    .btn-line svg { width: 17px; height: 17px; }
+    .hero-trust { display: flex; gap: 1.6rem; flex-wrap: wrap; opacity: 0; animation: fadeUp .9s .76s var(--ease) forwards; }
+    .hero-trust span { display: inline-flex; align-items: center; gap: .5rem; font-size: .84rem; color: var(--ink2); font-weight: 500; }
+    .hero-trust svg { width: 18px; height: 18px; color: var(--teal); }
+    .hero-right { position: relative; }
+    .hero-photo { width: 100%; height: 540px; object-fit: cover; border-radius: 26px; box-shadow: var(--shadow); background: linear-gradient(135deg, var(--teal), var(--navy)); }
+    .hero-card { position: absolute; background: var(--white); border-radius: 16px; box-shadow: var(--shadow); padding: 1rem 1.3rem; }
+    .hero-card.rating { bottom: 1.5rem; left: -1.5rem; display: flex; align-items: center; gap: .8rem; }
+    .hero-card.rating .stars { color: var(--teal); font-size: .95rem; letter-spacing: 1px; }
+    .hero-card.rating b { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; color: var(--navy); }
+    .hero-card.rating small { display: block; font-size: .72rem; color: var(--muted); }
+    .hero-card.pill { top: 1.6rem; right: -1rem; display: inline-flex; align-items: center; gap: .55rem; font-size: .82rem; font-weight: 600; color: var(--navy); }
+    .hero-card.pill svg { width: 20px; height: 20px; color: var(--teal); }
 
-    /* ============ HERO ============ */
-    #hero {
-      padding: var(--space-12) 0 var(--space-8);
-      background: linear-gradient(160deg, var(--mint) 55%, var(--mint-2) 100%);
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: var(--mint-3);
-      color: var(--teal-700);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 50px;
-      margin-bottom: var(--space-3);
-    }
-    .hero-title { margin-bottom: var(--space-3); }
-    .hero-title em {
-      font-style: italic;
-      color: var(--teal-500);
-    }
-    .hero-sub {
-      font-size: 1.08rem;
-      color: var(--muted);
-      margin-bottom: var(--space-4);
-      max-width: 460px;
-      line-height: 1.75;
-    }
-    .hero-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-    .hero-rating {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: var(--space-4);
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .hero-rating .stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; }
-    .hero-rating strong { color: var(--ink); }
-    .hero-visual { position: relative; }
-    .visual-stack {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 260px 190px;
-      gap: 12px;
-    }
-    .visual-stack .img-main {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .visual-stack .img-main img,
-    .visual-stack .img-sub img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-    }
-    .visual-stack .img-sub { border-radius: var(--radius); overflow: hidden; }
-    .visual-float {
-      position: absolute;
-      bottom: -16px;
-      left: -20px;
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.83rem;
-    }
-    .visual-float .dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #6dbf6d;
-      flex-shrink: 0;
-    }
-    .visual-float strong { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.88rem; }
+    /* TRUST BAR */
+    .trust-bar { background: var(--navy); display: grid; grid-template-columns: repeat(4, 1fr); }
+    .trust-item { padding: 2rem 2.2rem; display: flex; align-items: center; gap: 1rem; border-right: 1px solid rgba(255,255,255,.08); }
+    .trust-item:last-child { border-right: none; }
+    .trust-ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: rgba(255,255,255,.08); color: #6fd8cf; display: flex; align-items: center; justify-content: center; }
+    .trust-ico svg { width: 22px; height: 22px; }
+    .trust-item h4 { font-size: .92rem; font-weight: 700; color: #fff; margin-bottom: .1rem; }
+    .trust-item p { font-size: .76rem; color: rgba(255,255,255,.55); }
 
-    /* ============ STATS BAR ============ */
-    #stats {
-      padding: var(--space-6) 0;
-      background: var(--teal-700);
-      color: #fff;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-4);
-      text-align: center;
-    }
-    .stat-num {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2.8rem;
-      font-weight: 400;
-      color: var(--teal-100);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,.65);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
+    /* SECTION SHARED */
+    section { padding: 7.5rem 8%; }
+    .eyebrow { font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; display: inline-flex; align-items: center; gap: .6rem; }
+    .eyebrow::before { content: ''; width: 22px; height: 2px; background: var(--teal); border-radius: 2px; }
+    .eyebrow.center { justify-content: center; }
+    .eyebrow.center::before { display: none; }
+    h2.title { font-size: clamp(2.1rem, 3.8vw, 3.2rem); font-weight: 800; line-height: 1.12; letter-spacing: -.02em; margin-bottom: 1.2rem; color: var(--navy); }
+    h2.title em { font-style: normal; color: var(--teal); }
+    .lead { font-size: 1rem; line-height: 1.8; color: var(--ink2); max-width: 560px; }
 
-    /* ============ O NÁS ============ */
-    #onas { background: var(--mint); }
-    .onas-grid {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .onas-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 500px;
-      position: relative;
-    }
-    .onas-img img { width: 100%; height: 100%; object-fit: cover; }
-    .onas-img-badge {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: 12px;
-      padding: 12px 16px;
-      box-shadow: var(--shadow);
-      font-size: 0.8rem;
-      text-align: center;
-    }
-    .onas-img-badge strong {
-      display: block;
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.4rem;
-      color: var(--teal-700);
-    }
-    .onas-text .section-label { margin-bottom: var(--space-2); }
-    .onas-text h2 { margin-bottom: var(--space-3); }
-    .onas-text p { color: var(--muted); margin-bottom: var(--space-3); line-height: 1.8; }
-    .onas-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); }
-    .chip {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--mint-2);
-      border: 1.5px solid var(--mint-3);
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--teal-700);
-    }
+    /* SERVICES */
+    #sluzby { background: var(--white); }
+    .svc-head { text-align: center; max-width: 620px; margin: 0 auto 3.5rem; }
+    .svc-head .eyebrow { justify-content: center; }
+    .svc-head .eyebrow::before { display: none; }
+    .svc-head .lead { margin: 0 auto; }
+    .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; max-width: 1150px; margin: 0 auto; }
+    .svc-card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 2.2rem 2rem; transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s; }
+    .svc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: transparent; }
+    .svc-ico { width: 54px; height: 54px; border-radius: 14px; background: var(--mint); color: var(--teal2); display: flex; align-items: center; justify-content: center; margin-bottom: 1.3rem; }
+    .svc-ico svg { width: 26px; height: 26px; }
+    .svc-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+    .svc-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; }
 
-    /* ============ SLUŽBY / CENÍK ============ */
-    #sluzby { background: var(--mint-2); }
-    .sluzby-header { text-align: center; max-width: 560px; margin: 0 auto var(--space-6); }
-    .sluzby-header .section-label { justify-content: center; }
-    .sluzby-header .section-label::before { display: none; }
-    .filter-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: var(--space-6);
-    }
-    .filter-btn {
-      padding: 8px 20px;
-      border-radius: 50px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1.5px solid var(--mint-3);
-      background: var(--card);
-      color: var(--muted);
-      transition: all .2s;
-    }
-    .filter-btn:hover { border-color: var(--teal-300); color: var(--teal-500); }
-    .filter-btn.active {
-      background: var(--teal-700);
-      border-color: var(--teal-700);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(12, 122, 118, .28);
-    }
-    .sluzby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-    .sluzba-card {
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: transform .22s, box-shadow .22s;
-    }
-    .sluzba-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-    .sluzba-img { height: 170px; overflow: hidden; }
-    .sluzba-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .sluzba-card:hover .sluzba-img img { transform: scale(1.06); }
-    .sluzba-body { padding: 16px 18px; }
-    .sluzba-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      color: var(--teal-500);
-      background: var(--mint-2);
-      padding: 3px 10px;
-      border-radius: 50px;
-      margin-bottom: 8px;
-    }
-    .sluzba-body h3 { font-size: 1rem; margin-bottom: 4px; font-family: 'Inter', sans-serif; font-weight: 600; }
-    .sluzba-body p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
-    .sluzba-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-top: 1px solid var(--mint-2);
-    }
-    .sluzba-price {
-      font-family: 'DM Serif Display', serif;
-      font-weight: 400;
-      color: var(--teal-700);
-      font-size: 1.1rem;
-    }
-    .sluzba-time {
-      font-size: 0.77rem;
-      color: var(--muted);
-    }
+    /* PROCESS */
+    #proces { background: linear-gradient(160deg, var(--mint), var(--sky)); }
+    .proc-head { text-align: center; max-width: 620px; margin: 0 auto 3.5rem; }
+    .proc-head .eyebrow { justify-content: center; }
+    .proc-head .eyebrow::before { display: none; }
+    .proc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem; max-width: 1150px; margin: 0 auto; position: relative; }
+    .proc-step { background: var(--white); border-radius: 18px; padding: 2rem 1.6rem; box-shadow: 0 8px 30px rgba(14,80,80,.07); position: relative; }
+    .proc-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--mint); line-height: 1; margin-bottom: .6rem; -webkit-text-stroke: 1px var(--teal); }
+    .proc-step h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; }
+    .proc-step p { font-size: .84rem; color: var(--muted); line-height: 1.6; }
 
-    /* ============ TÝM ============ */
-    #tym { background: var(--mint); }
-    .tym-header { text-align: center; max-width: 560px; margin: 0 auto var(--space-8); }
-    .tym-header .section-label { justify-content: center; }
-    .tym-header .section-label::before { display: none; }
-    .tym-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-6);
-    }
-    .tym-card {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: var(--space-4);
-      align-items: center;
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: transform .22s, box-shadow .22s;
-    }
-    .tym-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(14, 165, 160, .16); }
-    .tym-card-img {
-      height: 220px;
-      overflow: hidden;
-      align-self: stretch;
-    }
-    .tym-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .tym-card-body { padding: var(--space-3) var(--space-3) var(--space-3) 0; }
-    .tym-role {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--teal-500);
-      margin-bottom: 6px;
-    }
-    .tym-card-body h3 { font-size: 1.15rem; margin-bottom: var(--space-2); }
-    .tym-card-body p { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
-    .tym-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--space-2); }
-    .tym-tag {
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--teal-700);
-      background: var(--mint-2);
-      border: 1px solid var(--mint-3);
-      padding: 3px 10px;
-      border-radius: 50px;
-    }
+    /* ABOUT */
+    #onas { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5.5rem; align-items: center; }
+    .about-figure { position: relative; }
+    .about-figure img { width: 100%; height: 560px; object-fit: cover; border-radius: 22px; box-shadow: var(--shadow); background: linear-gradient(135deg, var(--teal), var(--navy)); }
+    .about-text { font-size: 1rem; line-height: 1.9; color: var(--ink2); margin-bottom: 1.8rem; }
+    .about-checks { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 2rem; }
+    .about-checks li { display: flex; align-items: center; gap: .8rem; font-size: .95rem; color: var(--ink); list-style: none; }
+    .about-checks .ck { width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: var(--mint); color: var(--teal2); display: flex; align-items: center; justify-content: center; }
+    .about-checks .ck svg { width: 15px; height: 15px; }
 
-    /* ============ POJIŠŤOVNY ============ */
-    #pojistovny {
-      padding: var(--space-8) 0;
-      background: var(--teal-700);
-      overflow: hidden;
-    }
-    .pojist-header {
-      text-align: center;
-      margin-bottom: var(--space-6);
-    }
-    .pojist-header .section-label { justify-content: center; color: var(--teal-100); }
-    .pojist-header .section-label::before { background: var(--teal-100); }
-    .pojist-header h2 { color: #fff; }
-    .pojist-track {
-      display: flex;
-      gap: 16px;
-      animation: marquee-p 28s linear infinite;
-      width: max-content;
-    }
-    .pojist-wrap:hover .pojist-track { animation-play-state: paused; }
-    @keyframes marquee-p {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .pojist-badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 12px;
-      padding: 12px 24px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .pojist-badge span {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: .03em;
-    }
-    .pojist-badge small {
-      font-size: 0.7rem;
-      color: rgba(255,255,255,.55);
-      display: block;
-      text-align: center;
-    }
+    /* INSURANCE */
+    #pojistovny { background: var(--paper); text-align: center; }
+    .ins-box { max-width: 900px; margin: 0 auto; }
+    .ins-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 2rem; }
+    .ins-list span { background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: .7rem 1.5rem; font-size: .9rem; font-weight: 600; color: var(--navy); }
 
-    /* ============ GALERIE ============ */
-    #galerie { background: var(--mint); overflow: hidden; }
-    .galerie-header { margin-bottom: var(--space-6); }
-    .marquee-wrap { position: relative; }
-    .marquee-track {
-      display: flex;
-      gap: 14px;
-      animation: marquee 34s linear infinite;
-      width: max-content;
-    }
-    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
-    .marquee-track .gal-img {
-      width: 280px;
-      height: 210px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .marquee-track .gal-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .marquee-track .gal-img:hover img { transform: scale(1.07); }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .marquee-fade-l, .marquee-fade-r {
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 100px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .marquee-fade-l { left: 0; background: linear-gradient(to right, var(--mint), transparent); }
-    .marquee-fade-r { right: 0; background: linear-gradient(to left, var(--mint), transparent); }
+    /* GALLERY */
+    #galerie { padding: 6rem 0; background: var(--navy); overflow: hidden; }
+    .gallery-head { text-align: center; padding: 0 8%; margin-bottom: 3rem; }
+    .gallery-head .eyebrow { justify-content: center; color: #6fd8cf; }
+    .gallery-head .eyebrow::before { display: none; }
+    .gallery-head h2 { color: #fff; }
+    .gallery-head h2 em { color: #6fd8cf; }
+    .marquee-wrap { display: flex; flex-direction: column; gap: .8rem; }
+    .marquee-row { display: flex; gap: .8rem; width: max-content; animation: marquee 44s linear infinite; }
+    .marquee-row.reverse { animation-direction: reverse; animation-duration: 54s; }
+    .marquee-row img { width: 320px; height: 220px; object-fit: cover; flex-shrink: 0; border-radius: 14px; transition: transform .4s; }
+    .marquee-row img:hover { transform: scale(1.015); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* ============ RECENZE ============ */
-    #recenze { background: var(--mint-2); }
-    .recenze-header { text-align: center; margin-bottom: var(--space-6); }
-    .recenze-header .section-label { justify-content: center; }
-    .recenze-header .section-label::before { display: none; }
-    .slider { overflow: hidden; }
-    .slider-track {
-      display: flex;
-      transition: transform .5s cubic-bezier(.4,0,.2,1);
-    }
-    .review-slide {
-      min-width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-    }
-    .review-card {
-      background: var(--card);
-      border: 1px solid var(--mint-3);
-      border-radius: var(--radius);
-      padding: var(--space-4);
-    }
-    .review-stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
-    .review-text {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.05rem;
-      color: var(--ink-2);
-      line-height: 1.7;
-      font-style: italic;
-      margin-bottom: var(--space-3);
-    }
-    .review-author { font-size: 0.8rem; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
-    .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: var(--space-4); }
-    .dot-btn {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      border: none;
-      background: var(--mint-3);
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .dot-btn.active { background: var(--teal-500); width: 20px; border-radius: 4px; }
+    /* TESTIMONIALS */
+    #recenze { background: var(--white); }
+    .test-head { text-align: center; max-width: 560px; margin: 0 auto 3rem; }
+    .test-slider { position: relative; max-width: 840px; margin: 0 auto; overflow: hidden; }
+    .test-track { display: flex; transition: transform .7s var(--ease); }
+    .test-slide { min-width: 100%; padding: 2.5rem 3rem; text-align: center; }
+    .test-stars { color: var(--teal); font-size: 1rem; letter-spacing: 4px; margin-bottom: 1.4rem; }
+    .test-quote { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(1.3rem, 2.2vw, 1.7rem); font-weight: 500; line-height: 1.5; color: var(--navy); margin-bottom: 1.6rem; letter-spacing: -.01em; }
+    .test-author { font-size: .82rem; font-weight: 700; color: var(--teal2); }
+    .test-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(14,143,138,.3); border: none; cursor: pointer; transition: all .3s; padding: 0; }
+    .dot.active { background: var(--teal); transform: scale(1.4); }
 
-    /* ============ OBJEDNÁNÍ CTA ============ */
-    #objednani {
-      background: linear-gradient(135deg, var(--teal-700) 0%, var(--teal-300) 100%);
-      color: #fff;
-      padding: var(--space-12) 0;
-    }
-    .objednani-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .objednani-text .section-label { color: var(--teal-100); }
-    .objednani-text .section-label::before { background: var(--teal-100); }
-    .objednani-text h2 { color: #fff; margin-bottom: var(--space-3); }
-    .objednani-text p { color: rgba(255,255,255,.82); margin-bottom: var(--space-4); font-size: 1.05rem; line-height: 1.75; }
-    .objednani-text .btn--fill {
-      background: #fff;
-      color: var(--teal-700);
-      box-shadow: 0 4px 16px rgba(0,0,0,.18);
-    }
-    .objednani-text .btn--fill:hover { background: var(--mint); }
-    .objednani-text .btn--outline {
-      color: #fff;
-      border-color: rgba(255,255,255,.5);
-    }
-    .objednani-text .btn--outline:hover { background: rgba(255,255,255,.12); border-color: #fff; }
-    .objednani-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 360px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.22);
-    }
-    .objednani-img img { width: 100%; height: 100%; object-fit: cover; }
+    /* CONTACT */
+    #kontakt { background: linear-gradient(160deg, var(--paper), var(--mint)); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 5rem; align-items: start; }
+    .contact-item { display: flex; gap: 1.3rem; align-items: flex-start; margin-bottom: 2rem; }
+    .contact-ico { width: 46px; height: 46px; flex-shrink: 0; border-radius: 12px; background: var(--white); color: var(--teal); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(14,80,80,.08); }
+    .contact-ico svg { width: 20px; height: 20px; }
+    .contact-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teal2); margin-bottom: .25rem; }
+    .contact-val { font-size: .96rem; color: var(--ink); line-height: 1.55; }
+    .map-wrap { margin-top: 1.5rem; width: 100%; height: 210px; background: var(--white); overflow: hidden; border-radius: 16px; box-shadow: 0 8px 24px rgba(14,80,80,.08); }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; background: var(--white); padding: 2.4rem; border-radius: 20px; box-shadow: var(--shadow); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+    .form-group label { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select { background: var(--paper); border: 1px solid var(--line); padding: .9rem 1.1rem; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: .9rem; color: var(--ink); outline: none; transition: border-color .3s, box-shadow .3s; resize: none; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,143,138,.14); }
+    .form-group textarea { height: 100px; }
+    .form-submit { background: var(--teal); color: #fff; border: none; padding: 1.05rem 2.5rem; cursor: pointer; border-radius: 999px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; font-weight: 700; transition: all .3s; }
+    .form-submit:hover { background: var(--teal2); box-shadow: 0 10px 26px rgba(14,143,138,.35); }
 
-    /* ============ KONTAKT ============ */
-    #kontakt { background: var(--mint); }
-    .kontakt-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-    .kontakt-info h2 { margin-bottom: var(--space-3); }
-    .kontakt-info p { color: var(--muted); margin-bottom: var(--space-4); }
-    .kontakt-items { display: flex; flex-direction: column; gap: var(--space-3); }
-    .kontakt-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 16px 18px;
-      background: var(--mint-2);
-      border-radius: var(--radius);
-      border: 1px solid var(--mint-3);
-    }
-    .kontakt-icon {
-      width: 42px; height: 42px;
-      background: linear-gradient(135deg, var(--teal-700), var(--teal-300));
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1.1rem;
-    }
-    .kontakt-item-text small {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 600;
-    }
-    .kontakt-item-text strong { display: block; font-size: 0.95rem; margin-top: 3px; }
-    .kontakt-map {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 400px;
-      border: 1px solid var(--mint-3);
-      box-shadow: var(--shadow);
-    }
-    .kontakt-map iframe { width: 100%; height: 100%; border: none; }
+    /* FOOTER */
+    footer { background: var(--navy); padding: 5rem 8% 2.2rem; color: #fff; }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 4rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 2rem; }
+    .footer-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: .55rem; margin-bottom: 1rem; }
+    .footer-logo .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--teal); display: flex; align-items: center; justify-content: center; }
+    .footer-logo .mark svg { width: 17px; height: 17px; }
+    .footer-desc { font-size: .84rem; color: rgba(255,255,255,.5); line-height: 1.8; margin-bottom: 1.5rem; }
+    .social-links { display: flex; gap: .7rem; }
+    .social-link { width: 38px; height: 38px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.6); text-decoration: none; transition: all .3s; }
+    .social-link svg { width: 16px; height: 16px; }
+    .social-link:hover { border-color: var(--teal); color: #6fd8cf; }
+    .footer-col h4 { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 1.4rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .84rem; color: rgba(255,255,255,.5); text-decoration: none; transition: color .25s; }
+    .footer-col ul a:hover { color: #6fd8cf; }
+    .footer-hours li { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(255,255,255,.5); padding-bottom: .6rem; margin-bottom: .6rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .footer-hours li:last-child { border-bottom: none; }
+    .footer-hours li span:last-child { color: rgba(255,255,255,.78); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-copy { font-size: .76rem; color: rgba(255,255,255,.35); }
+    .footer-copy a { color: #6fd8cf; text-decoration: none; }
 
-    /* ============ FOOTER ============ */
-    footer {
-      background: var(--ink);
-      color: rgba(255,255,255,.7);
-      padding: var(--space-8) 0 var(--space-4);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
-      gap: var(--space-6);
-      margin-bottom: var(--space-6);
-    }
-    .footer-brand .nav-logo { color: var(--teal-100); font-size: 1.1rem; }
-    .footer-brand p { font-size: 0.87rem; line-height: 1.75; margin-top: var(--space-2); }
-    .footer-col h4 {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: var(--space-2);
-    }
-    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
-    .footer-col ul a { font-size: 0.87rem; transition: color .2s; }
-    .footer-col ul a:hover { color: var(--teal-100); }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: var(--space-3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-    .footer-bottom a { color: var(--teal-100); }
+    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; border-radius: 50%; background: var(--teal); color: #fff; border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; z-index: 500; }
+    #back-top.show { opacity: 1; visibility: visible; }
+    #back-top:hover { background: var(--teal2); }
 
-    /* ============ REVEAL ANIMATION ============ */
-    [data-r] {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    [data-r].in { opacity: 1; transform: none; }
+    [data-r] { opacity: 0; transform: translateY(34px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    [data-r="left"] { transform: translateX(-34px); }
+    [data-r="right"] { transform: translateX(34px); }
+    [data-r].visible { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-r] { opacity: 1 !important; transform: none !important; } }
 
-    /* ============ RESPONSIVE ============ */
-    @media (max-width: 1000px) {
-      .sluzby-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-6); }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-      .tym-grid { grid-template-columns: 1fr; }
+    @media (max-width: 1024px) {
+      section { padding: 5.5rem 6%; }
+      #hero { grid-template-columns: 1fr; padding: 7rem 6% 3rem; }
+      .hero-photo { height: 60vw; min-height: 340px; }
+      .trust-bar { grid-template-columns: 1fr 1fr; }
+      .trust-item:nth-child(2) { border-right: none; }
+      .svc-grid { grid-template-columns: 1fr 1fr; }
+      .proc-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-figure img { height: 420px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
-    @media (max-width: 900px) {
-      nav ul, .nav-phone { display: none; }
+    @media (max-width: 768px) {
+      .nav-links, .nav-phone { display: none; }
       .hamburger { display: flex; }
-      .hero-grid, .onas-grid, .objednani-grid, .kontakt-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: -1; }
-      .visual-stack { grid-template-rows: 210px 155px; }
-      .visual-float { display: none; }
-      .review-slide { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      #navbar { padding: 1.1rem 6%; }
+      .svc-grid { grid-template-columns: 1fr; }
+      .proc-grid { grid-template-columns: 1fr; }
+      .trust-bar { grid-template-columns: 1fr; }
+      .trust-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-card.rating { left: 0; }
+      .hero-card.pill { right: 0; }
     }
-    @media (max-width: 700px) {
-      .tym-card { grid-template-columns: 1fr; }
-      .tym-card-img { height: 200px; }
-      .tym-card-body { padding: var(--space-3); }
-    }
-    @media (max-width: 600px) {
-      .sluzby-grid, .auto-3, .auto-2 { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .onas-img { height: 300px; }
-      .objednani-img { height: 230px; }
-      .hero-actions { flex-direction: column; }
-      .hero-actions .btn { width: 100%; justify-content: center; }
-      section { padding: var(--space-6) 0; }
-      footer { padding: var(--space-6) 0 var(--space-3); }
-      .kontakt-map { height: 250px; }
-      .stat-num { font-size: 1.8rem; }
-      .card { padding: var(--space-3); }
-    }
+    @media (max-width: 480px) { section { padding: 4.5rem 5%; } .hero-btns { flex-direction: column; align-items: stretch; } .btn-solid, .btn-line { text-align: center; justify-content: center; } }
   </style>
 </head>
 <body>
+<div id="ukazka-banner" style="position:fixed;top:0;left:0;width:100%;background:#0e8f8a;color:#fff;text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box;">
+  ⚡ UKÁZKA – finální web bude s vašimi fotkami a texty
+</div>
+<style>body{margin-top:40px !important;}</style>
 
-<!-- Progress bar -->
 <div id="progress"></div>
 
-<!-- ===== HEADER ===== -->
-<header id="header">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">🦷 <span>RESTAURANT_SHORT_NAME</span></a>
-      <nav aria-label="Hlavní navigace">
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby</a></li>
-          <li><a href="#tym">Tým</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </nav>
-      <div class="nav-cta">
-        <a href="tel:RESTAURANT_PHONE" class="nav-phone">📞 Objednat se</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Otevřít menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
+<nav id="navbar">
+  <a href="#" class="nav-logo"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.5-5-2-6.5-.5S4 9 5 12s1.5 7 3 7 1.5-4 4-4 2.5 4 4 4 2-4 3-7 .5-6-1-7.5S14 3.5 12 5z"/></svg></span>RESTAURANT_SHORT_NAME</a>
+  <ul class="nav-links">
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#proces">Jak to probíhá</a></li>
+    <li><a href="#onas">O nás</a></li>
+    <li><a href="#recenze">Recenze</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1.4rem;">
+    <a href="tel:RESTAURANT_PHONE" class="nav-phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>RESTAURANT_PHONE</a>
+    <a href="#kontakt" class="nav-cta">Objednat se</a>
   </div>
-  <div class="mobile-menu" id="mobileMenu" role="navigation">
-    <a href="#onas">O nás</a>
-    <a href="#sluzby">Služby & ceník</a>
-    <a href="#tym">Tým</a>
-    <a href="#recenze">Recenze</a>
-    <a href="#kontakt">Kontakt</a>
-    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
-  </div>
-</header>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
 
-<!-- ===== HERO ===== -->
+<div id="mobile-nav">
+  <button class="close-nav" id="close-nav">✕</button>
+  <a href="#sluzby">Služby</a>
+  <a href="#proces">Jak to probíhá</a>
+  <a href="#onas">O nás</a>
+  <a href="#recenze">Recenze</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<!-- HERO -->
 <section id="hero">
-  <div class="container">
-    <div class="hero-grid">
-      <div class="hero-text" data-r>
-        <div class="hero-badge">RESTAURANT_CITY · Zubní ordinace</div>
-        <h1 class="hero-title">
-          RESTAURANT_TAGLINE<br>
-          <em>RESTAURANT_NAME</em>
-        </h1>
-        <p class="hero-sub">RESTAURANT_SUBTITLE</p>
-        <div class="hero-actions">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Objednat se</a>
-          <a href="#sluzby" class="btn btn--outline">Naše služby ↓</a>
-        </div>
-        <div class="hero-rating">
-          <span class="stars">★★★★★</span>
-          <strong>RESTAURANT_RATING / 5</strong>
-          <span>· RESTAURANT_REVIEWS hodnocení na Google</span>
-        </div>
-      </div>
-      <div class="hero-visual" data-r>
-        <div class="visual-stack">
-          <div class="img-main">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – zubní ordinace" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – moderní vybavení" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – prostředí ordinace" loading="lazy" style="filter: brightness(.95) saturate(1.05);" />
-          </div>
-        </div>
-        <div class="visual-float">
-          <span class="dot"></span>
-          <div>
-            <strong>Přijímáme nové pacienty</strong><br>
-            <span style="font-size:.78rem;color:var(--muted)">RESTAURANT_CITY</span>
-          </div>
-        </div>
-      </div>
+  <div class="hero-left">
+    <div class="hero-chip"><span class="dot"></span> Přijímáme nové pacienty · RESTAURANT_CITY</div>
+    <h1 class="hero-title">RESTAURANT_TAGLINE</h1>
+    <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+    <div class="hero-btns">
+      <a href="#kontakt" class="btn-solid">Objednat se online</a>
+      <a href="tel:RESTAURANT_PHONE" class="btn-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>RESTAURANT_PHONE</a>
     </div>
+    <div class="hero-trust">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Bezbolestné ošetření</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Moderní vybavení</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Smluvní pojišťovny</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img class="hero-photo" src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'">
+    <div class="hero-card rating">
+      <div class="stars">★★★★★</div>
+      <div><b>RESTAURANT_RATING</b><small>RESTAURANT_REVIEWS+ recenzí</small></div>
+    </div>
+    <div class="hero-card pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.5-5-2-6.5-.5S4 9 5 12s1.5 7 3 7 1.5-4 4-4 2.5 4 4 4 2-4 3-7 .5-6-1-7.5S14 3.5 12 5z"/></svg>Šetrná stomatologie</div>
   </div>
 </section>
 
-<!-- ===== STATS ===== -->
-<section id="stats">
-  <div class="container">
-    <div class="stats-grid">
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_REVIEWS">0</div>
-        <div class="stat-label">Spokojených pacientů</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_RATING" data-decimal>0</div>
-        <div class="stat-label">Hvězd na Google</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="15">0</div>
-        <div class="stat-label">Let praxe</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="7">0</div>
-        <div class="stat-label">Smluvních pojišťoven</div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><div class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div><h4>Smluvní pojišťovny</h4><p>Ošetření hrazené pojišťovnou</p></div></div>
+  <div class="trust-item"><div class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div><div><h4>Moderní přístroje</h4><p>Nejnovější technologie</p></div></div>
+  <div class="trust-item"><div class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div><div><h4>Šetrný přístup</h4><p>I pro nervózní pacienty</p></div></div>
+  <div class="trust-item"><div class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg></div><div><h4>Objednání online</h4><p>Rychle a bez čekání</p></div></div>
+</div>
 
-<!-- ===== O NÁS ===== -->
-<section id="onas">
-  <div class="container">
-    <div class="onas-grid">
-      <div class="onas-img" data-r>
-        <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – ordinace" loading="lazy" />
-        <div class="onas-img-badge">
-          <strong>15+</strong>
-          let v oboru
-        </div>
-      </div>
-      <div class="onas-text" data-r>
-        <div class="section-label">O nás</div>
-        <h2>Vaše zubní ordinace v RESTAURANT_CITY_LOC</h2>
-        <p>RESTAURANT_ABOUT</p>
-        <p class="section-desc">RESTAURANT_ABOUT_SHORT</p>
-        <div class="onas-chips">
-          <span class="chip">🦷 Bezbolestné ošetření</span>
-          <span class="chip">✨ Moderní vybavení</span>
-          <span class="chip">💉 Šetrná anestezie</span>
-          <span class="chip">📅 Online objednání</span>
-          <span class="chip">📍 RESTAURANT_CITY</span>
-        </div>
-        <div style="margin-top:2rem;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">Objednat se</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SLUŽBY / CENÍK ===== -->
+<!-- SERVICES -->
 <section id="sluzby">
-  <div class="container">
-    <div class="sluzby-header" data-r>
-      <div class="section-label">Služby & ceník</div>
-      <h2>Co u nás nabízíme</h2>
-      <p class="section-desc">Kompletní zubní péče pod jednou střechou – od preventivních prohlídek po estetickou stomatologii.</p>
+  <div class="svc-head" data-r>
+    <div class="eyebrow center">Naše služby</div>
+    <h2 class="title">Kompletní péče o <em>váš úsměv</em></h2>
+    <p class="lead">Od pravidelné prevence po estetickou stomatologii — vše na jednom místě a pod jednou střechou.</p>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.5-5-2-6.5-.5S4 9 5 12s1.5 7 3 7 1.5-4 4-4 2.5 4 4 4 2-4 3-7 .5-6-1-7.5S14 3.5 12 5z"/></svg></div>
+      <h3>Prevence a prohlídky</h3><p>Pravidelné kontroly, které včas odhalí problém a ušetří vám starosti i peníze.</p>
     </div>
-    <div class="filter-bar" data-r>
-      <button class="filter-btn active" data-filter="all">Vše</button>
-      <button class="filter-btn" data-filter="prevence">🦷 Prevence</button>
-      <button class="filter-btn" data-filter="estetika">✨ Estetika</button>
-      <button class="filter-btn" data-filter="ortodoncie">🔵 Ortodoncie</button>
-      <button class="filter-btn" data-filter="protetika">🔩 Protetika</button>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l8-16 8 16M8 14h8"/></svg></div>
+      <h3>Dentální hygiena</h3><p>Profesionální čištění, odstranění zubního kamene a nácvik správné péče.</p>
     </div>
-    <div class="sluzby-grid" id="sluzbyGrid">
-
-      <div class="sluzba-card" data-cat="prevence" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Preventivní prohlídka" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Prevence</span>
-          <h3>Preventivní prohlídka</h3>
-          <p>Komplexní vyšetření zubů a dásní, RTG snímek dle potřeby. Hrazeno pojišťovnou 2× ročně.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">Hrazeno pojišťovnou</span>
-          <span class="sluzba-time">⏱ 30 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="prevence" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Dentální hygiena" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Prevence</span>
-          <h3>Dentální hygiena</h3>
-          <p>Profesionální čištění zubů – odstranění zubního kamene, piaskování a instruktáž správné péče.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 800 Kč</span>
-          <span class="sluzba-time">⏱ 60 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="prevence" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Výplň a plomba" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Prevence</span>
-          <h3>Výplň (plomba)</h3>
-          <p>Kompozitní nebo amalgámová výplň – přesná oprava poškozených zubů s důrazem na přirozený vzhled.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 800 Kč</span>
-          <span class="sluzba-time">⏱ 45 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="estetika" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Bělení zubů" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Estetika</span>
-          <h3>Bělení zubů</h3>
-          <p>Profesionální bělení v ordinaci nebo domácí souprava – výrazně bělejší úsměv bez poškození skloviny.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 2 500 Kč</span>
-          <span class="sluzba-time">⏱ 60–90 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="estetika" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Kompozitní fazety" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Estetika</span>
-          <h3>Kompozitní fazety</h3>
-          <p>Tenké keramické nebo kompozitní fazety pro dokonalý estetický úsměv – tvarování a barva dle přání.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 3 000 Kč/zub</span>
-          <span class="sluzba-time">⏱ 90 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="ortodoncie" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Ortodoncie rovnátka" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Ortodoncie</span>
-          <h3>Rovnátka & Invisalign</h3>
-          <p>Fixní nebo průhledná snímatelná rovnátka pro děti i dospělé. Výsledek, který změní váš úsměv.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">Individuální nacenění</span>
-          <span class="sluzba-time">⏱ Konzultace zdarma</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="protetika" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Zubní korunka" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Protetika</span>
-          <h3>Keramická korunka</h3>
-          <p>Náhrada poškozeného nebo zlomeného zubu keramickou korunkou – pevné, trvanlivé a estetické řešení.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 8 000 Kč</span>
-          <span class="sluzba-time">⏱ 2 návštěvy</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="protetika" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Zubní implantát" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Protetika</span>
-          <h3>Zubní implantát</h3>
-          <p>Trvalá náhrada chybějícího zubu – titanový šroub v kosti s keramickou korunkou. Nejtrvanlivější řešení.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 15 000 Kč</span>
-          <span class="sluzba-time">⏱ Plánování zdarma</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="protetika" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Snímatelná protéza" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Protetika</span>
-          <h3>Zubní protéza</h3>
-          <p>Celková nebo částečná snímatelná protéza zhotovená na míru pro dokonalé přizpůsobení a komfort.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">Individuální nacenění</span>
-          <span class="sluzba-time">⏱ Dle rozsahu</span>
-        </div>
-      </div>
-
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3l6 3v6a6 6 0 0 1-6 6 6 6 0 0 1-3-11z"/><path d="M9 8v6"/></svg></div>
+      <h3>Záchovná stomatologie</h3><p>Šetrné ošetření zubního kazu s estetickými bílými výplněmi.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="7" rx="2"/><rect x="5" y="13" width="14" height="7" rx="2"/></svg></div>
+      <h3>Protetika</h3><p>Korunky, můstky a náhrady, které vrátí funkci i krásu vašim zubům.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M9 8h6l-1 8a2 2 0 0 1-4 0z"/><path d="M10.5 16h3"/></svg></div>
+      <h3>Zubní implantáty</h3><p>Trvalé a pevné řešení pro chybějící zuby, které vydrží roky.</p>
+    </div>
+    <div class="svc-card" data-r>
+      <div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 3.9 4.3.6-3.1 3 .7 4.3L12 12.8 8.2 14.8l.7-4.3-3.1-3 4.3-.6z"/></svg></div>
+      <h3>Bělení zubů</h3><p>Bezpečné zesvětlení a zářivější úsměv za jedno odpoledne.</p>
     </div>
   </div>
 </section>
 
-<!-- ===== TÝM ===== -->
-<section id="tym">
-  <div class="container">
-    <div class="tym-header" data-r>
-      <div class="section-label">Náš tým</div>
-      <h2>Odborníci, kterým můžete důvěřovat</h2>
-      <p class="section-desc" style="margin: 0.5rem auto 0;">Zkušený tým zubních lékařů a hygienistek, kteří se o vás postarají s maximální péčí.</p>
+<!-- PROCESS -->
+<section id="proces">
+  <div class="proc-head" data-r>
+    <div class="eyebrow center">Jak to u nás probíhá</div>
+    <h2 class="title">Cesta ke zdravému <em>úsměvu</em></h2>
+    <p class="lead" style="margin:0 auto;">Čtyři jednoduché kroky — od prvního objednání až po dlouhodobou péči.</p>
+  </div>
+  <div class="proc-grid">
+    <div class="proc-step" data-r><div class="proc-num">01</div><h3>Objednání</h3><p>Ozvěte se telefonem nebo online. Najdeme termín, který vám vyhovuje.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">02</div><h3>Vstupní vyšetření</h3><p>Prohlédneme stav vašich zubů a v klidu probereme, co potřebujete.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">03</div><h3>Plán léčby</h3><p>Navrhneme řešení na míru — srozumitelně a s jasnou cenou předem.</p></div>
+    <div class="proc-step" data-r><div class="proc-num">04</div><h3>Šetrné ošetření</h3><p>Postaráme se o vás bezbolestně a doporučíme následnou péči.</p></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="onas">
+  <div class="about-grid">
+    <div class="about-figure" data-r="left">
+      <img src="../stock_photos/PHOTO_2" alt="Ordinace – RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
     </div>
-    <div class="tym-grid">
-
-      <div class="tym-card" data-r>
-        <div class="tym-card-img">
-          <img src="../stock_photos/PHOTO_1" alt="Zubní lékař – RESTAURANT_NAME" loading="lazy" />
-        </div>
-        <div class="tym-card-body">
-          <div class="tym-role">Zubní lékař · Vedoucí ordinace</div>
-          <h3>MUDr. RESTAURANT_NAME</h3>
-          <p>Absolvent Lékařské fakulty s více než 15 lety klinické praxe. Specializace na estetickou stomatologii a implantologii.</p>
-          <div class="tym-tags">
-            <span class="tym-tag">Estetická stomatologie</span>
-            <span class="tym-tag">Implantologie</span>
-            <span class="tym-tag">Endodoncie</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="tym-card" data-r>
-        <div class="tym-card-img">
-          <img src="../stock_photos/PHOTO_2" alt="Dentální hygienistka – RESTAURANT_NAME" loading="lazy" />
-        </div>
-        <div class="tym-card-body">
-          <div class="tym-role">Dentální hygienistka</div>
-          <h3>DiS. Jana Nováková</h3>
-          <p>Certifikovaná dentální hygienistka s individuálním přístupem ke každému pacientovi. Specialistka na prevenci a parodontologii.</p>
-          <div class="tym-tags">
-            <span class="tym-tag">Dentální hygiena</span>
-            <span class="tym-tag">Parodontologie</span>
-            <span class="tym-tag">Dětská péče</span>
-          </div>
-        </div>
-      </div>
-
+    <div data-r="right">
+      <div class="eyebrow">O nás</div>
+      <h2 class="title">Zubaře, kterému <em>budete věřit</em></h2>
+      <p class="about-text">RESTAURANT_ABOUT</p>
+      <ul class="about-checks">
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Individuální přístup ke každému pacientovi</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Moderní vybavení a šetrné metody</li>
+        <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Srozumitelná komunikace a ceny předem</li>
+      </ul>
+      <a href="#kontakt" class="btn-solid">Objednat se</a>
     </div>
   </div>
 </section>
 
-<!-- ===== POJIŠŤOVNY ===== -->
+<!-- INSURANCE -->
 <section id="pojistovny">
-  <div class="container">
-    <div class="pojist-header" data-r>
-      <div class="section-label">Smluvní pojišťovny</div>
-      <h2>Spolupracujeme s vašimi pojišťovnami</h2>
-    </div>
-  </div>
-  <div class="pojist-wrap">
-    <div class="pojist-track" id="pojistTrack">
-      <!-- Duplicated for infinite loop – JS fills both halves -->
+  <div class="ins-box" data-r>
+    <div class="eyebrow center">Pojišťovny</div>
+    <h2 class="title">Máme smlouvu s <em>pojišťovnami</em></h2>
+    <p class="lead" style="margin:0 auto;">Většina ošetření je hrazena z veřejného zdravotního pojištění. Rádi vám poradíme, co pojišťovna pokryje.</p>
+    <div class="ins-list">
+      <span>VZP (111)</span><span>ČPZP (205)</span><span>OZP (207)</span><span>VoZP (201)</span><span>ZPMV (211)</span><span>RBP (213)</span>
     </div>
   </div>
 </section>
 
-<!-- ===== GALERIE ===== -->
+<!-- GALLERY -->
 <section id="galerie">
-  <div class="container">
-    <div class="galerie-header" data-r>
-      <div class="section-label">Galerie</div>
-      <h2>Naše ordinace a výsledky</h2>
-    </div>
+  <div class="gallery-head" data-r>
+    <div class="eyebrow center">Naše ordinace</div>
+    <h2 class="title">Prostředí, kde se <em>budete cítit dobře</em></h2>
   </div>
   <div class="marquee-wrap">
-    <div class="marquee-track" id="marqueeTrack">
-      <!-- JS doplní fotky -->
-    </div>
-    <div class="marquee-fade-l"></div>
-    <div class="marquee-fade-r"></div>
+    <div class="marquee-row" id="row1"></div>
+    <div class="marquee-row reverse" id="row2"></div>
   </div>
 </section>
 
-<!-- ===== RECENZE ===== -->
+<!-- TESTIMONIALS -->
 <section id="recenze">
-  <div class="container">
-    <div class="recenze-header" data-r>
-      <div class="section-label">Recenze</div>
-      <h2>Co říkají naši pacienti</h2>
-      <p class="section-desc" style="margin: 0.5rem auto 0;">Hodnocení RESTAURANT_RATING / 5 na základě RESTAURANT_REVIEWS recenzí na Google.</p>
+  <div class="test-head" data-r>
+    <div class="eyebrow center">Zkušenosti pacientů</div>
+    <h2 class="title">Co říkají <em>naši pacienti</em></h2>
+  </div>
+  <div class="test-slider" data-r>
+    <div class="test-track" id="test-track">
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Konečně zubař, u kterého se nebojím. Vše mi v klidu vysvětlili a ošetření bylo naprosto bezbolestné.</p><div class="test-author">Petra K. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Moderní ordinace, milý personál a objednání online během chvíle. Nejlepší zubní péče v RESTAURANT_CITY_LOC.</p><div class="test-author">Martin J. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Chodí sem celá rodina i děti. Vždy vstřícný přístup a péče, na kterou se dá spolehnout.</p><div class="test-author">Jana M. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Implantát proběhl bez problémů a výsledek předčil očekávání. Vřele doporučuji všem.</p><div class="test-author">Tomáš B. · RESTAURANT_CITY</div></div>
     </div>
-    <div class="slider" data-r>
-      <div class="slider-track" id="sliderTrack">
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Konečně zubař, kde se nebojím! Příjemný přístup, šetrné ošetření a skvělé výsledky. Vracím se sem pravidelně."</p>
-            <div class="review-author">— Jana K. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Dentální hygiena provedena naprosto profesionálně. Zuby svítí jako nikdy předtím a paní hygienistka vše srozumitelně vysvětlila."</p>
-            <div class="review-author">— Tomáš M. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Pan doktor je naprosto skvělý – trpělivý, pečlivý a bezbolestný přístup. Implantát dopadl perfektně. Vřele doporučuji!"</p>
-            <div class="review-author">— Petra V. · Google</div>
-          </div>
-        </div>
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Naše celá rodina chodí sem. Děti se zubaře nebojí, personál je skvělý a výsledky jsou vidět. Moc doporučuji!"</p>
-            <div class="review-author">— Lucie B. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★☆</div>
-            <p class="review-text">„Objednání proběhlo rychle, ordinace je moderně vybavená a doktor přátelský. Bělení zubů dopadlo nad očekávání."</p>
-            <div class="review-author">— Martin S. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Po letech strachu ze zubaře konečně ordinace, kde se cítím pohodlně. Bezbolestné ošetření a lidský přístup – 10/10."</p>
-            <div class="review-author">— Kateřina N. · Google</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="slider-dots" id="sliderDots">
-      <button class="dot-btn active" data-idx="0" aria-label="Slide 1"></button>
-      <button class="dot-btn" data-idx="1" aria-label="Slide 2"></button>
-    </div>
+  </div>
+  <div class="test-dots" id="test-dots">
+    <button class="dot active" data-i="0"></button><button class="dot" data-i="1"></button><button class="dot" data-i="2"></button><button class="dot" data-i="3"></button>
   </div>
 </section>
 
-<!-- ===== OBJEDNÁNÍ CTA ===== -->
-<section id="objednani">
-  <div class="container">
-    <div class="objednani-grid">
-      <div class="objednani-text" data-r>
-        <div class="section-label">Objednání</div>
-        <h2>Objednejte se ještě dnes</h2>
-        <p>Rádi vás přivítáme – ať už přicházíte na preventivní prohlídku, dentální hygienu nebo estetické ošetření. Stačí zavolat.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
-          <a href="#kontakt" class="btn btn--outline">Kde nás najdete</a>
-        </div>
-      </div>
-      <div class="objednani-img" data-r>
-        <img src="../stock_photos/PHOTO_1" alt="Objednání – RESTAURANT_NAME" loading="lazy" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== KONTAKT ===== -->
+<!-- CONTACT -->
 <section id="kontakt">
-  <div class="container">
-    <div class="kontakt-grid">
-      <div class="kontakt-info" data-r>
-        <div class="section-label">Kontakt</div>
-        <h2>Najdete nás v RESTAURANT_CITY_LOC</h2>
-        <p>Rádi vás uvítáme. Objednejte se telefonicky nebo nás navštivte osobně.</p>
-        <div class="kontakt-items">
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📍</div>
-            <div class="kontakt-item-text">
-              <small>Adresa</small>
-              <strong>RESTAURANT_ADDRESS</strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📞</div>
-            <div class="kontakt-item-text">
-              <small>Telefon</small>
-              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">✉️</div>
-            <div class="kontakt-item-text">
-              <small>Email</small>
-              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">🕐</div>
-            <div class="kontakt-item-text">
-              <small>Otevírací doba</small>
-              <strong>Po–Čt 8:00–17:00 · Pá 8:00–13:00</strong>
-            </div>
-          </div>
+  <div class="contact-grid">
+    <div data-r="left">
+      <div class="eyebrow">Objednání</div>
+      <h2 class="title">Objednejte se do <em>ordinace</em></h2>
+      <div class="contact-info" style="margin-top:2rem;">
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><div class="contact-label">Adresa</div><div class="contact-val">RESTAURANT_ADDRESS</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+          <div><div class="contact-label">Telefon</div><div class="contact-val">RESTAURANT_PHONE</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="contact-label">Ordinační hodiny</div><div class="contact-val">Po–Pá: 8:00–17:00<br>Akutní stavy po telefonu</div></div>
         </div>
       </div>
-      <div class="kontakt-map" data-r>
-        <iframe
-          src="GOOGLE_MAPS_EMBED"
-          allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Mapa RESTAURANT_NAME"
-        ></iframe>
-      </div>
+      <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
     </div>
+    <div data-r="right">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-group"><label>Telefon</label><input type="tel" placeholder="+420…"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Důvod návštěvy</label>
+            <select><option>Preventivní prohlídka</option><option>Dentální hygiena</option><option>Bolest / akutní stav</option><option>Estetika / bělení</option><option>Nový pacient</option></select>
+          </div>
+          <div class="form-group"><label>Preferovaný termín</label><input type="date"></div>
+        </div>
+        <div class="form-group"><label>Zpráva</label><textarea placeholder="Popište prosím, s čím vám můžeme pomoci…"></textarea></div>
+        <button type="submit" class="form-submit">Odeslat objednávku</button>
+      </form>
+    </div>
+  </div>
+  <div style="text-align:center;margin:3rem 0 0;">
+    <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:#0e8f8a;color:#fff;border-radius:999px;padding:15px 40px;font-size:16px;text-decoration:none;font-weight:700;">Chci takový web</a>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
+<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="nav-logo">🦷 <span>RESTAURANT_NAME</span></div>
-        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigace</h4>
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby & ceník</a></li>
-          <li><a href="#tym">Náš tým</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Kontakt</h4>
-        <ul>
-          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
-          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
-          <li>RESTAURANT_ADDRESS_SHORT</li>
-        </ul>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.5-5-2-6.5-.5S4 9 5 12s1.5 7 3 7 1.5-4 4-4 2.5 4 4 4 2-4 3-7 .5-6-1-7.5S14 3.5 12 5z"/></svg></span>RESTAURANT_NAME</a>
+      <p class="footer-desc">RESTAURANT_ABOUT_SHORT</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 RESTAURANT_NAME · Všechna práva vyhrazena</span>
-      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    <div class="footer-col">
+      <h4>Ordinace</h4>
+      <ul><li><a href="#sluzby">Služby</a></li><li><a href="#proces">Jak to probíhá</a></li><li><a href="#onas">O nás</a></li><li><a href="#recenze">Recenze</a></li><li><a href="#kontakt">Objednání</a></li></ul>
     </div>
+    <div class="footer-col">
+      <h4>Ordinační hodiny</h4>
+      <ul class="footer-hours"><li><span>Po–Čt</span><span>8:00–17:00</span></li><li><span>Pátek</span><span>8:00–14:00</span></li><li><span>So–Ne</span><span>zavřeno</span></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul><li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li><li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li><li><a href="#">RESTAURANT_EMAIL</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
   </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
 <script>
-  /* --- Progress bar --- */
-  window.addEventListener('scroll', () => {
-    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-    document.getElementById('progress').style.width = pct + '%';
-  });
+window.addEventListener('scroll', () => {
+  const s = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  document.getElementById('progress').style.transform = `scaleX(${s/h})`;
+  document.getElementById('navbar').classList.toggle('scrolled', s > 60);
+  document.getElementById('back-top').classList.toggle('show', s > 400);
+}, {passive:true});
 
-  /* --- Sticky header shadow --- */
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 10);
-  });
+const ham = document.getElementById('ham'), mNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => mNav.classList.add('open'));
+document.getElementById('close-nav').addEventListener('click', () => mNav.classList.remove('open'));
+mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mNav.classList.remove('open')));
 
-  /* --- Hamburger --- */
-  const btn = document.getElementById('hamburgerBtn');
-  const menu = document.getElementById('mobileMenu');
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', false);
-  }));
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const el = document.querySelector(a.getAttribute('href')); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } }); });
 
-  /* --- Reveal on scroll --- */
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('[data-r]').forEach(el => observer.observe(el));
+const revObs = new IntersectionObserver(es => { es.forEach((e,i) => { if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*70); revObs.unobserve(e.target); } }); }, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
 
-  /* --- Stats counter --- */
-  const statsObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      const target = parseFloat(el.dataset.count);
-      const isDecimal = 'decimal' in el.dataset;
-      const duration = 1400;
-      const step = 16;
-      const steps = duration / step;
-      let current = 0;
-      const inc = target / steps;
-      const timer = setInterval(() => {
-        current = Math.min(current + inc, target);
-        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
-        if (current >= target) clearInterval(timer);
-      }, step);
-      statsObs.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('[data-count]').forEach(el => statsObs.observe(el));
+const photos = [GALLERY_PHOTOS_JS].filter(s => s && s.length);
+const rows = [document.getElementById('row1'), document.getElementById('row2')];
+if(photos.length > 0){ rows.forEach(row => { [...photos,...photos,...photos,...photos].forEach(src => { const img=document.createElement('img'); img.src=src; img.alt='Ordinace'; img.loading='lazy'; img.onerror=function(){ this.remove(); }; row.appendChild(img); }); }); }
+else { document.getElementById('galerie').style.display='none'; }
 
-  /* --- Ceník filtr --- */
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const filter = btn.dataset.filter;
-      document.querySelectorAll('.sluzba-card').forEach(card => {
-        const match = filter === 'all' || card.dataset.cat === filter;
-        card.style.display = match ? '' : 'none';
-      });
-    });
-  });
-
-  /* --- Pojišťovny marquee --- */
-  const pojistovny = [
-    { name: 'VZP', code: '111' },
-    { name: 'ČPZZ', code: '205' },
-    { name: 'OZP', code: '207' },
-    { name: 'ZPMV', code: '211' },
-    { name: 'VoZP', code: '201' },
-    { name: 'RBZP', code: '213' },
-    { name: 'Metal-Aliance', code: '217' },
-  ];
-  const pojistTrack = document.getElementById('pojistTrack');
-  const doubled = [...pojistovny, ...pojistovny];
-  doubled.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'pojist-badge';
-    div.innerHTML = `<div><span>${p.name}</span><small>Kód ${p.code}</small></div>`;
-    pojistTrack.appendChild(div);
-  });
-
-  /* --- Galerie marquee --- */
-  const photos = [GALLERY_PHOTOS_JS];
-  const track = document.getElementById('marqueeTrack');
-  if (photos.length > 0 && photos[0]) {
-    const doubled2 = [...photos, ...photos];
-    doubled2.forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="${src}" alt="Galerie ordinace" loading="lazy" />`;
-      track.appendChild(div);
-    });
-    if (photos.length < 4) track.style.animationDuration = '18s';
-  } else {
-    ['PHOTO_1', 'PHOTO_2', 'PHOTO_1', 'PHOTO_2'].forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="photos/${src}" alt="Zubní ordinace" loading="lazy" />`;
-      track.appendChild(div);
-    });
-  }
-
-  /* --- Recenze slider --- */
-  const sliderTrack = document.getElementById('sliderTrack');
-  const slides = sliderTrack.querySelectorAll('.review-slide');
-  const dots = document.getElementById('sliderDots');
-  let current = 0;
-
-  function goTo(idx) {
-    current = idx;
-    sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
-    dots.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === idx));
-  }
-  dots.querySelectorAll('.dot-btn').forEach((d, i) => d.addEventListener('click', () => goTo(i)));
-  if (slides.length > 1) setInterval(() => goTo((current + 1) % slides.length), 5000);
+let cur=0; const track=document.getElementById('test-track'), dots=document.querySelectorAll('.dot'), slides=track.querySelectorAll('.test-slide');
+function goTo(n){ cur=n; track.style.transform=`translateX(-${n*100}%)`; dots.forEach((d,i)=>d.classList.toggle('active',i===n)); }
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+setInterval(() => goTo((cur+1)%slides.length), 5000);
 </script>
-
 </body>
 </html>

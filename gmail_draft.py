@@ -25,18 +25,46 @@ SENDER_EMAIL = "matyas.vrbaa@gmail.com"
 
 
 def get_gmail_service():
-    creds = None
-    if os.path.exists(TOKEN_FILE):
-        with open(TOKEN_FILE, "rb") as f:
-            creds = pickle.load(f)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open(TOKEN_FILE, "wb") as f:
-            pickle.dump(creds, f)
+    import fcntl
+    import time as _time
+
+    def _load():
+        if os.path.exists(TOKEN_FILE):
+            with open(TOKEN_FILE, "rb") as f:
+                return pickle.load(f)
+        return None
+
+    creds = _load()
+    if creds and creds.valid:
+        return build("gmail", "v1", credentials=creds)
+
+    # Obnova tokenu pod zámkem – jen jeden proces naráz (zabrání revokaci při souběhu)
+    lock_path = TOKEN_FILE + ".lock"
+    with open(lock_path, "w") as lockf:
+        fcntl.flock(lockf, fcntl.LOCK_EX)
+        try:
+            creds = _load()
+            if creds and creds.valid:
+                return build("gmail", "v1", credentials=creds)
+            if creds and creds.expired and creds.refresh_token:
+                for attempt in range(3):
+                    try:
+                        creds.refresh(Request())
+                        break
+                    except Exception:
+                        if attempt == 2:
+                            raise
+                        _time.sleep(2)
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            tmp = TOKEN_FILE + ".tmp"
+            with open(tmp, "wb") as f:
+                pickle.dump(creds, f)
+            os.replace(tmp, TOKEN_FILE)
+        finally:
+            fcntl.flock(lockf, fcntl.LOCK_UN)
+
     return build("gmail", "v1", credentials=creds)
 
 

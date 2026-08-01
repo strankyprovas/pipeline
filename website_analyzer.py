@@ -261,9 +261,9 @@ def assess_website(url, screenshots_dir="output/screenshots"):
                 print(f"  🎯 Finální skóre: {final_score}/100")
 
     # Klasifikace
-    # Bez Claude Vision (API klíč chybí) bereme vše pod 65 jako špatný web,
-    # protože hraniční pásmo 35-65 nemáme jak vizuálně posoudit.
-    threshold = 50 if ANTHROPIC_API_KEY else 65
+    # Threshold: weby pod tímto skóre mají zastaralý design/kód a profitovaly by z redesignu
+    # S Vision je analýza přesnější → nižší threshold stačí; bez Vision → přísnější (75)
+    threshold = 60 if vision_info else 75
     if final_score < threshold:
         verdict = "spatny_web"
     else:

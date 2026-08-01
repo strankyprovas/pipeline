@@ -4,6 +4,7 @@ import os
 import random
 import subprocess
 import sys
+import time
 from scraper import (
     search_restaurants,
     search_businesses,
@@ -23,6 +24,32 @@ from website_analyzer import assess_website
 from ai_email import generate_ai_email
 from gmail_draft import create_draft
 
+# ─── Dávkový push na GitHub Pages ────────────────────────────────────────────
+# GitHub Pages zvládne jen ~10 buildů/hodinu. Častější push → "Page build
+# failed" a dema zůstanou nedostupná (404). Proto pushujeme max 1× za 10 min.
+_PUSH_MIN_INTERVAL = 600  # sekund
+
+
+def _maybe_push(demos_dir: str, force: bool = False) -> None:
+    """Pushne nacommitovaná dema, ale nejvýš jednou za _PUSH_MIN_INTERVAL."""
+    import subprocess as _sp
+    stamp = os.path.join(demos_dir, ".last_push")
+    now = time.time()
+    if not force and os.path.exists(stamp):
+        if now - os.path.getmtime(stamp) < _PUSH_MIN_INTERVAL:
+            return
+    ahead = _sp.run(["git", "-C", demos_dir, "log", "origin/master..HEAD", "--oneline"],
+                    capture_output=True, text=True).stdout.strip()
+    if not ahead:
+        return
+    res = _sp.run(["git", "-C", demos_dir, "push", "origin", "master"],
+                  capture_output=True, text=True)
+    if res.returncode == 0:
+        print(f"  🚀 Pushnuto {len(ahead.splitlines())} dem na GitHub Pages", flush=True)
+        open(stamp, "w").close()
+    else:
+        print(f"  ⚠️  Push selhal: {res.stderr.strip()[:150]}", flush=True)
+
 # Google Sheets - načti jen pokud credentials existují
 SHEETS_ENABLED = os.path.exists(os.path.join(os.path.dirname(__file__), "credentials.json"))
 if SHEETS_ENABLED:
@@ -36,6 +63,8 @@ BASE_DIR = os.path.dirname(__file__)
 INDUSTRY_DEMOS_DIR = {
     "restaurace":  os.path.join(BASE_DIR, "demos"),
     "kavarna":     os.path.join(BASE_DIR, "demos-kavarny"),
+    "pekarna":     os.path.join(BASE_DIR, "demos-pekarna"),
+    "kvetinarstvi":os.path.join(BASE_DIR, "demos-kvetinarstvi"),
     "penzion":     os.path.join(BASE_DIR, "demos-penziony"),
     "kadernictvi": os.path.join(BASE_DIR, "demos-kadernictvi"),
     "kosmetika":   os.path.join(BASE_DIR, "demos-kosmetika"),
@@ -48,6 +77,8 @@ INDUSTRY_DEMOS_DIR = {
 INDUSTRY_PAGES_URL = {
     "restaurace":  "https://strankyprovas.github.io/restaurace",
     "kavarna":     "https://strankyprovas.github.io/kavarny",
+    "pekarna":     "https://strankyprovas.github.io/pekarna",
+    "kvetinarstvi":"https://strankyprovas.github.io/kvetinarstvi",
     "penzion":     "https://strankyprovas.github.io/penzion",
     "kadernictvi": "https://strankyprovas.github.io/kadernictvi",
     "kosmetika":   "https://strankyprovas.github.io/kosmetika",
@@ -90,7 +121,24 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
         num_results=BATCH_SIZE,
         osm_filter=ind.get("osm_filter", '["amenity"="restaurant"]'),
     )
-    print(f"  Nalezeno {len(places)} podniků k prověření\n")
+    print(f"  Nalezeno {len(places)} podniků k prověření (OSM)\n")
+
+    # Doplň výsledky z Firmy.cz (lepší pokrytí emailů/telefonů)
+    try:
+        from firmy_scraper import search_businesses_firmy_sync
+        # Vyšší limit kvůli zaplněné databázi – hodně nálezů se přeskočí jako duplicity
+        firmy_limit = min(30, max(target * 5, 20))
+        print(f"  🔍 Firmy.cz: načítám až {firmy_limit} podniků...", flush=True)
+        firmy_places = search_businesses_firmy_sync(city, industry, max_results=firmy_limit)
+        print(f"  Firmy.cz: {len(firmy_places)} podniků\n", flush=True)
+        # Firmy.cz PRVNÍ – mají přímé emaily, zpracujeme je dřív než OSM
+        places = firmy_places + places
+    except Exception as e:
+        import traceback
+        print(f"  ⚠️  Firmy.cz scraping selhal: {e}", flush=True)
+        traceback.print_exc()
+
+    print(f"  Celkem {len(places)} podniků k prověření (OSM + Firmy.cz)\n", flush=True)
 
     # Připoj Google Sheet
     sheet = None
@@ -175,14 +223,9 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             if email:
                 print(f"  📧 Email z Facebooku (OSM): {email}")
 
-        # Poslední záchrana: DuckDuckGo hledání Facebooku
-        if not email and not fb_page_url:
-            fb_page_url = find_facebook_via_google(name, city)
-            if fb_page_url:
-                print(f"  📘 Facebook nalezen přes DuckDuckGo: {fb_page_url}")
-                email = scrape_email_from_facebook(fb_page_url)
-                if email:
-                    print(f"  📧 Email z Facebooku: {email}")
+        # Poslední záchrana: DuckDuckGo hledání Facebooku (přeskakujeme – nespolehlivé a pomalé)
+        # if not email and not fb_page_url:
+        #     fb_page_url = find_facebook_via_google(name, city)
 
         if not email:
             # Facebook nalezen ale bez emailu – ulož do Sheetu pro manuální oslovení
@@ -221,11 +264,19 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             continue
 
         # 1c. Deduplikace domény (v rámci celého běhu)
+        # Sdílené free domény (gmail, seznam atd.) NEVYLUČUJEME – každý zákazník je jiný
+        _SHARED_DOMAINS = {
+            "gmail.com", "googlemail.com", "seznam.cz", "email.cz", "centrum.cz",
+            "volny.cz", "post.cz", "atlas.cz", "yahoo.com", "yahoo.co.uk",
+            "hotmail.com", "hotmail.cz", "outlook.com", "live.com", "icloud.com",
+            "me.com", "tiscali.cz", "quick.cz", "azet.cz",
+        }
         email_domain = email.split("@")[1].lower()
-        if email_domain in used_domains:
-            print(f"  ⏭️  Doména {email_domain} již použita v tomto běhu – přeskakuji\n")
-            continue
-        used_domains.add(email_domain)
+        if email_domain not in _SHARED_DOMAINS:
+            if email_domain in used_domains:
+                print(f"  ⏭️  Doména {email_domain} již použita v tomto běhu – přeskakuji\n")
+                continue
+            used_domains.add(email_domain)
 
         # 2. Duplikát v DB? (kontrola z in-memory cache – žádné Sheets čtení)
         if email.lower() in sheet_emails or name.lower() in sheet_names:
@@ -277,10 +328,10 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                     for r in reasons:
                         print(f"    {r}")
                 else:
-                    # Custom doména ale web nereaguje → přeskočíme,
-                    # raději nic nepošleme než špatný email
-                    print(f"  ⚠️  Custom doména {email_domain_check} nereaguje – přeskakuji\n")
-                    continue
+                    # Custom doména nereaguje → web je nefunkční nebo expirovaný
+                    # Perfektní lead: posíláme jim demo jako "bez_webu"
+                    print(f"  🚫 Bez webu / nefunkční web ({email_domain_check})")
+                    category = "bez_webu"
             else:
                 # Volná emailová služba (gmail atd.) a žádný web → OK, posíláme "bez_webu"
                 print(f"  🚫 Bez webu (free email doména)")
@@ -323,6 +374,17 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             demo_url = f"{pages_base}/{slug}/"
             print(f"  ✅ Demo: {demo_path}")
 
+            # Commitni demo hned, ale PUSHUJ JEN DÁVKOVĚ.
+            # ⚠️ GitHub Pages má limit ~10 buildů/hod – push po každém demu
+            # limit překročí a buildy začnou selhávat ("Page build failed"),
+            # takže odkazy zůstanou 404. Push řeší _maybe_push() níže.
+            try:
+                subprocess.run(["git", "-C", demos_dir, "add", slug], check=True, capture_output=True)
+                subprocess.run(["git", "-C", demos_dir, "commit", "-m", f"Demo: {slug}"], check=True, capture_output=True)
+            except subprocess.CalledProcessError as e:
+                print(f"  ⚠️  Commit dema selhal: {e}")
+            _maybe_push(demos_dir)
+
             # Gmail draft
             ab_variant = ""
             try:
@@ -338,9 +400,11 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             except Exception as e:
                 print(f"  ⚠️  Draft se nepodařilo vytvořit: {e}")
 
-            # Google Sheet
+            # Google Sheet – follow_up_due = 5 dní od teď
+            from datetime import datetime, timedelta
+            follow_up_due = (datetime.now() + timedelta(days=5)).strftime("%Y-%m-%d")
             if sheet:
-                add_restaurant(sheet, {**row, "demo_url": demo_url, "ab_variant": ab_variant, "industry": industry})
+                add_restaurant(sheet, {**row, "demo_url": demo_url, "ab_variant": ab_variant, "industry": industry, "follow_up_due": follow_up_due})
             # Aktualizuj in-memory cache
             sheet_emails.add(email.lower())
             sheet_names.add(name.lower())

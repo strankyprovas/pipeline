@@ -1,57 +1,43 @@
-"""Re-autorizace Gmail OAuth tokenu – vlastní HTTP server."""
-import pickle
-import sys
-import threading
-import urllib.parse
-from http.server import HTTPServer, BaseHTTPRequestHandler
+"""Obnoví Google OAuth token bez potřeby browseru v WSL."""
+import os, pickle, webbrowser
 from google_auth_oauthlib.flow import InstalledAppFlow
 
+CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "credentials.json")
+TOKEN_FILE = os.path.join(os.path.dirname(__file__), "token.pickle")
 SCOPES = [
-    "https://www.googleapis.com/auth/gmail.modify",
-    "https://www.googleapis.com/auth/gmail.compose",
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/gmail.compose",
 ]
 
-auth_code = None
+if os.path.exists(TOKEN_FILE):
+    os.remove(TOKEN_FILE)
 
-class CallbackHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        global auth_code
-        params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
-        auth_code = params.get("code", [None])[0]
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write("<h1>✅ Autorizace úspěšná! Můžeš zavřít toto okno.</h1>".encode("utf-8"))
-        threading.Thread(target=self.server.shutdown).start()
+flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
+# OOB (urn:ietf:wg:oauth:2.0:oob) Google zrušil → používáme loopback redirect.
+flow.redirect_uri = "http://localhost"
 
-    def log_message(self, format, *args):
-        pass
-
-flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-flow.redirect_uri = "http://localhost:8080/"
 auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline")
 
-with open("/tmp/auth_url.txt", "w") as f:
-    f.write(auth_url)
-
-print("\n" + "="*60)
-print("OTEVŘI TUTO URL VE WINDOWS BROWSERU:")
-print("="*60)
+print("\n📋 Otevři tuto URL v prohlížeči:\n")
 print(auth_url)
-print("="*60)
-print("\nČekám na callback z Googlu...\n")
-sys.stdout.flush()
-
-server = HTTPServer(("0.0.0.0", 8080), CallbackHandler)
-server.serve_forever()
-
-if auth_code:
-    flow.fetch_token(code=auth_code)
-    creds = flow.credentials
-    with open("token.pickle", "wb") as f:
-        pickle.dump(creds, f)
-    print("✅ Token uložen! Gmail je znovu autorizovaný.")
+print("\nPo přihlášení tě přesměruje na http://localhost/... (prohlížeč ukáže chybu – to nevadí).")
+print("Zkopíruj CELOU URL z adresního řádku (obsahuje ?code=...) a vlož ji sem.")
+pasted = input("\nSem vlož tu URL (nebo jen kód) a stiskni Enter: ").strip()
+# Vytáhni kód z vložené URL, nebo použij přímo vložený kód
+if "code=" in pasted:
+    from urllib.parse import urlparse, parse_qs
+    code = parse_qs(urlparse(pasted).query).get("code", [""])[0]
 else:
-    print("❌ Kód neodchycen.")
+    code = pasted
+
+flow.fetch_token(code=code)
+creds = flow.credentials
+
+with open(TOKEN_FILE, "wb") as f:
+    pickle.dump(creds, f)
+
+print("\n✅ Token uložen! Spouštím test...")
+import gspread
+client = gspread.authorize(creds)
+print("✅ Google Sheets OK – pipeline můžeš spustit.")

@@ -1,1215 +1,520 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RESTAURANT_NAME — Kadeřnictví v RESTAURANT_CITY</title>
-  <meta name="description" content="RESTAURANT_ABOUT_SHORT" />
-  <meta name="theme-color" content="#faf8f7" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESTAURANT_NAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ============ TOKENS ============ */
-    :root {
-      --blush:       #faf8f7;
-      --blush-2:     #f5ede9;
-      --blush-3:     #ecddd7;
-      --rose-100:    #e8cfc9;
-      --rose-300:    #c9887a;
-      --rose-500:    #b06d5e;
-      --rose-700:    #8c4f40;
-      --ink:         #1e1614;
-      --ink-2:       #33201c;
-      --muted:       #7a5a54;
-      --card:        #fff;
-      --shadow:      0 8px 28px rgba(176, 109, 94, 0.13);
-      --radius:      16px;
-      --space-1:     0.5rem;
-      --space-2:     1rem;
-      --space-3:     1.5rem;
-      --space-4:     2rem;
-      --space-6:     3rem;
-      --space-8:     4rem;
-      --space-12:    6rem;
-    }
-
-    /* ============ RESET ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--blush);
-      color: var(--ink);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-    img { display: block; max-width: 100%; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    img { max-width: 100%; display: block; }
 
-    /* ============ TYPOGRAPHY ============ */
-    h1, h2, h3 {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      line-height: 1.15;
-      color: var(--ink);
+    :root {
+      --cream:  #f3eee6;
+      --paper:  #faf6f0;
+      --nude:   #e6dace;
+      --blush:  #eed9d3;
+      --ink:    #201a18;
+      --ink2:   #4f453f;
+      --muted:  #8c8078;
+      --rose:   #bd7b7e;
+      --rose2:  #a3646a;
+      --line:   rgba(32,26,24,.16);
+      --ease:   cubic-bezier(0.4, 0, 0.2, 1);
     }
-    h4 {
-      font-family: 'Inter', sans-serif;
-      line-height: 1.3;
-      color: var(--ink);
-    }
-    h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 700; }
-    h2 { font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 600; }
-    h3 { font-size: clamp(1.2rem, 2.2vw, 1.55rem); font-weight: 600; }
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.73rem;
-      font-weight: 600;
-      letter-spacing: .13em;
-      text-transform: uppercase;
-      color: var(--rose-500);
-      margin-bottom: var(--space-2);
-    }
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 24px;
-      height: 1.5px;
-      background: var(--rose-300);
-      border-radius: 2px;
-    }
-    .section-desc {
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin-top: var(--space-2);
-      line-height: 1.75;
-    }
+    body { font-family: 'Jost', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--rose); color: #fff; }
 
-    /* ============ LAYOUT ============ */
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
-    section { padding: var(--space-12) 0; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--rose-100);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: var(--space-4);
-    }
-    .grid { display: grid; gap: var(--space-4); }
-    .auto-3 { grid-template-columns: repeat(3, 1fr); }
-    .auto-2 { grid-template-columns: repeat(2, 1fr); }
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--rose); transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
 
-    /* ============ BUTTONS ============ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: 50px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.88rem;
-      letter-spacing: .03em;
-      cursor: pointer;
-      border: none;
-      transition: all .22s;
-    }
-    .btn--fill {
-      background: linear-gradient(135deg, var(--rose-700), var(--rose-300));
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(176, 109, 94, 0.35);
-    }
-    .btn--fill:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(176,109,94,.45); }
-    .btn--outline {
-      background: transparent;
-      color: var(--rose-700);
-      border: 1.5px solid var(--rose-300);
-    }
-    .btn--outline:hover { background: var(--blush-2); border-color: var(--rose-500); }
+    /* NAV — always dark (light hero) */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.7rem 5%; display: flex; align-items: center; justify-content: space-between; transition: all .4s var(--ease); }
+    #navbar.scrolled { background: rgba(250,246,240,.92); backdrop-filter: blur(14px); padding: 1rem 5%; box-shadow: 0 1px 0 var(--line); }
+    .nav-logo { font-family: 'Bodoni Moda', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); text-decoration: none; letter-spacing: .02em; line-height: 1; }
+    .nav-logo span { color: var(--rose); }
+    .nav-links { display: flex; gap: 2.6rem; list-style: none; align-items: center; }
+    .nav-links a { color: var(--ink2); text-decoration: none; font-size: .74rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; transition: color .25s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 1px; background: var(--rose); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta { font-family: 'Jost', sans-serif; font-size: .72rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #fff; background: var(--ink); padding: .8rem 1.6rem; border: none; cursor: pointer; text-decoration: none; transition: all .3s; }
+    .nav-cta:hover { background: var(--rose); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 26px; height: 2px; background: var(--ink); transition: all .3s; }
 
-    /* ============ TOP PROGRESS BAR ============ */
-    #progress {
-      position: fixed;
-      top: 0; left: 0;
-      height: 2px;
-      width: 0%;
-      background: linear-gradient(90deg, var(--rose-300), var(--rose-700));
-      z-index: 9999;
-      transition: width .1s linear;
-    }
+    #mobile-nav { display: none; position: fixed; inset: 0; background: var(--cream); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem; }
+    #mobile-nav.open { display: flex; }
+    #mobile-nav a { font-family: 'Bodoni Moda', serif; font-size: 2.4rem; font-weight: 500; color: var(--ink); text-decoration: none; }
+    #mobile-nav a:hover { color: var(--rose); font-style: italic; }
+    .close-nav { position: absolute; top: 2rem; right: 6%; background: none; border: none; color: var(--ink); font-size: 2rem; cursor: pointer; }
 
-    /* ============ HEADER / NAV ============ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(250, 248, 247, 0.93);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
-      transition: border-color .3s, box-shadow .3s;
-    }
-    header.scrolled { border-color: var(--rose-100); box-shadow: 0 2px 16px rgba(176,109,94,.09); }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 68px;
-    }
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: var(--rose-700);
-      letter-spacing: .04em;
-    }
-    .nav-logo span { color: var(--rose-300); }
-    nav ul { display: flex; align-items: center; gap: var(--space-4); }
-    nav a {
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: .04em;
-      color: var(--ink-2);
-      transition: color .2s;
-    }
-    nav a:hover { color: var(--rose-500); }
-    .nav-cta { display: flex; align-items: center; gap: var(--space-2); }
-    .nav-phone {
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      font-size: 0.84rem;
-      color: var(--rose-700);
-      padding: 8px 18px;
-      border: 1.5px solid var(--rose-300);
-      border-radius: 50px;
-      transition: all .2s;
-    }
-    .nav-phone:hover { background: var(--rose-300); color: #fff; }
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-      background: none;
-      border: none;
-    }
-    .hamburger span {
-      display: block;
-      width: 22px;
-      height: 1.5px;
-      background: var(--ink);
-      border-radius: 2px;
-      transition: all .3s;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      padding: 16px 20px 20px;
-      border-top: 1px solid var(--rose-100);
-      background: rgba(250, 248, 247, 0.98);
-      gap: 4px;
-    }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--ink-2);
-      border-radius: 8px;
-      transition: background .2s;
-    }
-    .mobile-menu a:hover { background: var(--blush-2); }
+    /* HERO — editorial, light */
+    #hero { min-height: 100vh; background: var(--cream); display: grid; grid-template-columns: 1.05fr 1fr; align-items: stretch; }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 9rem 4% 4rem 8%; }
+    @media (min-width: 1025px) { .hero-left { justify-content: flex-start; padding-top: 9.5rem; } }
+    .hero-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--rose2); margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; opacity: 0; animation: fadeUp .9s .2s var(--ease) forwards; }
+    .hero-eyebrow::before { content: ''; width: 44px; height: 1px; background: var(--rose); }
+    .hero-name { font-family: 'Bodoni Moda', serif; font-size: clamp(3rem, 6vw, 5.6rem); font-weight: 500; line-height: .98; letter-spacing: -.01em; color: var(--ink); margin-bottom: 1.4rem; opacity: 0; animation: fadeUp .9s .34s var(--ease) forwards; }
+    .hero-tag { font-family: 'Bodoni Moda', serif; font-style: italic; font-weight: 400; font-size: clamp(1.4rem, 2.4vw, 2rem); color: var(--rose2); line-height: 1.2; margin-bottom: 1.8rem; opacity: 0; animation: fadeUp .9s .48s var(--ease) forwards; }
+    .hero-sub { font-size: 1rem; font-weight: 300; line-height: 1.8; color: var(--ink2); max-width: 420px; margin-bottom: 2.6rem; opacity: 0; animation: fadeUp .9s .62s var(--ease) forwards; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2.4rem; opacity: 0; animation: fadeUp .9s .76s var(--ease) forwards; }
+    .btn-dark { background: var(--ink); color: #fff; padding: 1.1rem 2.4rem; border: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; display: inline-block; transition: all .3s; }
+    .btn-dark:hover { background: var(--rose); transform: translateY(-2px); }
+    .btn-line { background: transparent; color: var(--ink); padding: 1.1rem 2.4rem; border: 1px solid var(--ink); font-family: 'Jost', sans-serif; font-size: .74rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; display: inline-block; transition: all .3s; }
+    .btn-line:hover { background: var(--ink); color: #fff; }
+    .hero-rating { display: inline-flex; align-items: center; gap: .7rem; font-size: .82rem; color: var(--ink2); opacity: 0; animation: fadeUp .9s .9s var(--ease) forwards; }
+    .hero-rating b { font-family: 'Bodoni Moda', serif; font-size: 1.1rem; color: var(--ink); }
+    .hero-rating .stars { color: var(--rose); letter-spacing: 2px; }
+    .hero-right { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--nude), var(--blush)); }
+    .hero-right img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); animation: heroZoom 9s var(--ease) forwards; }
+    @keyframes heroZoom { to { transform: scale(1); } }
+    .hero-vtag { position: absolute; top: 2.2rem; right: 2rem; writing-mode: vertical-rl; font-size: .68rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.85); text-shadow: 0 1px 8px rgba(0,0,0,.3); }
 
-    /* ============ HERO ============ */
-    #hero {
-      padding: var(--space-12) 0 var(--space-8);
-      background: linear-gradient(160deg, var(--blush) 55%, var(--blush-2) 100%);
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: var(--blush-3);
-      color: var(--rose-700);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 50px;
-      margin-bottom: var(--space-3);
-    }
-    .hero-title { margin-bottom: var(--space-3); }
-    .hero-title em {
-      font-style: italic;
-      color: var(--rose-500);
-    }
-    .hero-sub {
-      font-size: 1.08rem;
-      color: var(--muted);
-      margin-bottom: var(--space-4);
-      max-width: 460px;
-      line-height: 1.75;
-    }
-    .hero-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-    .hero-rating {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: var(--space-4);
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .hero-rating .stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; }
-    .hero-rating strong { color: var(--ink); }
-    .hero-visual { position: relative; }
-    .visual-stack {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 260px 190px;
-      gap: 12px;
-    }
-    .visual-stack .img-main {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .visual-stack .img-main img,
-    .visual-stack .img-sub img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-    }
-    .visual-stack .img-sub { border-radius: var(--radius); overflow: hidden; }
-    .visual-float {
-      position: absolute;
-      bottom: -16px;
-      left: -20px;
-      background: var(--card);
-      border: 1px solid var(--rose-100);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.83rem;
-    }
-    .visual-float .dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: #6dbf6d;
-      flex-shrink: 0;
-    }
-    .visual-float strong { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.88rem; }
+    /* TICKER */
+    .ticker { background: var(--ink); color: var(--cream); overflow: hidden; padding: 1.1rem 0; border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); }
+    .ticker-row { display: flex; gap: 3rem; width: max-content; animation: ticker 28s linear infinite; }
+    .ticker-row span { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 1.5rem; color: var(--cream); white-space: nowrap; display: inline-flex; align-items: center; gap: 3rem; }
+    .ticker-row span::after { content: '✦'; font-style: normal; color: var(--rose); font-size: 1rem; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* ============ STATS BAR ============ */
-    #stats {
-      padding: var(--space-6) 0;
-      background: var(--rose-700);
-      color: #fff;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-4);
-      text-align: center;
-    }
-    .stat-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: var(--rose-100);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 0.78rem;
-      color: rgba(255,255,255,.65);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
+    /* SECTION SHARED */
+    section { padding: 8rem 8%; }
+    .eyebrow { font-size: .7rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; color: var(--rose2); margin-bottom: 1.2rem; display: inline-flex; align-items: center; gap: .8rem; }
+    .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--rose); }
+    .eyebrow.center { justify-content: center; }
+    .eyebrow.center::before { display: none; }
+    h2.title { font-family: 'Bodoni Moda', serif; font-size: clamp(2.3rem, 4.4vw, 3.8rem); font-weight: 500; line-height: 1.08; letter-spacing: -.01em; margin-bottom: 1.4rem; }
+    h2.title em { font-style: italic; color: var(--rose2); }
+    .lead { font-size: 1rem; line-height: 1.85; color: var(--ink2); max-width: 540px; }
 
-    /* ============ O NÁS ============ */
-    #onas { background: var(--blush); }
-    .onas-grid {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .onas-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 500px;
-      position: relative;
-    }
-    .onas-img img { width: 100%; height: 100%; object-fit: cover; }
-    .onas-img-badge {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--rose-100);
-      border-radius: 12px;
-      padding: 12px 16px;
-      box-shadow: var(--shadow);
-      font-size: 0.8rem;
-      text-align: center;
-    }
-    .onas-img-badge strong {
-      display: block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem;
-      color: var(--rose-700);
-    }
-    .onas-text .section-label { margin-bottom: var(--space-2); }
-    .onas-text h2 { margin-bottom: var(--space-3); }
-    .onas-text p { color: var(--muted); margin-bottom: var(--space-3); line-height: 1.8; }
-    .onas-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); }
-    .chip {
-      display: inline-block;
-      padding: 6px 14px;
-      background: var(--blush-2);
-      border: 1.5px solid var(--rose-100);
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--rose-700);
-    }
+    /* ABOUT — editorial pull-quote */
+    #onas { background: var(--paper); }
+    .about-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 5rem; align-items: center; }
+    .about-figure { position: relative; }
+    .about-figure img { width: 100%; height: 620px; object-fit: cover; background: linear-gradient(135deg, var(--nude), var(--blush)); }
+    .about-figure .tagchip { position: absolute; bottom: 1.5rem; left: 1.5rem; background: var(--cream); color: var(--ink); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; padding: .6rem 1.1rem; }
+    .about-quote { font-family: 'Bodoni Moda', serif; font-style: italic; font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.35; color: var(--ink); margin-bottom: 2rem; }
+    .about-quote span { color: var(--rose2); }
+    .about-text { font-size: 1rem; line-height: 1.95; color: var(--ink2); margin-bottom: 2rem; }
+    .about-sign { display: flex; align-items: center; gap: 1.2rem; }
+    .about-sign .line { width: 40px; height: 1px; background: var(--rose); }
+    .about-sign small { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
 
-    /* ============ SLUŽBY / CENÍK ============ */
-    #sluzby { background: var(--blush-2); }
-    .sluzby-header { text-align: center; max-width: 560px; margin: 0 auto var(--space-6); }
-    .sluzby-header .section-label { justify-content: center; }
-    .sluzby-header .section-label::before { display: none; }
-    .filter-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: var(--space-6);
-    }
-    .filter-btn {
-      padding: 8px 20px;
-      border-radius: 50px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1.5px solid var(--rose-100);
-      background: var(--card);
-      color: var(--muted);
-      transition: all .2s;
-    }
-    .filter-btn:hover { border-color: var(--rose-300); color: var(--rose-500); }
-    .filter-btn.active {
-      background: var(--rose-700);
-      border-color: var(--rose-700);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(140, 79, 64, .28);
-    }
-    .sluzby-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-    .sluzba-card {
-      background: var(--card);
-      border: 1px solid var(--rose-100);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: transform .22s, box-shadow .22s;
-    }
-    .sluzba-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-    .sluzba-img { height: 170px; overflow: hidden; }
-    .sluzba-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .sluzba-card:hover .sluzba-img img { transform: scale(1.06); }
-    .sluzba-body { padding: 16px 18px; }
-    .sluzba-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .09em;
-      color: var(--rose-500);
-      background: var(--blush-2);
-      padding: 3px 10px;
-      border-radius: 50px;
-      margin-bottom: 8px;
-    }
-    .sluzba-body h3 { font-size: 1rem; margin-bottom: 4px; }
-    .sluzba-body p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
-    .sluzba-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-top: 1px solid var(--blush-2);
-    }
-    .sluzba-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 700;
-      color: var(--rose-700);
-      font-size: 1.15rem;
-    }
-    .sluzba-time {
-      font-size: 0.77rem;
-      color: var(--muted);
-    }
+    /* SERVICES — editorial index */
+    #sluzby { background: var(--cream); }
+    .svc-head { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 2rem; margin-bottom: 3.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+    .svc-head .lead { margin: 0; }
+    .svc-cat { margin-bottom: 3rem; }
+    .svc-cat:last-child { margin-bottom: 0; }
+    .svc-cat-head { display: flex; align-items: baseline; gap: 1.2rem; margin-bottom: 1.4rem; }
+    .svc-num { font-family: 'Bodoni Moda', serif; font-size: 1.1rem; color: var(--rose); font-weight: 500; }
+    .svc-cat-head h3 { font-family: 'Bodoni Moda', serif; font-size: 1.7rem; font-weight: 500; color: var(--ink); }
+    .svc-list { display: grid; grid-template-columns: 1fr 1fr; gap: .2rem 4rem; }
+    .svc-item { display: flex; align-items: baseline; gap: .8rem; padding: .85rem 0; border-bottom: 1px solid var(--line); }
+    .svc-name { font-size: .98rem; color: var(--ink); font-weight: 400; }
+    .svc-dots { flex: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px); }
+    .svc-price { font-family: 'Bodoni Moda', serif; font-size: 1.02rem; font-weight: 500; color: var(--rose2); white-space: nowrap; }
+    .svc-note { margin-top: 3.5rem; font-size: .82rem; color: var(--muted); text-align: center; }
 
-    /* ============ GALERIE ============ */
-    #galerie { background: var(--blush); overflow: hidden; }
-    .galerie-header { margin-bottom: var(--space-6); }
-    .marquee-wrap { position: relative; }
-    .marquee-track {
-      display: flex;
-      gap: 14px;
-      animation: marquee 34s linear infinite;
-      width: max-content;
-    }
-    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
-    .marquee-track .gal-img {
-      width: 280px;
-      height: 210px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .marquee-track .gal-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-    .marquee-track .gal-img:hover img { transform: scale(1.07); }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-    .marquee-fade-l, .marquee-fade-r {
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 100px;
-      z-index: 2;
-      pointer-events: none;
-    }
-    .marquee-fade-l { left: 0; background: linear-gradient(to right, var(--blush), transparent); }
-    .marquee-fade-r { right: 0; background: linear-gradient(to left, var(--blush), transparent); }
+    /* LOOKBOOK */
+    #lookbook { padding: 6rem 0 7rem; background: var(--ink); overflow: hidden; }
+    .lb-head { text-align: center; padding: 0 8%; margin-bottom: 3rem; }
+    .lb-head .eyebrow { justify-content: center; color: var(--rose); }
+    .lb-head .eyebrow::before { display: none; }
+    .lb-head h2 { color: var(--cream); }
+    .lb-head h2 em { color: var(--rose); }
+    .marquee-wrap { display: flex; flex-direction: column; gap: .8rem; }
+    .marquee-row { display: flex; gap: .8rem; width: max-content; animation: marquee 44s linear infinite; }
+    .marquee-row.reverse { animation-direction: reverse; animation-duration: 54s; }
+    .marquee-row img { width: 300px; height: 380px; object-fit: cover; flex-shrink: 0; filter: grayscale(.15); transition: filter .4s, transform .4s; }
+    .marquee-row img:hover { filter: none; transform: scale(1.02); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* ============ RECENZE ============ */
-    #recenze { background: var(--blush-2); }
-    .recenze-header { text-align: center; margin-bottom: var(--space-6); }
-    .recenze-header .section-label { justify-content: center; }
-    .recenze-header .section-label::before { display: none; }
-    .slider { overflow: hidden; }
-    .slider-track {
-      display: flex;
-      transition: transform .5s cubic-bezier(.4,0,.2,1);
-    }
-    .review-slide {
-      min-width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-    }
-    .review-card {
-      background: var(--card);
-      border: 1px solid var(--rose-100);
-      border-radius: var(--radius);
-      padding: var(--space-4);
-    }
-    .review-stars { color: #d4a853; font-size: 1rem; letter-spacing: 2px; margin-bottom: 12px; }
-    .review-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.08rem;
-      color: var(--ink-2);
-      line-height: 1.7;
-      font-style: italic;
-      margin-bottom: var(--space-3);
-    }
-    .review-author { font-size: 0.8rem; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
-    .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: var(--space-4); }
-    .dot-btn {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      border: none;
-      background: var(--rose-100);
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .dot-btn.active { background: var(--rose-500); width: 20px; border-radius: 4px; }
+    /* WHY — trio */
+    #proc { background: var(--paper); }
+    .why-head { text-align: center; max-width: 620px; margin: 0 auto 3.5rem; }
+    .why-head .eyebrow { justify-content: center; }
+    .why-head .eyebrow::before { display: none; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; max-width: 1050px; margin: 0 auto; }
+    .why-card { text-align: center; padding: 2.5rem 1.5rem; border: 1px solid var(--line); transition: background .3s, border-color .3s; }
+    .why-card:hover { background: var(--cream); border-color: var(--rose); }
+    .why-ico { width: 54px; height: 54px; border-radius: 50%; background: var(--blush); color: var(--rose2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.3rem; }
+    .why-ico svg { width: 24px; height: 24px; }
+    .why-card h4 { font-family: 'Bodoni Moda', serif; font-size: 1.35rem; font-weight: 500; color: var(--ink); margin-bottom: .6rem; }
+    .why-card p { font-size: .86rem; color: var(--muted); line-height: 1.65; }
 
-    /* ============ REZERVACE CTA ============ */
-    #rezervace {
-      background: linear-gradient(135deg, var(--rose-700) 0%, var(--rose-300) 100%);
-      color: #fff;
-      padding: var(--space-12) 0;
-    }
-    .rezervace-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: center;
-    }
-    .rezervace-text .section-label { color: var(--rose-100); }
-    .rezervace-text .section-label::before { background: var(--rose-100); }
-    .rezervace-text h2 { color: #fff; margin-bottom: var(--space-3); }
-    .rezervace-text p { color: rgba(255,255,255,.82); margin-bottom: var(--space-4); font-size: 1.05rem; line-height: 1.75; }
-    .rezervace-text .btn--fill {
-      background: #fff;
-      color: var(--rose-700);
-      box-shadow: 0 4px 16px rgba(0,0,0,.18);
-    }
-    .rezervace-text .btn--fill:hover { background: var(--blush); }
-    .rezervace-text .btn--outline {
-      color: #fff;
-      border-color: rgba(255,255,255,.5);
-    }
-    .rezervace-text .btn--outline:hover { background: rgba(255,255,255,.12); border-color: #fff; }
-    .rezervace-img {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 360px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.22);
-    }
-    .rezervace-img img { width: 100%; height: 100%; object-fit: cover; }
+    /* TESTIMONIALS */
+    #recenze { background: var(--nude); }
+    .test-head { text-align: center; max-width: 560px; margin: 0 auto 3rem; }
+    .test-slider { position: relative; max-width: 880px; margin: 0 auto; overflow: hidden; }
+    .test-track { display: flex; transition: transform .7s var(--ease); }
+    .test-slide { min-width: 100%; padding: 2rem 3rem; text-align: center; }
+    .test-stars { color: var(--rose); font-size: 1rem; letter-spacing: 5px; margin-bottom: 1.5rem; }
+    .test-quote { font-family: 'Bodoni Moda', serif; font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 400; font-style: italic; line-height: 1.45; color: var(--ink); margin-bottom: 1.8rem; }
+    .test-author { font-size: .76rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rose2); }
+    .test-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(189,123,126,.35); border: none; cursor: pointer; transition: all .3s; padding: 0; }
+    .dot.active { background: var(--rose); transform: scale(1.4); }
 
-    /* ============ KONTAKT ============ */
-    #kontakt { background: var(--blush); }
-    .kontakt-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-8);
-      align-items: start;
-    }
-    .kontakt-info h2 { margin-bottom: var(--space-3); }
-    .kontakt-info p { color: var(--muted); margin-bottom: var(--space-4); }
-    .kontakt-items { display: flex; flex-direction: column; gap: var(--space-3); }
-    .kontakt-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 16px 18px;
-      background: var(--blush-2);
-      border-radius: var(--radius);
-      border: 1px solid var(--rose-100);
-    }
-    .kontakt-icon {
-      width: 42px; height: 42px;
-      background: linear-gradient(135deg, var(--rose-700), var(--rose-300));
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 1.1rem;
-    }
-    .kontakt-item-text small {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 600;
-    }
-    .kontakt-item-text strong { display: block; font-size: 0.95rem; margin-top: 3px; }
-    .kontakt-map {
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 400px;
-      border: 1px solid var(--rose-100);
-      box-shadow: var(--shadow);
-    }
-    .kontakt-map iframe { width: 100%; height: 100%; border: none; }
+    /* CONTACT */
+    #kontakt { background: var(--paper); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 5.5rem; align-items: start; }
+    .contact-item { display: flex; gap: 1.3rem; align-items: flex-start; margin-bottom: 2.2rem; }
+    .contact-ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--blush); color: var(--rose2); display: flex; align-items: center; justify-content: center; }
+    .contact-ico svg { width: 20px; height: 20px; }
+    .contact-label { font-size: .64rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--rose2); margin-bottom: .3rem; }
+    .contact-val { font-size: .96rem; color: var(--ink); line-height: 1.55; }
+    .map-wrap { margin-top: 1.5rem; width: 100%; height: 210px; background: var(--nude); overflow: hidden; }
+    .map-wrap iframe { width: 100%; height: 100%; border: none; filter: grayscale(.5); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .45rem; }
+    .form-group label { font-size: .64rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select { background: #fff; border: 1px solid var(--line); padding: .9rem 1.1rem; font-family: 'Jost', sans-serif; font-size: .9rem; color: var(--ink); outline: none; transition: border-color .3s, box-shadow .3s; resize: none; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(189,123,126,.14); }
+    .form-group textarea { height: 100px; }
+    .form-submit { background: var(--ink); color: #fff; border: none; padding: 1.1rem 2.6rem; cursor: pointer; font-family: 'Jost', sans-serif; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; transition: all .3s; align-self: flex-start; }
+    .form-submit:hover { background: var(--rose); }
 
-    /* ============ FOOTER ============ */
-    footer {
-      background: var(--ink);
-      color: rgba(255,255,255,.7);
-      padding: var(--space-8) 0 var(--space-4);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr 1fr;
-      gap: var(--space-6);
-      margin-bottom: var(--space-6);
-    }
-    .footer-brand .nav-logo { color: var(--rose-100); font-size: 1.1rem; }
-    .footer-brand p { font-size: 0.87rem; line-height: 1.75; margin-top: var(--space-2); }
-    .footer-col h4 {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      margin-bottom: var(--space-2);
-    }
-    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
-    .footer-col ul a { font-size: 0.87rem; transition: color .2s; }
-    .footer-col ul a:hover { color: var(--rose-100); }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: var(--space-3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-    }
-    .footer-bottom a { color: var(--rose-100); }
+    /* FOOTER */
+    footer { background: var(--ink); padding: 5rem 8% 2.2rem; color: var(--cream); }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 4rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 2rem; }
+    .footer-logo { font-family: 'Bodoni Moda', serif; font-size: 1.8rem; font-weight: 500; color: var(--cream); text-decoration: none; display: block; margin-bottom: 1rem; }
+    .footer-logo span { color: var(--rose); }
+    .footer-desc { font-size: .84rem; color: rgba(243,238,230,.5); line-height: 1.8; margin-bottom: 1.5rem; }
+    .social-links { display: flex; gap: .7rem; }
+    .social-link { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(243,238,230,.2); display: flex; align-items: center; justify-content: center; color: rgba(243,238,230,.6); text-decoration: none; transition: all .3s; }
+    .social-link svg { width: 16px; height: 16px; }
+    .social-link:hover { border-color: var(--rose); color: var(--rose); }
+    .footer-col h4 { font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(243,238,230,.5); margin-bottom: 1.4rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .84rem; color: rgba(243,238,230,.5); text-decoration: none; transition: color .25s; }
+    .footer-col ul a:hover { color: var(--rose); }
+    .footer-hours li { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(243,238,230,.5); padding-bottom: .6rem; margin-bottom: .6rem; border-bottom: 1px solid rgba(243,238,230,.08); }
+    .footer-hours li:last-child { border-bottom: none; }
+    .footer-hours li span:last-child { color: rgba(243,238,230,.78); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-copy { font-size: .76rem; color: rgba(243,238,230,.32); }
+    .footer-copy a { color: var(--rose); text-decoration: none; }
 
-    /* ============ REVEAL ANIMATION ============ */
-    [data-r] {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    [data-r].in { opacity: 1; transform: none; }
+    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: #fff; border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; z-index: 500; }
+    #back-top.show { opacity: 1; visibility: visible; }
+    #back-top:hover { background: var(--rose); }
 
-    /* ============ RESPONSIVE ============ */
-    @media (max-width: 1000px) {
-      .sluzby-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-4) var(--space-6); }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
+    [data-r] { opacity: 0; transform: translateY(34px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    [data-r="left"] { transform: translateX(-34px); }
+    [data-r="right"] { transform: translateX(34px); }
+    [data-r].visible { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-r] { opacity: 1 !important; transform: none !important; } }
+
+    @media (max-width: 1024px) {
+      section { padding: 5.5rem 6%; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 8rem 6% 3.5rem; }
+      .hero-right { height: 60vw; min-height: 340px; }
+      .about-wrap { grid-template-columns: 1fr; gap: 3rem; }
+      .about-figure img { height: 440px; }
+      .svc-list { grid-template-columns: 1fr; gap: 0; }
+      .why-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
     }
-    @media (max-width: 900px) {
-      nav ul, .nav-phone { display: none; }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
       .hamburger { display: flex; }
-      .hero-grid, .onas-grid, .rezervace-grid, .kontakt-grid { grid-template-columns: 1fr; }
-      .hero-visual { order: -1; }
-      .visual-stack { grid-template-rows: 210px 155px; }
-      .visual-float { display: none; }
-      .review-slide { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      #navbar { padding: 1.3rem 6%; }
+      .svc-head { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     }
-    @media (max-width: 600px) {
-      .sluzby-grid, .auto-3, .auto-2 { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .onas-img { height: 300px; }
-      .rezervace-img { height: 230px; }
-      .hero-actions { flex-direction: column; }
-      .hero-actions .btn { width: 100%; justify-content: center; }
-      section { padding: var(--space-6) 0; }
-      footer { padding: var(--space-6) 0 var(--space-3); }
-      .kontakt-map { height: 250px; }
-      .stat-num { font-size: 1.8rem; }
-      .card { padding: var(--space-3); }
-    }
+    @media (max-width: 480px) { section { padding: 4.5rem 5%; } .hero-btns { flex-direction: column; align-items: stretch; } .btn-dark, .btn-line { text-align: center; } }
   </style>
 </head>
 <body>
+<div id="ukazka-banner" style="position:fixed;top:0;left:0;width:100%;background:#bd7b7e;color:#fff;text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box;">
+  ⚡ UKÁZKA – finální web bude s vašimi fotkami a texty
+</div>
+<style>body{margin-top:40px !important;}</style>
 
-<!-- Progress bar -->
 <div id="progress"></div>
 
-<!-- ===== HEADER ===== -->
-<header id="header">
-  <div class="container">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">✂ <span>RESTAURANT_SHORT_NAME</span></a>
-      <nav aria-label="Hlavní navigace">
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby</a></li>
-          <li><a href="#galerie">Galerie</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </nav>
-      <div class="nav-cta">
-        <a href="tel:RESTAURANT_PHONE" class="nav-phone">📞 Zavolat</a>
-        <button class="hamburger" id="hamburgerBtn" aria-label="Otevřít menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="mobile-menu" id="mobileMenu" role="navigation">
-    <a href="#onas">O nás</a>
-    <a href="#sluzby">Služby & ceník</a>
-    <a href="#galerie">Galerie</a>
-    <a href="#recenze">Recenze</a>
-    <a href="#kontakt">Kontakt</a>
-    <a href="tel:RESTAURANT_PHONE">📞 RESTAURANT_PHONE</a>
-  </div>
-</header>
+<nav id="navbar">
+  <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#onas">Studio</a></li>
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#recenze">Recenze</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <a href="#kontakt" class="nav-cta">Objednat se</a>
+  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+</nav>
 
-<!-- ===== HERO ===== -->
+<div id="mobile-nav">
+  <button class="close-nav" id="close-nav">✕</button>
+  <a href="#onas">Studio</a>
+  <a href="#sluzby">Služby</a>
+  <a href="#lookbook">Lookbook</a>
+  <a href="#recenze">Recenze</a>
+  <a href="#kontakt">Kontakt</a>
+</div>
+
+<!-- HERO -->
 <section id="hero">
-  <div class="container">
-    <div class="hero-grid">
-      <div class="hero-text" data-r>
-        <div class="hero-badge">RESTAURANT_CITY · Kadeřnictví</div>
-        <h1 class="hero-title">
-          RESTAURANT_TAGLINE<br>
-          <em>RESTAURANT_NAME</em>
-        </h1>
-        <p class="hero-sub">RESTAURANT_SUBTITLE</p>
-        <div class="hero-actions">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Objednat se</a>
-          <a href="#sluzby" class="btn btn--outline">Naše služby ↓</a>
-        </div>
-        <div class="hero-rating">
-          <span class="stars">★★★★★</span>
-          <strong>RESTAURANT_RATING / 5</strong>
-          <span>· RESTAURANT_REVIEWS hodnocení na Google</span>
-        </div>
-      </div>
-      <div class="hero-visual" data-r>
-        <div class="visual-stack">
-          <div class="img-main">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – kadeřnictví" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME – interiér" loading="lazy" />
-          </div>
-          <div class="img-sub">
-            <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME – výsledky" loading="lazy" style="filter: brightness(.93) saturate(1.1);" />
-          </div>
-        </div>
-        <div class="visual-float">
-          <span class="dot"></span>
-          <div>
-            <strong>Přijímáme rezervace</strong><br>
-            <span style="font-size:.78rem;color:var(--muted)">RESTAURANT_CITY</span>
-          </div>
-        </div>
-      </div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">RESTAURANT_CITY · Kadeřnictví</div>
+    <h1 class="hero-name">RESTAURANT_NAME</h1>
+    <p class="hero-tag">RESTAURANT_TAGLINE</p>
+    <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+    <div class="hero-btns">
+      <a href="#kontakt" class="btn-dark">Objednat se</a>
+      <a href="#sluzby" class="btn-line">Ceník služeb</a>
     </div>
+    <div class="hero-rating"><span class="stars">★★★★★</span> <b>RESTAURANT_RATING</b> · RESTAURANT_REVIEWS+ spokojených recenzí</div>
+  </div>
+  <div class="hero-right">
+    <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'">
+    <div class="hero-vtag">Est. — RESTAURANT_CITY</div>
   </div>
 </section>
 
-<!-- ===== STATS ===== -->
-<section id="stats">
-  <div class="container">
-    <div class="stats-grid">
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_REVIEWS">0</div>
-        <div class="stat-label">Spokojených zákaznic</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="RESTAURANT_RATING" data-decimal>0</div>
-        <div class="stat-label">Hvězd na Google</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="10">0</div>
-        <div class="stat-label">Let zkušeností</div>
-      </div>
-      <div data-r>
-        <div class="stat-num" data-count="6">0</div>
-        <div class="stat-label">Dní v týdnu</div>
-      </div>
-    </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-row">
+    <span>Střihy</span><span>Barvení</span><span>Balayage</span><span>Styling</span><span>Společenské účesy</span><span>Péče o vlasy</span>
+    <span>Střihy</span><span>Barvení</span><span>Balayage</span><span>Styling</span><span>Společenské účesy</span><span>Péče o vlasy</span>
   </div>
-</section>
+</div>
 
-<!-- ===== O NÁS ===== -->
+<!-- ABOUT -->
 <section id="onas">
-  <div class="container">
-    <div class="onas-grid">
-      <div class="onas-img" data-r>
-        <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME" loading="lazy" />
-        <div class="onas-img-badge">
-          <strong>10+</strong>
-          let v oboru
-        </div>
-      </div>
-      <div class="onas-text" data-r>
-        <div class="section-label">O nás</div>
-        <h2>Váš oblíbený salon v RESTAURANT_CITY_LOC</h2>
-        <p>RESTAURANT_ABOUT</p>
-        <p class="section-desc">RESTAURANT_ABOUT_SHORT</p>
-        <div class="onas-chips">
-          <span class="chip">✂ Profesionální střih</span>
-          <span class="chip">🎨 Barvení vlasů</span>
-          <span class="chip">💅 Péče o vlasy</span>
-          <span class="chip">📍 RESTAURANT_CITY</span>
-        </div>
-        <div style="margin-top:2rem;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">Objednat se</a>
-        </div>
-      </div>
+  <div class="about-wrap">
+    <div class="about-figure" data-r="left">
+      <img src="../stock_photos/PHOTO_2" alt="Studio – RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
+      <div class="tagchip">Naše studio</div>
+    </div>
+    <div data-r="right">
+      <div class="eyebrow">O nás</div>
+      <p class="about-quote">Správný střih promění nejen <span>vzhled</span>, ale i&nbsp;náladu.</p>
+      <p class="about-text">RESTAURANT_ABOUT</p>
+      <div class="about-sign"><span class="line"></span><small>RESTAURANT_NAME · RESTAURANT_CITY</small></div>
     </div>
   </div>
 </section>
 
-<!-- ===== SLUŽBY / CENÍK ===== -->
+<!-- SERVICES INDEX -->
 <section id="sluzby">
-  <div class="container">
-    <div class="sluzby-header" data-r>
-      <div class="section-label">Služby & ceník</div>
-      <h2>Co u nás nabízíme</h2>
-      <p class="section-desc">Vše pro vaše vlasy na jednom místě – od klasického střihu až po komplexní proměnu.</p>
-    </div>
-    <div class="filter-bar" data-r>
-      <button class="filter-btn active" data-filter="all">Vše</button>
-      <button class="filter-btn" data-filter="strih">✂ Střihy</button>
-      <button class="filter-btn" data-filter="barva">🎨 Barvení</button>
-      <button class="filter-btn" data-filter="styling">💇 Styling</button>
-      <button class="filter-btn" data-filter="pece">✨ Péče</button>
-    </div>
-    <div class="sluzby-grid" id="sluzbyGrid">
+  <div class="svc-head" data-r>
+    <div><div class="eyebrow">Ceník</div><h2 class="title">Služby &amp; <em>ceník</em></h2></div>
+    <p class="lead">Orientační ceny. Konečná cena se odvíjí od délky a&nbsp;hustoty vlasů — ráda vám ji upřesním na konzultaci zdarma.</p>
+  </div>
 
-      <div class="sluzba-card" data-cat="strih" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Střih ženy" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Střih</span>
-          <h3>Střih a foukání</h3>
-          <p>Klasický nebo moderní střih dle přání klientky, s mytím a profesionálním foukáním.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 350 Kč</span>
-          <span class="sluzba-time">⏱ 60 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="strih" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Pánský střih" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Střih</span>
-          <h3>Pánský střih</h3>
-          <p>Přesný a moderní pánský střih přizpůsobený tvaru hlavy a životnímu stylu.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 250 Kč</span>
-          <span class="sluzba-time">⏱ 45 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="barva" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Barvení vlasů" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Barvení</span>
-          <h3>Jednobarvení</h3>
-          <p>Celobarvení vlasů v libovolném odstínu – s důrazem na zdraví vašich vlasů.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 600 Kč</span>
-          <span class="sluzba-time">⏱ 90 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="barva" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Melír a balayage" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Barvení</span>
-          <h3>Balayage & melír</h3>
-          <p>Přirozené přechody barev pro efekt opálených vlasů – technika balayage nebo klasický melír.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 900 Kč</span>
-          <span class="sluzba-time">⏱ 2–3 hod</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="styling" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_1" alt="Slavnostní účes" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Styling</span>
-          <h3>Slavnostní účes</h3>
-          <p>Dokonalý účes pro svatbu, ples nebo jiný výjimečný den – s konzultací.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 800 Kč</span>
-          <span class="sluzba-time">⏱ 60–90 min</span>
-        </div>
-      </div>
-
-      <div class="sluzba-card" data-cat="pece" data-r>
-        <div class="sluzba-img"><img src="../stock_photos/PHOTO_2" alt="Keratin a ošetření" loading="lazy" /></div>
-        <div class="sluzba-body">
-          <span class="sluzba-tag">Péče</span>
-          <h3>Keratinová kúra</h3>
-          <p>Hloubková regenerace poškozených vlasů – keratinové ošetření pro lesk a hebkost.</p>
-        </div>
-        <div class="sluzba-footer">
-          <span class="sluzba-price">od 700 Kč</span>
-          <span class="sluzba-time">⏱ 45 min</span>
-        </div>
-      </div>
-
+  <div class="svc-cat" data-r>
+    <div class="svc-cat-head"><span class="svc-num">01</span><h3>Střihy</h3></div>
+    <div class="svc-list">
+      <div class="svc-item"><span class="svc-name">Dámský střih</span><span class="svc-dots"></span><span class="svc-price">od 490 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Pánský střih</span><span class="svc-dots"></span><span class="svc-price">od 320 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Dětský střih</span><span class="svc-dots"></span><span class="svc-price">od 200 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Střih + mytí + foukaná</span><span class="svc-dots"></span><span class="svc-price">od 690 Kč</span></div>
     </div>
   </div>
+
+  <div class="svc-cat" data-r>
+    <div class="svc-cat-head"><span class="svc-num">02</span><h3>Barvení</h3></div>
+    <div class="svc-list">
+      <div class="svc-item"><span class="svc-name">Barva celková</span><span class="svc-dots"></span><span class="svc-price">od 890 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Melír / balayage</span><span class="svc-dots"></span><span class="svc-price">od 1 290 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Přeliv / tónování</span><span class="svc-dots"></span><span class="svc-price">od 690 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Odbarvení</span><span class="svc-dots"></span><span class="svc-price">od 990 Kč</span></div>
+    </div>
+  </div>
+
+  <div class="svc-cat" data-r>
+    <div class="svc-cat-head"><span class="svc-num">03</span><h3>Styling &amp; účesy</h3></div>
+    <div class="svc-list">
+      <div class="svc-item"><span class="svc-name">Foukaná</span><span class="svc-dots"></span><span class="svc-price">od 350 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Společenský účes</span><span class="svc-dots"></span><span class="svc-price">od 690 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Svatební účes</span><span class="svc-dots"></span><span class="svc-price">od 1 490 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Konzultace</span><span class="svc-dots"></span><span class="svc-price">zdarma</span></div>
+    </div>
+  </div>
+
+  <div class="svc-cat" data-r>
+    <div class="svc-cat-head"><span class="svc-num">04</span><h3>Péče o vlasy</h3></div>
+    <div class="svc-list">
+      <div class="svc-item"><span class="svc-name">Regenerační kúra</span><span class="svc-dots"></span><span class="svc-price">od 290 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Keratinové ošetření</span><span class="svc-dots"></span><span class="svc-price">od 1 290 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Botox na vlasy</span><span class="svc-dots"></span><span class="svc-price">od 990 Kč</span></div>
+      <div class="svc-item"><span class="svc-name">Vlasová diagnostika</span><span class="svc-dots"></span><span class="svc-price">zdarma</span></div>
+    </div>
+  </div>
+  <p class="svc-note">Pracujeme s prémiovou vlasovou kosmetikou. Konečnou cenu vždy potvrdíme před zákrokem.</p>
 </section>
 
-<!-- ===== GALERIE ===== -->
-<section id="galerie">
-  <div class="container">
-    <div class="galerie-header" data-r>
-      <div class="section-label">Galerie</div>
-      <h2>Naše práce mluví za vše</h2>
-    </div>
+<!-- LOOKBOOK -->
+<section id="lookbook">
+  <div class="lb-head" data-r>
+    <div class="eyebrow center">Naše práce</div>
+    <h2 class="title">Lookbook <em>proměn</em></h2>
   </div>
   <div class="marquee-wrap">
-    <div class="marquee-track" id="marqueeTrack">
-      <!-- JS doplní fotky -->
-    </div>
-    <div class="marquee-fade-l"></div>
-    <div class="marquee-fade-r"></div>
+    <div class="marquee-row" id="row1"></div>
+    <div class="marquee-row reverse" id="row2"></div>
   </div>
 </section>
 
-<!-- ===== RECENZE ===== -->
+<!-- WHY -->
+<section id="proc">
+  <div class="why-head" data-r>
+    <div class="eyebrow center">Proč k nám</div>
+    <h2 class="title">Péče, kterou <em>ucítíte</em></h2>
+  </div>
+  <div class="why-grid">
+    <div class="why-card" data-r>
+      <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l4 4M4 6l4 4M14 14l6 6M9 9l11 11M18 6a2 2 0 1 0-3-3M6 18a2 2 0 1 0 3 3"/></svg></div>
+      <h4>Zkušený tým</h4>
+      <p>Kadeřnice s citem pro detail a nejnovější techniky.</p>
+    </div>
+    <div class="why-card" data-r>
+      <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.3 4.7L19.5 8l-3.7 3.6.9 5.1L12 14.3 7.3 16.7l.9-5.1L4.5 8l5.2-.3z"/></svg></div>
+      <h4>Prémiové produkty</h4>
+      <p>Značková kosmetika šetrná k vlasům i pokožce.</p>
+    </div>
+    <div class="why-card" data-r>
+      <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-8-8M12 8v4l3 2"/></svg></div>
+      <h4>Individuální přístup</h4>
+      <p>Poradíme styl, který sedne právě vám a vašemu životu.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
 <section id="recenze">
-  <div class="container">
-    <div class="recenze-header" data-r>
-      <div class="section-label">Recenze</div>
-      <h2>Co říkají naše zákaznice</h2>
-      <p class="section-desc" style="margin: 0.5rem auto 0;">Hodnocení RESTAURANT_RATING / 5 na základě RESTAURANT_REVIEWS recenzí na Google.</p>
+  <div class="test-head" data-r>
+    <div class="eyebrow center">Klientky říkají</div>
+    <h2 class="title">Spokojenost, která <em>mluví</em></h2>
+  </div>
+  <div class="test-slider" data-r>
+    <div class="test-track" id="test-track">
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Nejlepší kadeřnictví v RESTAURANT_CITY_LOC. Konečně někdo, kdo poslouchá, co chci — a výsledek předčil očekávání.</p><div class="test-author">Petra K. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Balayage jako z časopisu. Milý přístup, příjemné prostředí a vlasy, ze kterých mám radost každý den.</p><div class="test-author">Martina J. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Chodím sem roky a nikdy zklamání. Profesionální práce a atmosféra, kde si opravdu odpočinu.</p><div class="test-author">Jana M. · RESTAURANT_CITY</div></div>
+      <div class="test-slide"><div class="test-stars">★★★★★</div><p class="test-quote">Svatební účes byl dokonalý a vydržel celý den. Doporučuji všem, kdo chtějí být krásní.</p><div class="test-author">Tereza B. · RESTAURANT_CITY</div></div>
     </div>
-    <div class="slider" data-r>
-      <div class="slider-track" id="sliderTrack">
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Naprosto skvělé kadeřnictví! Výsledek přesně dle přání, příjemná atmosféra a milý personál. Vracím se sem pravidelně."</p>
-            <div class="review-author">— Jana K. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Konečně kadeřnice, která ví, co dělá. Balayage vyšel perfektně a vlasy vypadají přirozeně krásně. Vřele doporučuji!"</p>
-            <div class="review-author">— Markéta S. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Přišla jsem na slavnostní účes před plesem a byla jsem nadšená. Precizní práce, příjemné prostředí, rozhodně se vrátím."</p>
-            <div class="review-author">— Tereza N. · Google</div>
-          </div>
-        </div>
-        <div class="review-slide">
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Skvělý střih, přesně jak jsem chtěla. Kadeřnice mi poradila s tvarem a výsledek je fantastický. Moc děkuji!"</p>
-            <div class="review-author">— Petra V. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★☆</div>
-            <p class="review-text">„Příjemné a čisté prostředí, profesionální přístup. Keratinová kúra provedena skvěle, vlasy jsou nyní hedvábně hladké."</p>
-            <div class="review-author">— Lucie M. · Google</div>
-          </div>
-          <div class="review-card">
-            <div class="review-stars">★★★★★</div>
-            <p class="review-text">„Chodím sem roky a nikdy jsem nebyla zklamaná. Vždy milý přístup a perfektní výsledek. Toto kadeřnictví je skvělé!"</p>
-            <div class="review-author">— Kateřina B. · Google</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="slider-dots" id="sliderDots">
-      <button class="dot-btn active" data-idx="0" aria-label="Slide 1"></button>
-      <button class="dot-btn" data-idx="1" aria-label="Slide 2"></button>
-    </div>
+  </div>
+  <div class="test-dots" id="test-dots">
+    <button class="dot active" data-i="0"></button><button class="dot" data-i="1"></button><button class="dot" data-i="2"></button><button class="dot" data-i="3"></button>
   </div>
 </section>
 
-<!-- ===== REZERVACE CTA ===== -->
-<section id="rezervace">
-  <div class="container">
-    <div class="rezervace-grid">
-      <div class="rezervace-text" data-r>
-        <div class="section-label">Rezervace</div>
-        <h2>Zarezervujte si termín ještě dnes</h2>
-        <p>Rádi vás uvítáme. Stačí zavolat nebo napsat – a my se postaráme o zbytek. Přijďte si pro svůj nový look.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <a href="tel:RESTAURANT_PHONE" class="btn btn--fill">📞 Zavolat nyní</a>
-          <a href="#kontakt" class="btn btn--outline">Kde nás najdete</a>
-        </div>
-      </div>
-      <div class="rezervace-img" data-r>
-        <img src="../stock_photos/PHOTO_1" alt="Rezervace termínu – RESTAURANT_NAME" loading="lazy" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== KONTAKT ===== -->
+<!-- CONTACT -->
 <section id="kontakt">
-  <div class="container">
-    <div class="kontakt-grid">
-      <div class="kontakt-info" data-r>
-        <div class="section-label">Kontakt</div>
-        <h2>Najdete nás v RESTAURANT_CITY_LOC</h2>
-        <p>Rádi vás uvítáme. Objednejte se telefonicky nebo nás navštivte osobně.</p>
-        <div class="kontakt-items">
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📍</div>
-            <div class="kontakt-item-text">
-              <small>Adresa</small>
-              <strong>RESTAURANT_ADDRESS</strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">📞</div>
-            <div class="kontakt-item-text">
-              <small>Telefon</small>
-              <strong><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">✉️</div>
-            <div class="kontakt-item-text">
-              <small>Email</small>
-              <strong><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></strong>
-            </div>
-          </div>
-          <div class="kontakt-item">
-            <div class="kontakt-icon">🕐</div>
-            <div class="kontakt-item-text">
-              <small>Otevírací doba</small>
-              <strong>Po–Pá 9:00–18:00 · So 9:00–14:00</strong>
-            </div>
-          </div>
+  <div class="contact-grid">
+    <div data-r="left">
+      <div class="eyebrow">Objednání</div>
+      <h2 class="title">Rezervujte si<br><em>svůj termín</em></h2>
+      <div class="contact-info" style="margin-top:2rem;">
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><div class="contact-label">Adresa</div><div class="contact-val">RESTAURANT_ADDRESS_SHORT</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+          <div><div class="contact-label">Telefon</div><div class="contact-val">RESTAURANT_PHONE</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="contact-label">Otevírací doba</div><div class="contact-val">Po–Pá: 9:00–19:00<br>So: 9:00–14:00</div></div>
         </div>
       </div>
-      <div class="kontakt-map" data-r>
-        <iframe
-          src="GOOGLE_MAPS_EMBED"
-          allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Mapa RESTAURANT_NAME"
-        ></iframe>
-      </div>
+      <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
     </div>
+    <div data-r="right">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-group"><label>Telefon</label><input type="tel" placeholder="+420…"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Služba</label>
+            <select><option>Střih</option><option>Barvení / melír</option><option>Styling / účes</option><option>Péče o vlasy</option><option>Nevím, poradíte mi</option></select>
+          </div>
+          <div class="form-group"><label>Preferovaný termín</label><input type="date"></div>
+        </div>
+        <div class="form-group"><label>Zpráva</label><textarea placeholder="Co byste si přála? Přiložte klidně i inspiraci…"></textarea></div>
+        <button type="submit" class="form-submit">Odeslat objednávku</button>
+      </form>
+    </div>
+  </div>
+  <div style="text-align:center;margin:3rem 0 0;">
+    <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:#201a18;color:#fff;padding:15px 40px;font-size:16px;text-decoration:none;font-weight:600;letter-spacing:.06em;">Chci takový web</a>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
+<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="nav-logo">✂ <span>RESTAURANT_NAME</span></div>
-        <p>RESTAURANT_ABOUT_SHORT<br>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigace</h4>
-        <ul>
-          <li><a href="#onas">O nás</a></li>
-          <li><a href="#sluzby">Služby & ceník</a></li>
-          <li><a href="#galerie">Galerie</a></li>
-          <li><a href="#recenze">Recenze</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Kontakt</h4>
-        <ul>
-          <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
-          <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
-          <li>RESTAURANT_ADDRESS_SHORT</li>
-        </ul>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">RESTAURANT_NAME<span>.</span></a>
+      <p class="footer-desc">RESTAURANT_ABOUT_SHORT</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg></a>
+        <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2025 RESTAURANT_NAME · Všechna práva vyhrazena</span>
-      <span>Web od <a href="https://strankyprovas.cz">StránkyProVás</a></span>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <ul><li><a href="#onas">O nás</a></li><li><a href="#sluzby">Služby</a></li><li><a href="#lookbook">Lookbook</a></li><li><a href="#recenze">Recenze</a></li><li><a href="#kontakt">Objednání</a></li></ul>
     </div>
+    <div class="footer-col">
+      <h4>Otevřeno</h4>
+      <ul class="footer-hours"><li><span>Po–Pá</span><span>9:00–19:00</span></li><li><span>Sobota</span><span>9:00–14:00</span></li><li><span>Neděle</span><span>zavřeno</span></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul><li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li><li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li><li><a href="#">RESTAURANT_EMAIL</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
   </div>
 </footer>
 
-<!-- ===== JAVASCRIPT ===== -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
 <script>
-  /* --- Progress bar --- */
-  window.addEventListener('scroll', () => {
-    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-    document.getElementById('progress').style.width = pct + '%';
-  });
+window.addEventListener('scroll', () => {
+  const s = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
+  document.getElementById('progress').style.transform = `scaleX(${s/h})`;
+  document.getElementById('navbar').classList.toggle('scrolled', s > 60);
+  document.getElementById('back-top').classList.toggle('show', s > 400);
+}, {passive:true});
 
-  /* --- Sticky header shadow --- */
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 10);
-  });
+const ham = document.getElementById('ham'), mNav = document.getElementById('mobile-nav');
+ham.addEventListener('click', () => mNav.classList.add('open'));
+document.getElementById('close-nav').addEventListener('click', () => mNav.classList.remove('open'));
+mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mNav.classList.remove('open')));
 
-  /* --- Hamburger --- */
-  const btn = document.getElementById('hamburgerBtn');
-  const menu = document.getElementById('mobileMenu');
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-  });
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open');
-    btn.setAttribute('aria-expanded', false);
-  }));
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const el = document.querySelector(a.getAttribute('href')); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } }); });
 
-  /* --- Reveal on scroll --- */
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('[data-r]').forEach(el => observer.observe(el));
+const revObs = new IntersectionObserver(es => { es.forEach((e,i) => { if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*70); revObs.unobserve(e.target); } }); }, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
 
-  /* --- Stats counter --- */
-  const statsObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      const target = parseFloat(el.dataset.count);
-      const isDecimal = 'decimal' in el.dataset;
-      const duration = 1400;
-      const step = 16;
-      const steps = duration / step;
-      let current = 0;
-      const inc = target / steps;
-      const timer = setInterval(() => {
-        current = Math.min(current + inc, target);
-        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
-        if (current >= target) clearInterval(timer);
-      }, step);
-      statsObs.unobserve(el);
-    });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('[data-count]').forEach(el => statsObs.observe(el));
+const photos = [GALLERY_PHOTOS_JS].filter(s => s && s.length);
+const rows = [document.getElementById('row1'), document.getElementById('row2')];
+if(photos.length > 0){ rows.forEach(row => { [...photos,...photos,...photos,...photos].forEach(src => { const img=document.createElement('img'); img.src=src; img.alt='Lookbook'; img.loading='lazy'; img.onerror=function(){ this.remove(); }; row.appendChild(img); }); }); }
+else { document.getElementById('lookbook').style.display='none'; }
 
-  /* --- Ceník filtr --- */
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const filter = btn.dataset.filter;
-      document.querySelectorAll('.sluzba-card').forEach(card => {
-        const match = filter === 'all' || card.dataset.cat === filter;
-        card.style.display = match ? '' : 'none';
-      });
-    });
-  });
-
-  /* --- Galerie marquee --- */
-  const photos = [GALLERY_PHOTOS_JS];
-  const track = document.getElementById('marqueeTrack');
-  if (photos.length > 0 && photos[0]) {
-    const doubled = [...photos, ...photos];
-    doubled.forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="${src}" alt="Galerie kadeřnictví" loading="lazy" />`;
-      track.appendChild(div);
-    });
-    if (photos.length < 4) track.style.animationDuration = '18s';
-  } else {
-    ['PHOTO_1', 'PHOTO_2', 'PHOTO_1', 'PHOTO_2'].forEach(src => {
-      const div = document.createElement('div');
-      div.className = 'gal-img';
-      div.innerHTML = `<img src="photos/${src}" alt="Kadeřnictví" loading="lazy" />`;
-      track.appendChild(div);
-    });
-  }
-
-  /* --- Recenze slider --- */
-  const sliderTrack = document.getElementById('sliderTrack');
-  const slides = sliderTrack.querySelectorAll('.review-slide');
-  const dots = document.getElementById('sliderDots');
-  let current = 0;
-
-  function goTo(idx) {
-    current = idx;
-    sliderTrack.style.transform = `translateX(-${idx * 100}%)`;
-    dots.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === idx));
-  }
-  dots.querySelectorAll('.dot-btn').forEach((d, i) => d.addEventListener('click', () => goTo(i)));
-  if (slides.length > 1) setInterval(() => goTo((current + 1) % slides.length), 5000);
+let cur=0; const track=document.getElementById('test-track'), dots=document.querySelectorAll('.dot'), slides=track.querySelectorAll('.test-slide');
+function goTo(n){ cur=n; track.style.transform=`translateX(-${n*100}%)`; dots.forEach((d,i)=>d.classList.toggle('active',i===n)); }
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+setInterval(() => goTo((cur+1)%slides.length), 5000);
 </script>
-
 </body>
 </html>
