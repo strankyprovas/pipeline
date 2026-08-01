@@ -1,0 +1,66 @@
+name: Send Drafts
+
+# Rozesílá připravené Gmail drafty po dávkách.
+#
+# ⚠️ Sdílí `concurrency: google-oauth-token` s Daily Outreach Pipeline.
+# Obě workflow obnovují TÝŽ Google refresh token a souběžné obnovení
+# Google vyhodnotí jako reuse → token zneplatní (stalo se už dvakrát).
+# Stejná concurrency group je drží v řadě za sebou, nikdy vedle sebe.
+#
+# Pojistky uvnitř send_drafts.py (neměnit bez rozmyslu):
+#   - přeskočí naše stávající klienty (EXCLUDED_EMAILS / EXCLUDED_KEYWORDS)
+#   - přeskočí kontakty se stavem "osloveno" v Google Sheetu
+#   - NEODEŠLE mail, jehož demo neodpovídá 200 (jinak by příjemce klikl na 404)
+
+on:
+  schedule:
+    # Ve všední dny 12:00, 15:00 a 17:00 SELČ – mimo okno pipeline (8:00).
+    - cron: '0 10,13,15 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max. počet e-mailů za tento běh'
+        required: false
+        default: '10'
+      dry_run:
+        description: 'Jen vypsat, nic neodesílat (true/false)'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  send:
+    name: Odeslat drafty
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instaluj Python závislosti
+        run: |
+          pip install -q \
+            requests gspread google-auth google-auth-oauthlib \
+            google-auth-httplib2 google-api-python-client
+
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+
+      - name: Odešli drafty
+        env:
+          LIMIT: ${{ github.event.inputs.limit || '10' }}
+          DRY: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -euo pipefail
+          FLAGS="--delay 60 --limit $LIMIT"
+          if [ "$DRY" = "true" ]; then
+            FLAGS="$FLAGS --dry-run"
+          fi
+          echo "Spouštím: send_drafts.py $FLAGS"
+          python3 send_drafts.py $FLAGS

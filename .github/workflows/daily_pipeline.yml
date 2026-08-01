@@ -15,6 +15,10 @@ on:
         required: false
         default: ''
 
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
 jobs:
   plan:
     name: Naplánuj odvětví
@@ -52,7 +56,7 @@ jobs:
     timeout-minutes: 45
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
       matrix:
         industry: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
