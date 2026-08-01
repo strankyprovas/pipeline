@@ -1,28 +1,60 @@
 name: Daily Outreach Pipeline
 
+# Odvětví se střídají po dnech (2 denně) místo 9 naráz. Důvody:
+#   - 9 paralelních jobů narazilo na kvótu Google Sheets (chyba 429)
+#   - timeout 6 h na job byl zbytečný, reálný běh se vejde do ~40 min
+# Ruční spuštění: workflow_dispatch → pole "industry" (prázdné = dnešní dvojice).
+
 on:
   schedule:
     - cron: '0 7 * * *'   # každý den v 8:00 CET (7:00 UTC)
-  workflow_dispatch:        # možnost spustit ručně z GitHubu
+  workflow_dispatch:
+    inputs:
+      industry:
+        description: 'Jedno odvětví (prázdné = dnešní dvojice dle dne v týdnu)'
+        required: false
+        default: ''
 
 jobs:
+  plan:
+    name: Naplánuj odvětví
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+    steps:
+      - name: Vyber odvětví podle dne v týdnu
+        id: pick
+        env:
+          MANUAL: ${{ github.event.inputs.industry }}
+        run: |
+          set -euo pipefail
+          if [ -n "${MANUAL:-}" ]; then
+            MATRIX="[\"$MANUAL\"]"
+          else
+            # 1 = pondělí … 7 = neděle (runner běží v UTC)
+            case "$(date -u +%u)" in
+              1) MATRIX='["pekarna","kvetinarstvi"]' ;;
+              2) MATRIX='["restaurace","kavarna"]' ;;
+              3) MATRIX='["penzion","kosmetika"]' ;;
+              4) MATRIX='["kadernictvi","zubni"]' ;;
+              5) MATRIX='["masaze","autoservis"]' ;;
+              6) MATRIX='["psycholog","pekarna"]' ;;
+              7) MATRIX='["kvetinarstvi","restaurace"]' ;;
+            esac
+          fi
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "Dnešní odvětví: $MATRIX"
+
   run-industry:
     name: ${{ matrix.industry }}
+    needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 45
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
-        industry:
-          - restaurace
-          - kavarna
-          - penzion
-          - kosmetika
-          - kadernictvi
-          - zubni
-          - masaze
-          - autoservis
-          - psycholog
+        industry: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -51,15 +83,17 @@ jobs:
           python3 -c "
           import subprocess
           DEMO_DIRS = {
-            'restaurace':  ('restaurace',  'demos'),
-            'kavarna':     ('kavarny',     'demos-kavarny'),
-            'penzion':     ('penzion',     'demos-penziony'),
-            'kadernictvi': ('kadernictvi', 'demos-kadernictvi'),
-            'kosmetika':   ('kosmetika',   'demos-kosmetika'),
-            'autoservis':  ('autoservis',  'demos-autoservis'),
-            'masaze':      ('masaze',      'demos-masaze'),
-            'zubni':       ('zubni',       'demos-zubni'),
-            'psycholog':   ('psycholog',   'demos-psycholog'),
+            'restaurace':   ('restaurace',   'demos'),
+            'kavarna':      ('kavarny',      'demos-kavarny'),
+            'pekarna':      ('pekarna',      'demos-pekarna'),
+            'kvetinarstvi': ('kvetinarstvi', 'demos-kvetinarstvi'),
+            'penzion':      ('penzion',      'demos-penziony'),
+            'kadernictvi':  ('kadernictvi',  'demos-kadernictvi'),
+            'kosmetika':    ('kosmetika',    'demos-kosmetika'),
+            'autoservis':   ('autoservis',   'demos-autoservis'),
+            'masaze':       ('masaze',       'demos-masaze'),
+            'zubni':        ('zubni',        'demos-zubni'),
+            'psycholog':    ('psycholog',    'demos-psycholog'),
           }
           industry = '${{ matrix.industry }}'
           repo, demo_dir = DEMO_DIRS[industry]
@@ -77,3 +111,29 @@ jobs:
         #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           python3 run_all_cities.py --industry ${{ matrix.industry }} --target 2
+
+      - name: Ověř, že se dema opravdu zveřejnila
+        # Bez tohohle kroku pipeline tiše "uspěje", i když push dem selže –
+        # přesně to se dělo od července: dema 404, sender je odmítl,
+        # odešlo 0 e-mailů a v logu nic nekřičelo.
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import subprocess, sys
+          industry = "${{ matrix.industry }}"
+          DIRS = {
+            'restaurace':'demos','kavarna':'demos-kavarny','pekarna':'demos-pekarna',
+            'kvetinarstvi':'demos-kvetinarstvi','penzion':'demos-penziony',
+            'kadernictvi':'demos-kadernictvi','kosmetika':'demos-kosmetika',
+            'autoservis':'demos-autoservis','masaze':'demos-masaze',
+            'zubni':'demos-zubni','psycholog':'demos-psycholog',
+          }
+          d = DIRS[industry]
+          out = subprocess.run(['git','-C',d,'log','origin/master..HEAD','--oneline'],
+                               capture_output=True, text=True).stdout.strip()
+          if out:
+              print(f"::error::{len(out.splitlines())} dem zůstalo nepushnutých -> "
+                    f"budou 404 a sender je přeskočí:\n{out}")
+              sys.exit(1)
+          print("OK: všechna vygenerovaná dema jsou nahraná na GitHub Pages.")
+          PY
