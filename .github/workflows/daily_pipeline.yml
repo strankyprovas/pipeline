@@ -122,6 +122,32 @@ jobs:
         run: |
           python3 run_all_cities.py --industry ${{ matrix.industry }} --target 2
 
+      - name: Dopush zbylá dema
+        # Dema se pushují dávkově (max 1× za 10 min kvůli limitu buildů GitHub Pages).
+        # Job ale VŽDY skončí na timeoutu, takže poslední dávka zůstane nenahraná
+        # a draft, který na ni odkazuje, míří na 404. Tenhle krok to dožene.
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          industry = "${{ matrix.industry }}"
+          DIRS = {
+            'restaurace':'demos','kavarna':'demos-kavarny','pekarna':'demos-pekarna',
+            'kvetinarstvi':'demos-kvetinarstvi','penzion':'demos-penziony',
+            'kadernictvi':'demos-kadernictvi','kosmetika':'demos-kosmetika',
+            'autoservis':'demos-autoservis','masaze':'demos-masaze',
+            'zubni':'demos-zubni','psycholog':'demos-psycholog',
+          }
+          d = DIRS[industry]
+          subprocess.run(['git','-C',d,'add','-A'], check=False)
+          r = subprocess.run(['git','-C',d,'commit','-m',f'Dopush dem ({industry})'],
+                             capture_output=True, text=True)
+          print(r.stdout.strip() or r.stderr.strip())
+          p = subprocess.run(['git','-C',d,'push','origin','master'],
+                             capture_output=True, text=True)
+          print(p.stdout.strip() or p.stderr.strip() or 'push OK')
+          PY
+
       - name: Ověř, že se dema opravdu zveřejnila
         # Bez tohohle kroku pipeline tiše "uspěje", i když push dem selže –
         # přesně to se dělo od července: dema 404, sender je odmítl,
