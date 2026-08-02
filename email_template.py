@@ -133,12 +133,16 @@ CITY_LOCATIVE = {
 }
 
 def city_in_locative(city: str) -> str:
-    """Vrátí 'v {město v lokálu}' – správný český pád."""
+    """Vrátí 'v {město v lokálu}', nebo prázdný řetězec, když pád neznáme.
+
+    Slovník pokrývá ~90 měst, ale pipeline projíždí přes 2 000 obcí. Dřív se
+    u neznámého města vracel 1. pád ("v Benátky nad Jizerou"), což je v mailu
+    klientovi vidět. Skloňovat česká jména obcí heuristikou je nespolehlivé
+    (Klatovy→Klatovech, Kopřivnice→Kopřivnici, Benátky→Benátkách), proto radši
+    vrátíme prázdno a volající větu složí bez zmínky o městě.
+    """
     loc = CITY_LOCATIVE.get(city)
-    if loc:
-        return f"v {loc}"
-    # Fallback: koncovka -ě pro města zakončená na souhlásku (heuristika)
-    return f"v {city}"
+    return f"v {loc}" if loc else ""
 
 
 def get_subject(name, category):
@@ -407,7 +411,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
         intro = (
             f"Dobrý den,\n\n"
             f"jmenuju se Matyáš a s mým kamarádem Kryštofem už několik let vytváříme moderní weby "
-            f"pro {ind_name_gen} v Česku. Díval jsem se na {name} {city_loc} a napadlo mě, "
+            f"pro {ind_name_gen} v Česku. Díval jsem se na {name}{' ' + city_loc if city_loc else ''} a napadlo mě, "
             f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
             f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
             f"ale jako funkční základ podnikání."
