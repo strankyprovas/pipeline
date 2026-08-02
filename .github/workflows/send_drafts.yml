@@ -21,7 +21,7 @@ on:
       limit:
         description: 'Max. počet e-mailů za tento běh'
         required: false
-        default: '10'
+        default: '3'
       dry_run:
         description: 'Jen vypsat, nic neodesílat (true/false)'
         required: false
@@ -54,7 +54,7 @@ jobs:
 
       - name: Odešli drafty
         env:
-          LIMIT: ${{ github.event.inputs.limit || '10' }}
+          LIMIT: ${{ github.event.inputs.limit || '3' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           set -euo pipefail
