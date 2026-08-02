@@ -69,7 +69,13 @@ jobs:
           pip install -q \
             requests gspread google-auth google-auth-oauthlib \
             google-auth-httplib2 google-api-python-client \
-            anthropic beautifulsoup4 dnspython
+            anthropic beautifulsoup4 dnspython playwright
+
+      - name: Nainstaluj Chromium pro Playwright
+        # firmy_scraper.py jede přes playwright.chromium – bez tohohle kroku
+        # padá na "No module named 'playwright'" a Firmy.cz se přeskočí.
+        # A protože OSM skoro nemá e-maily, znamená to nula použitelných leadů.
+        run: playwright install --with-deps chromium
 
       - name: Obnov Google credentials
         run: |

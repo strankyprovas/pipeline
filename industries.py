@@ -7,6 +7,7 @@ texty pro emaily a texty pro demo stránku.
 INDUSTRIES = {
     "restaurace": {
         "name_cs": "restaurace",          # pro email CTA "Pracujeme s restauracemi..."
+        "name_genitive_pl": "restaurace",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "restauraci",         # akuzativ – "nemáte web pro restauraci"
         "search_query": "restaurace {city}",
         "places_type": "restaurant",
@@ -47,6 +48,7 @@ INDUSTRIES = {
 
     "kavarna": {
         "name_cs": "kavárny",
+        "name_genitive_pl": "kavárny",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "kavárnu",
         "search_query": "kavárna {city}",
         "places_type": "cafe",
@@ -87,6 +89,7 @@ INDUSTRIES = {
 
     "pekarna": {
         "name_cs": "pekárny",
+        "name_genitive_pl": "pekárny",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "pekárnu",
         "search_query": "pekárna {city}",
         "places_type": "bakery",
@@ -127,6 +130,7 @@ INDUSTRIES = {
 
     "kvetinarstvi": {
         "name_cs": "květinářství",
+        "name_genitive_pl": "květinářství",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "květinářství",
         "search_query": "květinářství {city}",
         "places_type": "florist",
@@ -167,6 +171,7 @@ INDUSTRIES = {
 
     "penzion": {
         "name_cs": "penziony",
+        "name_genitive_pl": "penziony",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "penzion",
         "search_query": "penzion ubytování {city}",
         "places_type": "lodging",
@@ -207,6 +212,7 @@ INDUSTRIES = {
 
     "kosmetika": {
         "name_cs": "kosmetické salony",
+        "name_genitive_pl": "kosmetické salony",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "kosmetický salon",
         "search_query": "kosmetický salon {city}",
         "places_type": "beauty_salon",
@@ -247,6 +253,7 @@ INDUSTRIES = {
 
     "kadernictvi": {
         "name_cs": "kadeřnictví",
+        "name_genitive_pl": "kadeřnictví",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "kadeřnictví",
         "search_query": "kadeřnictví {city}",
         "places_type": "hair_care",
@@ -287,6 +294,7 @@ INDUSTRIES = {
 
     "zubni": {
         "name_cs": "zubní ordinace",
+        "name_genitive_pl": "zubní ordinace",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "zubní ordinaci",
         "search_query": "zubní ordinace zubař {city}",
         "places_type": "dentist",
@@ -327,6 +335,7 @@ INDUSTRIES = {
 
     "masaze": {
         "name_cs": "masážní salony",
+        "name_genitive_pl": "masážní salony",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "masážní salon",
         "search_query": "masáže wellness salon {city}",
         "places_type": "spa",
@@ -367,6 +376,7 @@ INDUSTRIES = {
 
     "autoservis": {
         "name_cs": "autoservisy",
+        "name_genitive_pl": "autoservisy",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "autoservis",
         "search_query": "autoservis {city}",
         "places_type": "car_repair",
@@ -407,6 +417,7 @@ INDUSTRIES = {
 
     "psycholog": {
         "name_cs": "psychologické poradny",
+        "name_genitive_pl": "psychology a terapeuty",   # do vety "weby pro ... v Cesku"
         "name_cs_4": "psychologickou poradnu",
         "search_query": "psycholog terapeut poradna {city}",
         "places_type": "doctor",

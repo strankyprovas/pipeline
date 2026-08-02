@@ -31,13 +31,15 @@ SENDER_EMAIL = "matyas.vrbaa@gmail.com"
 PORTFOLIO_BY_INDUSTRY = {
     "restaurace":  "piavarestaurace.cz a padthairestaurace.cz, aktuálně připravujeme web pro grasehaus.cz",
     "kavarna":     "piavarestaurace.cz (kavárna/bistro) a padthairestaurace.cz",
-    "penzion":     "jakubsojka.cz a strankyprovas.github.io/penzion (ukázky pro penzionyy)",
+    "penzion":     "jakubsojka.cz a strankyprovas.github.io/penzion (ukázky pro penziony)",
     "kadernictvi": "piavarestaurace.cz a strankyprovas.github.io/kadernictvi (ukázky pro kadeřnictví)",
     "kosmetika":   "piavarestaurace.cz a strankyprovas.github.io/kosmetika (ukázky pro kosmetické salony)",
     "autoservis":  "piavarestaurace.cz a strankyprovas.github.io/autoservis (ukázky pro autoservisy)",
     "masaze":      "piavarestaurace.cz a strankyprovas.github.io/masaze (ukázky pro masážní salony)",
     "zubni":       "jakubsojka.cz a strankyprovas.github.io/zubni (ukázky pro zubní ordinace)",
     "psycholog":   "jakubsojka.cz a strankyprovas.github.io/psycholog (ukázky pro psychology)",
+    "pekarna":     "piavarestaurace.cz a strankyprovas.github.io/pekarna (ukázky pro pekárny)",
+    "kvetinarstvi": "piavarestaurace.cz a strankyprovas.github.io/kvetinarstvi (ukázky pro květinářství)",
 }
 # Fallback pro zpětnou kompatibilitu
 PORTFOLIO = PORTFOLIO_BY_INDUSTRY["restaurace"]
@@ -157,6 +159,48 @@ def get_subject(name, category):
 
 # Odvětvové texty pro šablonu
 INDUSTRY_TEXTS = {
+    "pekarna": {
+        "co_delate": "pečete a prodáváte pečivo",
+        "zakaznici": "zákazníky a stálé odběratele",
+        "co_web_ukaze": "nabídku pečiva, otevírací dobu a to, co pečete vlastníma rukama",
+        "problemy_bez_webu": [
+            "lidé hledají pekárnu v okolí online – přes Google a mapy – a bez webu na vás jednoduše nenarazí",
+            "bez vlastního webu neukážete to hlavní: co pečete, z čeho a v kolik hodin je to čerstvé",
+            "katalogy vás sice zobrazí, ale sortiment, otevírací dobu ani objednávky na zakázku tam nemáte pod kontrolou",
+            "Google a AI vyhledávače dávají přednost pekárnám s vlastním webem před těmi jen v katalozích",
+        ],
+        "reseni": [
+            "postavíme moderní jednoduchý web, který hned ukáže: co pečete, kdy máte čerstvo a kde vás najdou",
+            "přidáme přehledné bloky: nabídka pečiva a zákusků, fotky výrobků, otevírací doba, kontakt a mapa",
+            "web bude rychlý, plně funkční na mobilu a nastavíme lokální SEO, aby vás Google bral jako hlavní výsledek pro dotazy v okolí",
+        ],
+        "prinosy": [
+            "víc zákazníků, kteří vás cíleně najdou a přijdou – ne jen ti, co jdou náhodou kolem",
+            "méně opakujících se dotazů na sortiment, otevírací dobu nebo objednávky na zakázku",
+            "pevný online základ pro sezónní nabídky – vánoční cukroví, velikonoční pečivo, dorty na objednávku",
+        ],
+    },
+    "kvetinarstvi": {
+        "co_delate": "vážete a prodáváte květiny",
+        "zakaznici": "zákazníky a klienty",
+        "co_web_ukaze": "ukázky vazeb, nabídku a otevírací dobu",
+        "problemy_bez_webu": [
+            "květiny se vybírají očima – bez webu s fotkami vašich vazeb nemá zákazník podle čeho se rozhodnout",
+            "svatební a smuteční vazba se objednává dopředu, a lidé k tomu hledají někoho, kdo působí důvěryhodně",
+            "katalogy vás sice zobrazí, ale vaši práci, styl a fotky tam neukážete",
+            "Google a AI vyhledávače upřednostňují květinářství s vlastním webem",
+        ],
+        "reseni": [
+            "postavíme moderní web, kde bude vaše práce vidět na první pohled – galerie vazeb a aranžmá",
+            "přidáme přehledné bloky: nabídka a sortiment, svatební a smuteční vazba, otevírací doba, kontakt a mapa",
+            "web bude rychlý, plně funkční na mobilu a nastavíme lokální SEO, aby vás Google bral jako hlavní výsledek pro dotazy v okolí",
+        ],
+        "prinosy": [
+            "víc zákazníků, kteří si vás najdou podle vašich fotek – a přijdou rovnou s konkrétní představou",
+            "víc objednávek na svatby a větší zakázky, kde se rozhoduje podle ukázek práce",
+            "pevný online základ pro sezónní špičky – Valentýn, Dušičky, Den matek, svatební sezóna",
+        ],
+    },
     "restaurace": {
         "co_delate": "vaři a servírujete jídlo",
         "zakaznici": "hosty a strávníky",
