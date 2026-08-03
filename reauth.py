@@ -14,8 +14,15 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
 ]
 
+BACKUP_FILE = TOKEN_FILE + ".bak"
+
+# Starý token nejdřív zazálohovat, ne rovnou smazat. Když autorizace neprojde
+# (nová oprávnění vyžadují odsouhlasení), zůstaneš jinak úplně bez tokenu.
 if os.path.exists(TOKEN_FILE):
-    os.remove(TOKEN_FILE)
+    os.replace(TOKEN_FILE, BACKUP_FILE)
+    print(f"ℹ️  Původní token zazálohován do {os.path.basename(BACKUP_FILE)}")
+    print("   Kdyby se autorizace nepovedla, vrátíš ho zpátky:")
+    print(f"   mv {BACKUP_FILE} {TOKEN_FILE}\n")
 
 flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
 # OOB (urn:ietf:wg:oauth:2.0:oob) Google zrušil → používáme loopback redirect.
@@ -41,7 +48,20 @@ creds = flow.credentials
 with open(TOKEN_FILE, "wb") as f:
     pickle.dump(creds, f)
 
-print("\n✅ Token uložen! Spouštím test...")
+print("\n✅ Token uložen! Spouštím testy...\n")
+
 import gspread
-client = gspread.authorize(creds)
-print("✅ Google Sheets OK – pipeline můžeš spustit.")
+gspread.authorize(creds)
+print("  ✅ Google Sheets OK")
+
+# Tohle je ten důvod, proč se reauth dělá – ověř, že čtení pošty opravdu projde.
+from googleapiclient.discovery import build
+try:
+    svc = build("gmail", "v1", credentials=creds, cache_discovery=False)
+    svc.users().messages().list(userId="me", q="in:inbox", maxResults=1).execute()
+    print("  ✅ Čtení Gmailu OK – detekce odpovědí bude fungovat, follow-upy lze zapnout")
+except Exception as e:
+    print(f"  ❌ Čtení Gmailu stále nejde: {e}")
+    print("     Follow-upy NEZAPÍNAT – posílaly by i lidem, kteří už odpověděli.")
+
+print("\nHotovo. Řekni Claudovi, ať nahraje nový token do GitHub secrets.")
