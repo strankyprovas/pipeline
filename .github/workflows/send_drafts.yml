@@ -14,8 +14,11 @@ name: Send Drafts
 
 on:
   schedule:
-    # Ve všední dny 12:00, 15:00 a 17:00 SELČ – mimo okno pipeline (8:00).
-    - cron: '0 10,13,15 * * 1-5'
+    # Út–Pá v 7:30, 15:30 a 17:30 SELČ. Poledne je pro restaurace a pekárny
+    # nejhorší chvíle (mají špičku), proto ven z 12:00. Pondělí vynecháno –
+    # maily se ztrácejí v návalu po víkendu. Odpolední sloty jsou až po
+    # doběhnutí pipeline (07:00–13:00 UTC), aby se nečekalo ve frontě.
+    - cron: '30 5,13,15 * * 2-5'
   workflow_dispatch:
     inputs:
       limit:

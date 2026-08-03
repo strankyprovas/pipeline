@@ -74,12 +74,16 @@ def sync_replies(sheet) -> int:
     return updated
 
 
-def get_followup_candidates(sheet, days: int = 5) -> list[dict]:
+def get_followup_candidates(sheet, days: int = 5, max_days: int = 30) -> list[dict]:
     """
     Vrátí seznam kontaktů kde:
     - Stav = 'osloveno' (follow-up ještě nebyl poslán)
-    - Datum emailu je starší než `days` dní
+    - Datum emailu je starší než `days` dní, ale zároveň mladší než `max_days`
     - Odpověděl = prázdné
+
+    Horní hranice je důležitá: follow-up text mluví o „nedávno zaslané ukázce",
+    takže kontaktu z března by tvrdil nepravdu. V DB je přes 14 000 starých
+    kontaktů, bez `max_days` by se první běh pokusil oslovit všechny.
     """
     try:
         records = sheet.get_all_records()
@@ -88,6 +92,7 @@ def get_followup_candidates(sheet, days: int = 5) -> list[dict]:
         return []
 
     cutoff = datetime.now() - timedelta(days=days)
+    oldest = datetime.now() - timedelta(days=max_days)
     candidates = []
 
     for r in records:
@@ -108,7 +113,7 @@ def get_followup_candidates(sheet, days: int = 5) -> list[dict]:
         except ValueError:
             continue
 
-        if datum < cutoff:
+        if datum < cutoff and datum >= oldest:
             days_ago = (datetime.now() - datum).days
             candidates.append({
                 "name":     r.get("Název", ""),
@@ -250,6 +255,10 @@ if __name__ == "__main__":
                         help="Rovnou odešli follow-up emaily (pro automatický cron)")
     parser.add_argument("--days", type=int, default=5,
                         help="Počet dní čekání před follow-up (default: 5)")
+    parser.add_argument("--max-days", type=int, default=30,
+                        help="Nejstarší kontakt k oslovení – starším by text lhal (default: 30)")
+    parser.add_argument("--limit", type=int, default=0,
+                        help="Max. počet follow-upů za běh (0 = bez omezení)")
     parser.add_argument("--delay", type=int, default=30,
                         help="Prodleva mezi emaily v sekundách při --send (default: 30)")
     args = parser.parse_args()
@@ -264,8 +273,11 @@ if __name__ == "__main__":
     else:
         print(f"  (žádné nové odpovědi)\n")
 
-    print(f"🔍 Hledám kontakty oslovené před více než {args.days} dny bez odpovědi...\n")
-    candidates = get_followup_candidates(sheet, days=args.days)
+    print(f"🔍 Hledám kontakty oslovené před {args.days}–{args.max_days} dny bez odpovědi...\n")
+    candidates = get_followup_candidates(sheet, days=args.days, max_days=args.max_days)
+    if args.limit and len(candidates) > args.limit:
+        print(f"   (nalezeno {len(candidates)}, beru prvních {args.limit})")
+        candidates = candidates[:args.limit]
 
     if not candidates:
         print("✅ Žádné follow-upy k řešení – všechno je aktuální.")

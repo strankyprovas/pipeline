@@ -1,0 +1,69 @@
+name: Follow-ups
+
+# Připomenutí kontaktům, které dostaly ukázku a neozvaly se.
+# check_followups.py zároveň nejdřív načte z Gmailu, kdo odpověděl, a označí
+# je v Sheetu – takže follow-up nikdy nedostane někdo, kdo už reagoval.
+#
+# ⚠️ Sdílí `concurrency: google-oauth-token` s pipeline i senderem –
+# všechny tři sahají na týž Google refresh token a souběžné obnovení
+# ho Google vyhodnotí jako reuse a zneplatní.
+#
+# Rozsah je schválně úzký:
+#   --days 5      = dřív než po 5 dnech nemá smysl připomínat
+#   --max-days 30 = text mluví o „nedávno zaslané ukázce“, staršímu kontaktu
+#                   by lhal (a v DB je přes 14 000 starých kontaktů)
+#   --limit       = strop na běh, ať se z toho nestane hromadná rozesílka
+
+on:
+  schedule:
+    # Út–Čt v 7:00 SELČ, tj. PŘED pipeline (ta drží stejnou concurrency group
+    # od 9:00 do ~15:00 SELČ, takže později by follow-upy čekaly hodiny ve frontě).
+    - cron: '0 5 * * 2-4'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Max. počet follow-upů za běh'
+        required: false
+        default: '10'
+      dry_run:
+        description: 'Jen vypsat kandidáty, nic neodesílat (true/false)'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  followup:
+    name: Odeslat follow-upy
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instaluj Python závislosti
+        run: |
+          pip install -q \
+            requests gspread google-auth google-auth-oauthlib \
+            google-auth-httplib2 google-api-python-client
+
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+
+      - name: Odešli follow-upy
+        env:
+          LIMIT: ${{ github.event.inputs.limit || '10' }}
+          DRY: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -euo pipefail
+          FLAGS="--days 5 --max-days 30 --limit $LIMIT --delay 45"
+          if [ "$DRY" != "true" ]; then
+            FLAGS="$FLAGS --send"
+          fi
+          echo "Spouštím: check_followups.py $FLAGS"
+          python3 check_followups.py $FLAGS

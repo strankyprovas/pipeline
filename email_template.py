@@ -29,17 +29,19 @@ SENDER_WEBSITE = "https://strankyprovas.cz"
 SENDER_EMAIL = "matyas.vrbaa@gmail.com"
 
 PORTFOLIO_BY_INDUSTRY = {
-    "restaurace":  "piavarestaurace.cz a padthairestaurace.cz, aktuálně připravujeme web pro grasehaus.cz",
-    "kavarna":     "piavarestaurace.cz (kavárna/bistro) a padthairestaurace.cz",
-    "penzion":     "jakubsojka.cz a strankyprovas.github.io/penzion (ukázky pro penziony)",
-    "kadernictvi": "piavarestaurace.cz a strankyprovas.github.io/kadernictvi (ukázky pro kadeřnictví)",
-    "kosmetika":   "piavarestaurace.cz a strankyprovas.github.io/kosmetika (ukázky pro kosmetické salony)",
-    "autoservis":  "piavarestaurace.cz a strankyprovas.github.io/autoservis (ukázky pro autoservisy)",
-    "masaze":      "piavarestaurace.cz a strankyprovas.github.io/masaze (ukázky pro masážní salony)",
-    "zubni":       "jakubsojka.cz a strankyprovas.github.io/zubni (ukázky pro zubní ordinace)",
-    "psycholog":   "jakubsojka.cz a strankyprovas.github.io/psycholog (ukázky pro psychology)",
-    "pekarna":     "piavarestaurace.cz a strankyprovas.github.io/pekarna (ukázky pro pekárny)",
-    "kvetinarstvi": "piavarestaurace.cz a strankyprovas.github.io/kvetinarstvi (ukázky pro květinářství)",
+    # Jen reálné klientské domény – odkaz na strankyprovas.github.io/... vypadal
+    # jako testovací a v cold mailu spíš ubližoval než pomáhal.
+    "restaurace":   "piavarestaurace.cz a padthairestaurace.cz, aktuálně připravujeme web pro graselhaus.cz",
+    "kavarna":      "piavarestaurace.cz (kavárna/bistro) a padthairestaurace.cz",
+    "pekarna":      "dortycvikov.cz (cukrárna) a piavarestaurace.cz",
+    "kvetinarstvi": "bylinarstvimedunka.cz a dortycvikov.cz",
+    "penzion":      "piavarestaurace.cz a dortycvikov.cz",
+    "kadernictvi":  "bylinarstvimedunka.cz a dortycvikov.cz",
+    "kosmetika":    "bylinarstvimedunka.cz a petrakovalska.cz",
+    "autoservis":   "sekventcar.cz a sojkafinance.cz",
+    "masaze":       "petrakovalska.cz a bylinarstvimedunka.cz",
+    "zubni":        "petrakovalska.cz a psychologiejurakova.cz",
+    "psycholog":    "psychologiejurakova.cz a petrakovalska.cz",
 }
 # Fallback pro zpětnou kompatibilitu
 PORTFOLIO = PORTFOLIO_BY_INDUSTRY["restaurace"]
@@ -519,7 +521,8 @@ def generate_followup_email(name, demo_url):
         f"Dobrý den,\n\n"
         f"posílám jen krátké připomenutí – před pár dny jsem vám poslal ukázku webu "
         f"pro {name}: {demo_url}\n\n"
-        f"Demo mažu za pár dní. Pokud máte zájem nebo dotaz, stačí odpovědět na tento email.\n\n"
+        f"Kdyby vás to zajímalo nebo měli jakýkoliv dotaz, stačí odpovědět na tento e-mail.\n"
+        f"A pokud teď není vhodná doba, klidně to nechte být – ozvat se můžete kdykoliv později.\n\n"
         f"S pozdravem,\n"
         f"{SENDER_NAME}\n"
         f"{SENDER_COMPANY}"
@@ -530,7 +533,8 @@ def generate_followup_email(name, demo_url):
         f"<p>Dobrý den,</p>"
         f"<p>posílám jen krátké připomenutí – před pár dny jsem vám poslal ukázku webu "
         f'pro {name}: <a href="{demo_url}">{demo_url}</a></p>'
-        f"<p>Demo mažu za pár dní. Pokud máte zájem nebo dotaz, stačí odpovědět na tento email.</p>"
+        f"<p>Kdyby vás to zajímalo nebo měli jakýkoliv dotaz, stačí odpovědět na tento e-mail. "
+        f"A pokud teď není vhodná doba, klidně to nechte být – ozvat se můžete kdykoliv později.</p>"
         f"<p>S pozdravem,<br>"
         f"<strong>{SENDER_NAME}</strong><br>"
         f'<a href="{SENDER_WEBSITE}">{SENDER_COMPANY}</a></p>'
