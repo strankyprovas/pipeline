@@ -15,7 +15,13 @@ from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-import anthropic
+try:
+    import anthropic
+except ImportError:
+    # AI personalizace je vypnutá (organizace bez kreditů), takže balíček
+    # v Actions neinstalujeme. Bez tohohle obalu spadl celý follow-up běh
+    # na ModuleNotFoundError ještě před prvním řádkem práce.
+    anthropic = None
 from sheets import get_or_create_sheet, HEADERS, mark_followup_sent
 from gmail_draft import create_draft, get_gmail_service
 from email_template import SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
@@ -132,7 +138,7 @@ def get_followup_candidates(sheet, days: int = 5, max_days: int = 30) -> list[di
 
 def _generate_ai_followup(contact: dict) -> tuple[str, str] | None:
     """Vygeneruje AI follow-up text přes Claude Haiku. Vrátí (plain, html) nebo None."""
-    if not ANTHROPIC_API_KEY:
+    if not ANTHROPIC_API_KEY or anthropic is None:
         return None
 
     name = contact["name"]
