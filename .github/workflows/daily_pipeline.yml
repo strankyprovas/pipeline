@@ -2,7 +2,7 @@ name: Daily Outreach Pipeline
 
 # Odvětví se střídají po dnech (2 denně) místo 9 naráz. Důvody:
 #   - 9 paralelních jobů narazilo na kvótu Google Sheets (chyba 429)
-#   - timeout 6 h na job byl zbytečný, reálný běh se vejde do ~40 min
+#   - 180 min/obor: běh projde ~35 měst místo 9 (cca 5 min na město)
 # Ruční spuštění: workflow_dispatch → pole "industry" (prázdné = dnešní dvojice).
 
 on:
@@ -53,7 +53,7 @@ jobs:
     name: ${{ matrix.industry }}
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -120,7 +120,7 @@ jobs:
         # env:
         #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 2
+          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 4
 
       - name: Dopush zbylá dema
         # Dema se pushují dávkově (max 1× za 10 min kvůli limitu buildů GitHub Pages).
