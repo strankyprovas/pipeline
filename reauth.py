@@ -8,6 +8,10 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
     "https://www.googleapis.com/auth/gmail.compose",
+    # gmail.compose umí jen vytvářet a odesílat. Na detekci odpovědí je potřeba
+    # ČÍST poštu – bez tohohle scope vrací sync_replies 403 a follow-upy by
+    # chodily i lidem, kteří už odpověděli.
+    "https://www.googleapis.com/auth/gmail.readonly",
 ]
 
 if os.path.exists(TOKEN_FILE):
