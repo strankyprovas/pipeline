@@ -147,7 +147,39 @@ def city_in_locative(city: str) -> str:
     return f"v {loc}" if loc else ""
 
 
-def get_subject(name, category):
+def pick_subject(name, category) -> tuple:
+    """Vrátí (předmět, varianta A/B/C) – aby šlo v Sheetu vyhodnotit, co funguje.
+
+    `get_subject()` níž vrací jen text, takže se do Sheetu zapisovala prázdná
+    varianta a A/B test nešel vyhodnotit ("Gmail draft vytvořen (varianta: )").
+    """
+    subjects = _subject_variants(name, category)
+    i = random.randrange(len(subjects))
+    return subjects[i], "ABC"[i] if i < 3 else str(i)
+
+
+def _rating_note(restaurant: dict, category: str) -> str:
+    """Věta o hodnocení na Googlu. Data se scrapují, ale v mailu se nepoužívala.
+
+    Přidá se jen když je hodnocení opravdu dobré a postavené na dost recenzích –
+    u podniku se třemi hvězdami by to vyznělo jako výsměch.
+    """
+    try:
+        rating = float(restaurant.get("rating") or 0)
+        reviews = int(restaurant.get("reviews_count") or 0)
+    except (TypeError, ValueError):
+        return ""
+    if rating < 4.3 or reviews < 15:
+        return ""
+    r = f"{rating:.1f}".replace(".", ",")
+    if category == "bez_webu":
+        return (f" Všiml jsem si, že na Googlu máte {r} z {reviews} hodnocení – "
+                f"to je skvělá vizitka, kterou ale nemáte kde pořádně ukázat.")
+    return (f" Všiml jsem si, že na Googlu máte {r} z {reviews} hodnocení – "
+            f"to je skvělá vizitka, kterou by web měl mnohem víc prodávat.")
+
+
+def _subject_variants(name, category):
     if category == "bez_webu":
         subjects = [
             f"{name} – připravil jsem vám ukázku webu",
@@ -160,7 +192,12 @@ def get_subject(name, category):
             "Váš nový web je hotový – podívejte se",
             "Zákazníci vás hledají na Googlu – co najdou?",
         ]
-    return random.choice(subjects)
+    return subjects
+
+
+def get_subject(name, category):
+    """Zpětně kompatibilní obal – vrací jen text předmětu."""
+    return pick_subject(name, category)[0]
 
 
 # Odvětvové texty pro šablonu
@@ -403,7 +440,8 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     ind_name_gen = ind.get("name_genitive_pl", "podniky")  # "restaurací", "kaváren"...
     domain = website.replace("https://", "").replace("http://", "").rstrip("/") if website else ""
 
-    subject = get_subject(name, category)
+    subject, ab_variant = pick_subject(name, category)
+    rating_note = _rating_note(restaurant, category)
     texts = INDUSTRY_TEXTS.get(industry_key, INDUSTRY_TEXTS["restaurace"])
     portfolio = PORTFOLIO_BY_INDUSTRY.get(industry_key, PORTFOLIO_BY_INDUSTRY["restaurace"])
     city_loc = city_in_locative(city)
@@ -416,7 +454,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
             f"pro {ind_name_gen} v Česku. Díval jsem se na {name}{' ' + city_loc if city_loc else ''} a napadlo mě, "
             f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
             f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
-            f"ale jako funkční základ podnikání."
+            f"ale jako funkční základ podnikání.{rating_note}"
         )
     else:
         intro = (
@@ -424,7 +462,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
             f"jmenuju se Matyáš a s mým kamarádem Kryštofem už několik let vytváříme moderní weby "
             f"pro {ind_name_gen} v Česku. Díval jsem se na váš web {domain} a napadlo mě, "
             f"že by zasloužil modernizaci – aby lépe fungoval na mobilech, rychleji se načítal "
-            f"a výš se zobrazoval ve vyhledávačích."
+            f"a výš se zobrazoval ve vyhledávačích.{rating_note}"
         )
 
     # Sekce problémů
@@ -508,7 +546,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 {pixel}
 </div>"""
 
-    return {"subject": subject, "body": body, "html_body": html_body, "to_name": name}
+    return {"subject": subject, "body": body, "html_body": html_body, "to_name": name, "ab_variant": ab_variant}
 
 
 def generate_followup_email(name, demo_url):
