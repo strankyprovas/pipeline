@@ -16,6 +16,34 @@ import requests
 import time
 from main import process_restaurants
 
+STATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state")
+
+
+def _offset_path(industry: str) -> str:
+    return os.path.join(STATE_DIR, f"{industry}.txt")
+
+
+def _load_offset(industry: str, total: int) -> int:
+    """Kolikáté město zpracovat jako první. Po dojetí seznamu začne od nuly."""
+    try:
+        with open(_offset_path(industry), encoding="utf-8") as f:
+            off = int(f.read().strip())
+    except (OSError, ValueError):
+        return 0
+    if off >= total:
+        print(f"↩️  Seznam měst dojel do konce ({total}), začínám znovu od začátku.")
+        return 0
+    return max(0, off)
+
+
+def _save_offset(industry: str, offset: int, total: int) -> None:
+    try:
+        os.makedirs(STATE_DIR, exist_ok=True)
+        with open(_offset_path(industry), "w", encoding="utf-8") as f:
+            f.write(f"{offset % total if total else 0}\n")
+    except OSError as e:
+        print(f"  ⚠️  Nepodařilo se uložit pozici v seznamu měst: {e}")
+
 
 CITIES_CACHE_FILE = os.path.join(os.path.dirname(__file__), "czech_cities_cache.json")
 CACHE_MAX_AGE_DAYS = 7
@@ -235,7 +263,13 @@ if __name__ == "__main__":
     else:
         cities = fetch_czech_cities(min_population=args.min_pop)
 
-    cities = cities[args.skip:]
+    # Odkud pokračovat. Běh vždy skončí na timeoutu, takže bez uložené pozice
+    # by se pořád dokola projížděla stejná první města – a u vytěženého oboru
+    # se celé okno spotřebuje jen odmítáním kontaktů, které už v DB jsou
+    # (3. 8. 2026 takhle pekárny vyrobily 0 dem při 44 hláškách "Již v databázi").
+    total_cities = len(cities)
+    start = args.skip if args.skip else _load_offset(args.industry, total_cities)
+    cities = cities[start:]
 
     # Náhodné zpoždění startu (0–90s) aby paralelní GitHub Actions joby nestrefily Sheets API najednou
     startup_delay = random.uniform(0, 90)
@@ -243,14 +277,14 @@ if __name__ == "__main__":
     time.sleep(startup_delay)
 
     print(f"🏙️  Zpracovávám {len(cities)} měst, cíl {args.target} demo/město (odvětví: {args.industry})")
-    if args.skip:
-        print(f"   (přeskočeno prvních {args.skip} měst)")
+    if start:
+        print(f"   (navazuji od {start}. města z {total_cities})")
     print(f"   Ukázka: {', '.join(cities[:8])}...\n")
 
     used_domains: set = set()
     total = 0
 
-    for city in cities:
+    for i, city in enumerate(cities):
         results = process_restaurants(
             city=city,
             target=args.target,
@@ -258,6 +292,9 @@ if __name__ == "__main__":
             industry=args.industry,
         )
         total += sum(1 for r in results if r.get("demo_path"))
+        # Zapisuj po každém městě – job je vždy ukončen timeoutem, takže
+        # na konec smyčky se nikdy nedostaneme.
+        _save_offset(args.industry, start + i + 1, total_cities)
 
     print(f"\n{'='*50}")
     print(f"🎉 Celkem vygenerováno: {total} demo+draft pro {len(cities)} měst")

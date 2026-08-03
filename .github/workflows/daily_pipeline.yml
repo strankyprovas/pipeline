@@ -148,6 +148,25 @@ jobs:
           print(p.stdout.strip() or p.stderr.strip() or 'push OK')
           PY
 
+      - name: Ulož pozici v seznamu měst
+        # Bez toho začíná každý běh znovu od prvního města. U vytěženého oboru
+        # se pak celé okno spotřebuje odmítáním kontaktů, které už v DB jsou.
+        if: always()
+        run: |
+          if [ -z "$(git status --porcelain state/ 2>/dev/null)" ]; then
+            echo "Žádná změna pozice k uložení."
+            exit 0
+          fi
+          git add state/
+          git commit -m "Pozice v seznamu měst: ${{ matrix.industry }}"
+          # Druhý obor běží ve vlastním checkoutu, proto rebase před pushem.
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "pokus $i selhal, zkouším znovu"
+            sleep 5
+          done
+          echo "::warning::Pozici v seznamu měst se nepodařilo uložit"
+
       - name: Ověř, že se dema opravdu zveřejnila
         # Bez tohohle kroku pipeline tiše "uspěje", i když push dem selže –
         # přesně to se dělo od července: dema 404, sender je odmítl,
