@@ -29,13 +29,37 @@ from email_template import SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 
+def _records(sheet) -> list:
+    """Načte Sheet jako seznam dictů.
+
+    Nepoužíváme gspread `get_all_records()` – hlavička má prázdné sloupce a ta
+    metoda na nich padá ("header row contains duplicates: ['']"). Volající to
+    odchytávaly a vracely prázdný seznam, takže follow-upy hlásily „všechno je
+    aktuální", i když čekalo přes 1 100 kontaktů. Čteme proto surové hodnoty
+    a mapujeme podle hlavičky sami.
+    """
+    values = sheet.get_all_values()
+    if not values:
+        return []
+    header = values[0]
+    out = []
+    for row in values[1:]:
+        rec = {}
+        for i, key in enumerate(header):
+            key = key.strip()
+            if key and key not in rec:
+                rec[key] = row[i].strip() if i < len(row) else ""
+        out.append(rec)
+    return out
+
+
 def sync_replies(sheet) -> int:
     """
     Prohledá Gmail inbox a označí v Sheetu kontakty, od kterých přišla odpověď.
     Vrátí počet nově označených odpovědí.
     """
     try:
-        records = sheet.get_all_records()
+        records = _records(sheet)
     except Exception as e:
         print(f"❌ Chyba čtení Sheetu: {e}")
         return 0
@@ -92,10 +116,12 @@ def get_followup_candidates(sheet, days: int = 5, max_days: int = 30) -> list[di
     kontaktů, bez `max_days` by se první běh pokusil oslovit všechny.
     """
     try:
-        records = sheet.get_all_records()
+        records = _records(sheet)
     except Exception as e:
+        # Nevracet prázdno – vypadalo by to jako „není co řešit“ a job by
+        # skončil zeleně. Radši ať workflow spadne a je to vidět.
         print(f"❌ Chyba čtení Sheetu: {e}")
-        return []
+        raise
 
     cutoff = datetime.now() - timedelta(days=days)
     oldest = datetime.now() - timedelta(days=max_days)
