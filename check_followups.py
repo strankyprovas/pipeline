@@ -82,24 +82,54 @@ def sync_replies(sheet) -> int:
         print(f"⚠️  Gmail API nedostupné: {e}")
         return 0
 
+    # Původní verze pouštěla jeden Gmail dotaz NA KAŽDÝ čekající kontakt.
+    # Při 14 800 oslovených to je 14 800 volání API – job by doběhl na timeout
+    # a narazil na kvótu. Dokud se Sheet kvůli chybné hlavičce nedal přečíst,
+    # se sem běh nikdy nedostal, takže to nebylo vidět.
+    # Teď načteme příchozí poštu jedním dotazem a odesílatele porovnáme v paměti.
     updated = 0
     odpov_col = HEADERS.index("Odpověděl") + 1
     stav_col = HEADERS.index("Stav") + 1
 
-    for email_addr, row_idx in pending.items():
-        try:
-            # Hledej zprávy OD tohoto emailu v inboxu
-            query = f"from:{email_addr} in:inbox"
-            result = service.users().messages().list(
-                userId="me", q=query, maxResults=1
+    senders = set()
+    page_token = None
+    try:
+        for _ in range(20):  # strop, ať se z toho nestane nekonečné stránkování
+            resp = service.users().messages().list(
+                userId="me", q="in:inbox newer_than:60d",
+                maxResults=500, pageToken=page_token,
             ).execute()
-            if result.get("messages"):
-                sheet.update_cell(row_idx, odpov_col, "ano")
-                sheet.update_cell(row_idx, stav_col, "odpověděl")
-                print(f"  ✅ Odpověď od: {email_addr}")
-                updated += 1
-        except Exception:
-            pass
+            ids = [m["id"] for m in resp.get("messages", [])]
+            for mid in ids:
+                msg = service.users().messages().get(
+                    userId="me", id=mid, format="metadata",
+                    metadataHeaders=["From"],
+                ).execute()
+                for h in msg.get("payload", {}).get("headers", []):
+                    if h.get("name", "").lower() == "from":
+                        addr = h.get("value", "")
+                        if "<" in addr:
+                            addr = addr.split("<", 1)[1].split(">", 1)[0]
+                        senders.add(addr.strip().lower())
+            page_token = resp.get("nextPageToken")
+            if not page_token:
+                break
+    except Exception as e:
+        print(f"⚠️  Nepodařilo se načíst příchozí poštu: {e}")
+        return 0
+
+    print(f"  (prošel jsem {len(senders)} odesílatelů z pošty za posledních 60 dní)")
+
+    for email_addr, row_idx in pending.items():
+        if email_addr not in senders:
+            continue
+        try:
+            sheet.update_cell(row_idx, odpov_col, "ano")
+            sheet.update_cell(row_idx, stav_col, "odpověděl")
+            print(f"  ✅ Odpověď od: {email_addr}")
+            updated += 1
+        except Exception as e:
+            print(f"  ⚠️  Zápis do Sheetu selhal pro {email_addr}: {e}")
 
     return updated
 
