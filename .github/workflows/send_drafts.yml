@@ -14,17 +14,22 @@ name: Send Drafts
 
 on:
   schedule:
-    # Út–Pá v 7:30, 15:30 a 17:30 SELČ. Poledne je pro restaurace a pekárny
-    # nejhorší chvíle (mají špičku), proto ven z 12:00. Pondělí vynecháno –
-    # maily se ztrácejí v návalu po víkendu. Odpolední sloty jsou až po
-    # doběhnutí pipeline (07:00–13:00 UTC), aby se nečekalo ve frontě.
-    - cron: '30 5,13,15 * * 2-5'
+    # Út–Pá 2× denně: ráno před pipeline, odpoledne po ní.
+    # Radši 2 dávky po 15 mailech než 3 po 8 – GitHub spouští naplánované běhy
+    # u public repa i s 2,5h zpožděním (cron 7:00 → reálný start 9:34), takže
+    # čím míň slotů musí trefit mezeru, tím spolehlivější to je.
+    # ⚠️ Sloty MUSÍ být mimo okno pipeline. Ta drží stejnou concurrency group
+    # a při 2 oborech × 180 min běží 9:00–15:30 SELČ (reálně ~9:34–15:34 UTC+0
+    # kvůli zpoždění cronu). Slot ve 13:30 UTC kvůli tomu 4. 8. vůbec
+    # nenaskočil a místo 24 mailů odešlo 8, zatímco draftů přibylo ~50.
+    - cron: '30 5 * * 2-5'
+    - cron: '0 16 * * 2-5'
   workflow_dispatch:
     inputs:
       limit:
         description: 'Max. počet e-mailů za tento běh'
         required: false
-        default: '8'
+        default: '15'
       dry_run:
         description: 'Jen vypsat, nic neodesílat (true/false)'
         required: false
@@ -57,7 +62,7 @@ jobs:
 
       - name: Odešli drafty
         env:
-          LIMIT: ${{ github.event.inputs.limit || '8' }}
+          LIMIT: ${{ github.event.inputs.limit || '15' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           set -euo pipefail
