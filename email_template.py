@@ -1,6 +1,6 @@
 """
 Nový long-form cold email template (styl Vegeranda).
-Struktura: intro → problémy → řešení → přínosy → demo → cena → CTA
+Struktura: intro → problémy → řešení → přínosy → demo → CTA (cena se v mailu neuvádí)
 """
 import random
 try:
@@ -441,7 +441,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     domain = website.replace("https://", "").replace("http://", "").rstrip("/") if website else ""
 
     subject, ab_variant = pick_subject(name, category)
-    rating_note = ""  # zmínka o hodnocení na přání vypnutá (3.–5. 8. 2026)
+    rating_note = _rating_note(restaurant, category)
     texts = INDUSTRY_TEXTS.get(industry_key, INDUSTRY_TEXTS["restaurace"])
     portfolio = PORTFOLIO_BY_INDUSTRY.get(industry_key, PORTFOLIO_BY_INDUSTRY["restaurace"])
     city_loc = city_in_locative(city)
@@ -497,11 +497,11 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     else:
         demo_section = f"Naše poslední projekty jsou například {portfolio}."
 
-    # Cena a CTA
+    # CTA. Cenu do studeného mailu schválně nepíšeme (rozhodnuto 5. 8. 2026) –
+    # řeší se až v odpovědi, kdy je o čem mluvit. HTML verze cta_section přebírá.
     cta_section = (
-        f"Weby děláme za 500 Kč měsíčně – v ceně je hosting, správa, úpravy na vyžádání "
-        f"a vše potřebné, takže se nemusíte starat o nic technického.\n\n"
-        f"Hodí se vám krátký hovor v úterý nebo ve středu dopoledne? Stačí odpovědět na tento email. 🙂"
+        f"Rád vám k tomu řeknu víc – hodí se vám krátký hovor v úterý nebo ve středu "
+        f"dopoledne? Stačí odpovědět na tento e-mail. 🙂"
     )
 
     # Podpis
