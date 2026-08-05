@@ -7,7 +7,10 @@ name: Daily Outreach Pipeline
 
 on:
   schedule:
-    - cron: '0 7 * * *'   # každý den v 8:00 CET (7:00 UTC)
+    # Večerní start schválně: 3 obory × 180 min = až 9 h běhu. Přes den by to
+    # drželo concurrency group a odesílací dávky by vůbec nenaskočily (stalo se
+    # 4. 8. slotu 13:30). V noci je okno volné a drafty ráno čekají hotové.
+    - cron: '0 17 * * *'   # cca 19:30 UTC reálně (GitHub startuje se zpožděním)
   workflow_dispatch:
     inputs:
       industry:
@@ -37,13 +40,13 @@ jobs:
           else
             # 1 = pondělí … 7 = neděle (runner běží v UTC)
             case "$(date -u +%u)" in
-              1) MATRIX='["pekarna","kvetinarstvi"]' ;;
-              2) MATRIX='["restaurace","kavarna"]' ;;
-              3) MATRIX='["penzion","kosmetika"]' ;;
-              4) MATRIX='["kadernictvi","zubni"]' ;;
-              5) MATRIX='["masaze","autoservis"]' ;;
-              6) MATRIX='["psycholog","pekarna"]' ;;
-              7) MATRIX='["kvetinarstvi","restaurace"]' ;;
+              1) MATRIX='["pekarna","kvetinarstvi","restaurace"]' ;;
+              2) MATRIX='["kavarna","penzion","kosmetika"]' ;;
+              3) MATRIX='["kadernictvi","zubni","masaze"]' ;;
+              4) MATRIX='["autoservis","psycholog","pekarna"]' ;;
+              5) MATRIX='["kvetinarstvi","restaurace","kavarna"]' ;;
+              6) MATRIX='["penzion","kosmetika","kadernictvi"]' ;;
+              7) MATRIX='["zubni","masaze","autoservis"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
@@ -120,7 +123,7 @@ jobs:
         # env:
         #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 4
+          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 6
 
       - name: Dopush zbylá dema
         # Dema se pushují dávkově (max 1× za 10 min kvůli limitu buildů GitHub Pages).

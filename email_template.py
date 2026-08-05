@@ -441,7 +441,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     domain = website.replace("https://", "").replace("http://", "").rstrip("/") if website else ""
 
     subject, ab_variant = pick_subject(name, category)
-    rating_note = _rating_note(restaurant, category)
+    rating_note = ""  # zmínka o hodnocení na přání vypnutá (3.–5. 8. 2026)
     texts = INDUSTRY_TEXTS.get(industry_key, INDUSTRY_TEXTS["restaurace"])
     portfolio = PORTFOLIO_BY_INDUSTRY.get(industry_key, PORTFOLIO_BY_INDUSTRY["restaurace"])
     city_loc = city_in_locative(city)
