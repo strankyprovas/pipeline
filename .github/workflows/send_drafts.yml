@@ -14,16 +14,19 @@ name: Send Drafts
 
 on:
   schedule:
-    # Út–Pá 2× denně: ráno před pipeline, odpoledne po ní.
-    # Radši 2 dávky po 15 mailech než 3 po 8 – GitHub spouští naplánované běhy
-    # u public repa i s 2,5h zpožděním (cron 7:00 → reálný start 9:34), takže
-    # čím míň slotů musí trefit mezeru, tím spolehlivější to je.
-    # ⚠️ Sloty MUSÍ být mimo okno pipeline. Ta drží stejnou concurrency group
-    # a při 2 oborech × 180 min běží 9:00–15:30 SELČ (reálně ~9:34–15:34 UTC+0
-    # kvůli zpoždění cronu). Slot ve 13:30 UTC kvůli tomu 4. 8. vůbec
-    # nenaskočil a místo 24 mailů odešlo 8, zatímco draftů přibylo ~50.
-    - cron: '0 6 * * 2-5'
-    - cron: '0 13 * * 2-5'
+    # Pipeline se přesunula na večer, celý den je proto volný.
+    # GitHub spouští naplánované běhy u public repa se zpožděním ~1 h
+    # (cron 6:00 → reálný start 7:02, cron 13:00 → 14:06), s tím sloty počítají.
+    #
+    # 7. 8. 2026: přidán třetí slot (3×20 = 60 mailů/den). Výroba běží ~90 draftů
+    # denně, odesílalo se 40 – fronta rostla asi o 50 draftů denně a protože
+    # sender bere od nejnovějšího, její starý konec by se na řadu nedostal nikdy.
+    # Pondělí dobráno taky (pipeline jede 7 dní v týdnu, odesílalo se jen Út–Pá).
+    # Sloty MUSÍ zůstat mimo okno pipeline: ta drží stejnou concurrency group
+    # od ~18:20 UTC do ~03:30 UTC (3 obory × 180 min).
+    - cron: '0 6 * * 1-5'
+    - cron: '0 9 * * 1-5'
+    - cron: '0 13 * * 1-5'
   workflow_dispatch:
     inputs:
       limit:
