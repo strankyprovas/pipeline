@@ -438,17 +438,22 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
         for r in results:
             writer.writerow({k: r.get(k, "") for k in fieldnames})
 
-    # Auto push na GitHub Pages
+    # Auto push na GitHub Pages.
+    # Každé demo se commituje hned po vygenerování (viz výše), takže tady už
+    # obvykle není co commitovat – dřívější `commit --check=True` proto po každém
+    # městě vypsal "GitHub push selhal", ačkoli šlo jen o "nothing to commit".
+    # 5. 8. 2026 takových falešných hlášek bylo 15 na běh a schovaly se v nich
+    # tři skutečné 403 z pushe pozice. Commitujeme proto jen zbytky a push
+    # necháme na dávkovači, který hlídá limit buildů GitHub Pages.
     if demos_done > 0:
         print(f"\n🚀 Nahrávám dema na GitHub Pages...")
-        try:
-            subprocess.run(["git", "-C", demos_dir, "add", "."], check=True)
+        subprocess.run(["git", "-C", demos_dir, "add", "."], check=False)
+        zbytky = subprocess.run(["git", "-C", demos_dir, "diff", "--cached", "--quiet"])
+        if zbytky.returncode != 0:
             subprocess.run(["git", "-C", demos_dir, "commit",
-                            "-m", f"Nová dema: {city} ({demos_done} {ind_name})"], check=True)
-            subprocess.run(["git", "-C", demos_dir, "push"], check=True)
-            print(f"  ✅ GitHub Pages aktualizován")
-        except subprocess.CalledProcessError as e:
-            print(f"  ⚠️  GitHub push selhal: {e}")
+                            "-m", f"Nová dema: {city} ({demos_done} {ind_name})"],
+                           check=False, capture_output=True)
+        _maybe_push(demos_dir)
 
     return results
 
