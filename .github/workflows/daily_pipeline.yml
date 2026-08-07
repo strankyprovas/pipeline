@@ -66,6 +66,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # persist-credentials: false → checkout NEuloží do .git/config hlavičku
+          # s GITHUB_TOKENem. Ta má jen čtecí právo a přebíjela přepis přes GH_PAT
+          # níž, takže push pozice v seznamu měst končil 403 (viz krok "Ulož pozici").
+          # Dema se pushovala v pořádku jen proto, že jejich repo se klonuje zvlášť
+          # a žádnou takovou hlavičku nemá.
+          persist-credentials: false
+          # Rebase před pushem potřebuje historii, mělký klon ji nemá.
+          fetch-depth: 0
 
       - name: Instaluj Python závislosti
         run: |
@@ -160,6 +169,7 @@ jobs:
             echo "Žádná změna pozice k uložení."
             exit 0
           fi
+          echo "Ukládám pozici: $(cat state/${{ matrix.industry }}.txt 2>/dev/null)"
           git add state/
           git commit -m "Pozice v seznamu měst: ${{ matrix.industry }}"
           # Druhý obor běží ve vlastním checkoutu, proto rebase před pushem.
@@ -168,7 +178,11 @@ jobs:
             echo "pokus $i selhal, zkouším znovu"
             sleep 5
           done
-          echo "::warning::Pozici v seznamu měst se nepodařilo uložit"
+          # Chyba, ne warning: když tohle selže, začne příští běh zase od prvního
+          # města a celé tříhodinové okno se spotřebuje na kontakty, které už
+          # v databázi jsou. Přesně tohle se dělo tiše od 3. 8. 2026.
+          echo "::error::Pozici v seznamu měst se nepodařilo uložit (${{ matrix.industry }})"
+          exit 1
 
       - name: Ověř, že se dema opravdu zveřejnila
         # Bez tohohle kroku pipeline tiše "uspěje", i když push dem selže –
