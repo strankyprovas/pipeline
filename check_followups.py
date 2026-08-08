@@ -354,8 +354,10 @@ if __name__ == "__main__":
         print(f"  (žádné nové odpovědi)\n")
 
     if args.sync_only:
+        # Tenhle blok běží na úrovni modulu (`if __name__ == "__main__":`),
+        # takže tady `return` není povolený – padalo to na SyntaxError.
         print("✅ Hotovo (--sync-only, follow-upy se neřeší).")
-        return
+        raise SystemExit(0)
 
     print(f"🔍 Hledám kontakty oslovené před {args.days}–{args.max_days} dny bez odpovědi...\n")
     candidates = get_followup_candidates(sheet, days=args.days, max_days=args.max_days)
