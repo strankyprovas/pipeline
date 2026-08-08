@@ -1,0 +1,80 @@
+name: Outreach report
+
+# Sečte, co outreach za celou dobu přinesl – odezva podle oboru, města,
+# A/B varianty a měsíce. Report se ukládá do reports/ a vypisuje do logu.
+#
+# ⚠️ Sdílí `concurrency: google-oauth-token` s pipeline, senderem i follow-upy.
+# Všechny čtyři sahají na týž Google refresh token a souběžné obnovení ho
+# Google vyhodnotí jako reuse a token zneplatní. Proto se to NIKDY nespouští
+# lokálně z Macu, ale vždycky tudy.
+
+on:
+  schedule:
+    # 1. v měsíci ráno – měsíční odstup je minimum, aby přibylo dost dat
+    # na to, aby se čísla vůbec pohnula mimo interval spolehlivosti.
+    - cron: '0 4 1 * *'
+  workflow_dispatch:
+    inputs:
+      min_vzorek:
+        description: 'Od kolika odeslaných mailů brát odezvu segmentu vážně'
+        required: false
+        default: '100'
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Spočítat odezvu
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Bez tohohle si checkout uloží hlavičku s GITHUB_TOKENem, ta má jen
+          # čtecí právo a push reportu by skončil na 403 (viz daily_pipeline.yml).
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Instaluj Python závislosti
+        run: |
+          pip install -q \
+            requests gspread google-auth google-auth-oauthlib \
+            google-auth-httplib2 google-api-python-client
+
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+
+      - name: Spočítej odezvu
+        env:
+          MIN_VZOREK: ${{ github.event.inputs.min_vzorek || '100' }}
+        run: |
+          set -euo pipefail
+          echo "REPORT_FILE=reports/outreach-$(date -u +%F).md" >> "$GITHUB_ENV"
+          python3 analyze_outreach.py \
+            --min-vzorek "$MIN_VZOREK" \
+            --out "reports/outreach-$(date -u +%F).md"
+
+      - name: Ulož report do repa
+        run: |
+          git config user.name "StrankyProVas Bot"
+          git config user.email "matyas.vrbaa@gmail.com"
+          git config --global url."https://x-access-token:${{ secrets.GH_PAT }}@github.com/".insteadOf "https://github.com/"
+          if [ -z "$(git status --porcelain reports/)" ]; then
+            echo "Report se od minula nezměnil."
+            exit 0
+          fi
+          git add reports/
+          git commit -m "Outreach report $(date -u +%F)"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0
+            echo "pokus $i selhal, zkouším znovu"
+            sleep 5
+          done
+          echo "::error::Report se nepodařilo uložit do repa"
+          exit 1
