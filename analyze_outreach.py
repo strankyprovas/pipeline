@@ -83,7 +83,6 @@ class Segment:
 def analyzuj(hlavicky: list[str], radky: list[list[str]]) -> dict:
     i_datum = _sloupec(hlavicky, "Datum emailu")
     i_stav = _sloupec(hlavicky, "Stav")
-    i_pozn = _sloupec(hlavicky, "Poznámka")
     i_mesto = _sloupec(hlavicky, "Město")
     i_odvetvi = _sloupec(hlavicky, "Odvětví")
     i_odpov = _sloupec(hlavicky, "Odpověděl")
@@ -102,6 +101,7 @@ def analyzuj(hlavicky: list[str], radky: list[list[str]]) -> dict:
     celkem = Segment()
     radku_celkem = 0
     bez_oboru = 0
+    kde_znacky = {"klik": defaultdict(int), "pixel": defaultdict(int)}
 
     for r in radky:
         radku_celkem += 1
@@ -114,10 +114,21 @@ def analyzuj(hlavicky: list[str], radky: list[list[str]]) -> dict:
         if not odeslano:
             continue
 
-        pozn = bunka(r, i_pozn).lower()
         odpovedel = bool(bunka(r, i_odpov)) or stav == "odpověděl"
-        proklik = "klik" in pozn
-        otevrel = "pixel" in pozn
+
+        # Značky "klik …" / "pixel …" zapisuje Apps Script tracker a nesedí vždy
+        # ve stejném sloupci (viděl jsem je v Poznámce i jinde). Když se hledaly
+        # jen v Poznámce, vyšlo 0 prokliků, ačkoli v Sheetu jsou. Proto se
+        # prohledává celý řádek a zároveň se sleduje, kde se to našlo.
+        proklik = otevrel = False
+        for idx, hodnota in enumerate(r):
+            h = hodnota.lower()
+            if "klik" in h:
+                proklik = True
+                kde_znacky["klik"][hlavicky[idx] if idx < len(hlavicky) else f"sl. {idx}"] += 1
+            if "pixel" in h:
+                otevrel = True
+                kde_znacky["pixel"][hlavicky[idx] if idx < len(hlavicky) else f"sl. {idx}"] += 1
         follow_up = bool(bunka(r, i_fup)) or stav == "follow_up_odesl"
 
         obor = bunka(r, i_odvetvi) or "(nevyplněno)"
@@ -149,6 +160,7 @@ def analyzuj(hlavicky: list[str], radky: list[list[str]]) -> dict:
         "celkem": celkem,
         "radku_celkem": radku_celkem,
         "bez_oboru": bez_oboru,
+        "kde_znacky": kde_znacky,
     }
 
 
@@ -212,7 +224,27 @@ def sestav_report(data: dict, min_vzorek: int) -> str:
         "nemá cenu podle něj přesouvat kapacitu. ▲/▼ značí segment, který se "
         "od celkového průměru odlišuje průkazně.",
         "",
+        "## ⚠️ Než z toho začneš vyvozovat závěry",
+        "",
+        "**Odpovědi se dopočítávají z pošty jen 60 dní zpět** "
+        "(`sync_replies` v `check_followups.py`). Cokoli staršího nemá odpovědi "
+        "spočítané, i kdyby přišly – vypadá to pak jako propadák, přitom jde jen "
+        "o díru v měření. Rozdíly mezi měsíci proto neber vážně, dokud se "
+        "historie nedopočítá: `check_followups.py --sync-only --reply-window-days 250`.",
+        "",
+        "Totéž platí pro A/B varianty: zapisovat se začaly až 3. 8. 2026, "
+        "u starších mailů je sloupec prázdný.",
+        "",
     ]
+
+    znacky = data.get("kde_znacky", {})
+    nalezene = {k: dict(v) for k, v in znacky.items() if v}
+    if nalezene:
+        r += ["Značky trackeru nalezeny ve sloupcích: "
+              + "; ".join(f"**{typ}** → {v}" for typ, v in nalezene.items()), ""]
+    else:
+        r += ["Značky trackeru (`klik …`, `pixel …`) se v databázi nenašly vůbec – "
+              "buď tracker nezapisuje, nebo píše jinam, než se hledá.", ""]
 
     r += tabulka("Podle oboru", data["podle"]["obor"], min_vzorek, odezva)
     r += tabulka("Podle A/B varianty předmětu", data["podle"]["varianta"], min_vzorek, odezva)

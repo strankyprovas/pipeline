@@ -53,10 +53,17 @@ def _records(sheet) -> list:
     return out
 
 
-def sync_replies(sheet) -> int:
+def sync_replies(sheet, window_days: int = 60, max_pages: int = 20) -> int:
     """
     Prohledá Gmail inbox a označí v Sheetu kontakty, od kterých přišla odpověď.
     Vrátí počet nově označených odpovědí.
+
+    `window_days` = jak daleko zpátky číst poštu. Pro běžný denní provoz stačí
+    60 dní, ale ⚠️ znamená to, že odpovědi na starší maily se do Sheetu nikdy
+    nedostanou. V reportu z 8. 8. 2026 to vypadalo, že odezva v červnu skokově
+    vzrostla desetkrát – ve skutečnosti jen červen padl do okna a březen s
+    dubnem ne. Na dopočet historie pouštěj s velkým oknem (a vyšším max_pages,
+    strop je window × 500 zpráv).
     """
     try:
         records = _records(sheet)
@@ -94,9 +101,9 @@ def sync_replies(sheet) -> int:
     senders = set()
     page_token = None
     try:
-        for _ in range(20):  # strop, ať se z toho nestane nekonečné stránkování
+        for _ in range(max_pages):  # strop, ať se z toho nestane nekonečné stránkování
             resp = service.users().messages().list(
-                userId="me", q="in:inbox newer_than:60d",
+                userId="me", q=f"in:inbox newer_than:{window_days}d",
                 maxResults=500, pageToken=page_token,
             ).execute()
             ids = [m["id"] for m in resp.get("messages", [])]
@@ -118,7 +125,7 @@ def sync_replies(sheet) -> int:
         print(f"⚠️  Nepodařilo se načíst příchozí poštu: {e}")
         return 0
 
-    print(f"  (prošel jsem {len(senders)} odesílatelů z pošty za posledních 60 dní)")
+    print(f"  (prošel jsem {len(senders)} odesílatelů z pošty za posledních {window_days} dní)")
 
     for email_addr, row_idx in pending.items():
         if email_addr not in senders:
@@ -321,6 +328,11 @@ if __name__ == "__main__":
                         help="Nejstarší kontakt k oslovení – starším by text lhal (default: 30)")
     parser.add_argument("--limit", type=int, default=0,
                         help="Max. počet follow-upů za běh (0 = bez omezení)")
+    parser.add_argument("--reply-window-days", type=int, default=60,
+                        help="Jak daleko zpět číst poštu při hledání odpovědí "
+                             "(default 60; na dopočet historie použij např. 250)")
+    parser.add_argument("--sync-only", action="store_true",
+                        help="Jen dopočítat odpovědi z Gmailu, follow-upy neřešit")
     parser.add_argument("--delay", type=int, default=30,
                         help="Prodleva mezi emaily v sekundách při --send (default: 30)")
     args = parser.parse_args()
@@ -329,11 +341,21 @@ if __name__ == "__main__":
     sheet = get_or_create_sheet()
 
     print("📬 Synchronizuji odpovědi z Gmailu...")
-    new_replies = sync_replies(sheet)
+    new_replies = sync_replies(
+        sheet,
+        window_days=args.reply_window_days,
+        # Delší okno = víc zpráv; strop stránkování musí růst s ním, jinak se
+        # dopočet tiše zastaví uprostřed a bude vypadat jako "nic tam není".
+        max_pages=max(20, args.reply_window_days // 2),
+    )
     if new_replies:
         print(f"  🎉 {new_replies} nových odpovědí zaznamenáno do Sheetu\n")
     else:
         print(f"  (žádné nové odpovědi)\n")
+
+    if args.sync_only:
+        print("✅ Hotovo (--sync-only, follow-upy se neřeší).")
+        return
 
     print(f"🔍 Hledám kontakty oslovené před {args.days}–{args.max_days} dny bez odpovědi...\n")
     candidates = get_followup_candidates(sheet, days=args.days, max_days=args.max_days)

@@ -29,6 +29,14 @@ on:
         description: 'Jen vypsat kandidáty, nic neodesílat (true/false)'
         required: false
         default: 'false'
+      sync_only:
+        description: 'Jen dopočítat odpovědi z Gmailu, follow-upy neposílat (true/false)'
+        required: false
+        default: 'false'
+      reply_window_days:
+        description: 'Jak daleko zpět číst poštu při hledání odpovědí (default 60)'
+        required: false
+        default: '60'
 
 concurrency:
   group: google-oauth-token
@@ -59,10 +67,15 @@ jobs:
         env:
           LIMIT: ${{ github.event.inputs.limit || '10' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
+          SYNC_ONLY: ${{ github.event.inputs.sync_only || 'false' }}
+          WINDOW: ${{ github.event.inputs.reply_window_days || '60' }}
         run: |
           set -euo pipefail
-          FLAGS="--days 5 --max-days 30 --limit $LIMIT --delay 45"
-          if [ "$DRY" != "true" ]; then
+          FLAGS="--days 5 --max-days 30 --limit $LIMIT --delay 45 --reply-window-days $WINDOW"
+          if [ "$SYNC_ONLY" = "true" ]; then
+            # Dopočet historie odpovědí: žádné odesílání, jen doplnit Sheet.
+            FLAGS="$FLAGS --sync-only"
+          elif [ "$DRY" != "true" ]; then
             FLAGS="$FLAGS --send"
           fi
           echo "Spouštím: check_followups.py $FLAGS"
