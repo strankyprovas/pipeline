@@ -21,7 +21,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
 ]
 
-SENDER_EMAIL = "matyas.vrbaa@gmail.com"
+from config import SENDER_EMAIL  # jediný zdroj pravdy
 
 
 def get_gmail_service():

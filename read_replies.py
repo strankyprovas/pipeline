@@ -28,7 +28,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.modify",
 ]
 
-SENDER_EMAIL = "matyas.vrbaa@gmail.com"
+from config import SENDER_EMAIL  # jediný zdroj pravdy
 SENDER_NAME = "Matyáš Vrba"
 FIRMA = "StránkyProVás"
 

@@ -1,0 +1,40 @@
+name: Test odesilatele
+
+# Ověří, že se drafty zakládají z adresy v SENDER_EMAIL a že ji Gmail uzná.
+# Spouští se ručně, po každé změně odesílací adresy.
+#
+# ⚠️ Sdílí `concurrency: google-oauth-token` – sahá na týž Google token jako
+# pipeline, sender i follow-upy. Nikdy nespouštět lokálně z Macu.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Ověřit odesílací adresu
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Instaluj Python závislosti
+        run: |
+          pip install -q \
+            requests gspread google-auth google-auth-oauthlib \
+            google-auth-httplib2 google-api-python-client
+
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+
+      - name: Ověř odesílací adresu
+        run: python3 test_sender.py

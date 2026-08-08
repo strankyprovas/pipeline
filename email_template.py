@@ -26,7 +26,7 @@ def _click_tracking_url(slug: str, demo_url: str) -> str:
 SENDER_NAME = "Matyáš Vrba"
 SENDER_COMPANY = "StránkyProVás"
 SENDER_WEBSITE = "https://strankyprovas.cz"
-SENDER_EMAIL = "matyas.vrbaa@gmail.com"
+from config import SENDER_EMAIL  # jediný zdroj pravdy
 
 PORTFOLIO_BY_INDUSTRY = {
     # Jen reálné klientské domény – odkaz na strankyprovas.github.io/... vypadal
