@@ -185,7 +185,7 @@ def tabulka(nazev: str, segmenty: dict, min_vzorek: int, celkova_odezva: float,
         polozky = polozky[:limit]
 
     out = [f"### {nazev}", "",
-           "| | Odesláno | Odpovědi | Odezva | 95% interval | Prokliky | Follow-upy |",
+           "| | Odesláno | Odpovědi | Odezva | 95% interval | Otevření | Prokliky |",
            "|---|---:|---:|---:|---|---:|---:|"]
     for klic, s in polozky:
         odezva = s.odpovedi / s.odeslano * 100 if s.odeslano else 0
@@ -199,9 +199,13 @@ def tabulka(nazev: str, segmenty: dict, min_vzorek: int, celkova_odezva: float,
                 interval += " ▲"
             elif horni < celkova_odezva:
                 interval += " ▼"
+        # Otevření je hrubé (Gmail obrázky proxuje), ale skokový propad mezi
+        # měsíci je silná indicie doručitelnosti – právě tím se pozná, jestli
+        # měsíc s velkým objemem neskončil ve spamu.
+        otevr = f"{s.otevreni} ({s.otevreni / s.odeslano * 100:.0f} %)" if s.odeslano else "0"
         out.append(
             f"| {klic} | {s.odeslano} | {s.odpovedi} | {odezva:.1f} % | {interval} "
-            f"| {s.prokliky} | {s.follow_upy} |"
+            f"| {otevr} | {s.prokliky} |"
         )
     if orezano:
         out.append(f"| _(a dalších {orezano} s menším objemem)_ | | | | | | |")
