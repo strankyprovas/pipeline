@@ -53,6 +53,17 @@ def main() -> int:
             nalezen = (d["id"], payload)
             break
 
+    # Ukliď i případné starší testovací drafty (ručně založené přes Gmail MCP
+    # apod.) – sender je jinak vezme jako běžný outreach.
+    for d in drafts.get("drafts", []):
+        detail = service.users().drafts().get(
+            userId="me", id=d["id"], format="metadata",
+        ).execute()
+        predmet = _hlavicka(detail.get("message", {}).get("payload", {}), "Subject")
+        if predmet.lower().startswith("test odesílací adresy"):
+            service.users().drafts().delete(userId="me", id=d["id"]).execute()
+            print(f"Uklizen starý testovací draft: {predmet}")
+
     if not nalezen:
         print("❌ Testovací draft se nepodařilo najít zpátky.")
         return 1

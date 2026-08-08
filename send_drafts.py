@@ -32,6 +32,12 @@ def _walk_parts(payload):
     return texts
 
 
+VLASTNI_ADRESY = {
+    "matyas.vrbaa@gmail.com",
+    "strankyprovas@strankyprovas.cz",
+}
+
+
 def get_draft_demo_url(service, draft_id):
     """Vytáhne z těla draftu odkaz na demo (nebo None)."""
     try:
@@ -199,6 +205,14 @@ def main():
 
         to_email = to.lower().strip()
         ts = datetime.now().strftime("%H:%M:%S")
+
+        # Vlastní adresy nikdy neoslovovat. Testovací a ručně psané drafty
+        # (např. z ověřování odesílatele) jinak sender pošle jako outreach –
+        # kontrola dema je nezachytí, protože demo URL vůbec nemají.
+        if to_email in VLASTNI_ADRESY:
+            print(f"[{ts}] [{i}/{len(drafts)}] 🚫 Vlastní adresa, nikdy neodesílat → {to}")
+            skipped_count += 1
+            continue
 
         # Přeskoč chráněné podniky (již mají web od nás)
         if to_email in EXCLUDED_EMAILS or any(kw in to_email for kw in EXCLUDED_KEYWORDS):
