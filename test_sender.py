@@ -13,8 +13,10 @@ skutečně zůstalo. Testovací draft na konci zase smaže.
 ⚠️ Pouštět přes workflow „Test odesilatele", ne lokálně – sahá to na týž Google
    token jako pipeline a sender.
 """
+import argparse
 import sys
 
+import gmail_draft
 from gmail_draft import SENDER_EMAIL, create_draft, get_gmail_service
 
 PRIJEMCE = "matyas.vrbaa@gmail.com"
@@ -29,9 +31,22 @@ def _hlavicka(payload: dict, jmeno: str) -> str:
 
 
 def main() -> int:
+    p = argparse.ArgumentParser(description="Ověří, kterou odesílací adresu Gmail pustí")
+    p.add_argument("--adresa", default="",
+                   help="Zkusit jinou adresu než tu v config.py (nic se nepřepisuje, "
+                        "jen se ověří, jestli ji Gmail uzná)")
+    args = p.parse_args()
+
+    # Zkoušená adresa se podstrčí do modulu, ať projde stejnou cestou jako
+    # ostrý provoz – včetně kódování jména v hlavičce From.
+    global SENDER_EMAIL
+    if args.adresa:
+        SENDER_EMAIL = args.adresa
+        gmail_draft.SENDER_EMAIL = args.adresa
+
     service = get_gmail_service()
 
-    print(f"SENDER_EMAIL v kódu: {SENDER_EMAIL}")
+    print(f"Zkouším odesílací adresu: {SENDER_EMAIL}")
     print(f"Zakládám testovací draft na {PRIJEMCE} …\n")
 
     create_draft(

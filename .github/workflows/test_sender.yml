@@ -8,6 +8,12 @@ name: Test odesilatele
 
 on:
   workflow_dispatch:
+    inputs:
+      adresa:
+        description: 'Zkusit konkrétní adresu (prázdné = ta z config.py)'
+        required: false
+        default: ''
+
 
 concurrency:
   group: google-oauth-token
@@ -37,4 +43,12 @@ jobs:
           echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
 
       - name: Ověř odesílací adresu
-        run: python3 test_sender.py
+        env:
+          ADRESA: ${{ github.event.inputs.adresa }}
+        run: |
+          set -euo pipefail
+          if [ -n "${ADRESA:-}" ]; then
+            python3 test_sender.py --adresa "$ADRESA"
+          else
+            python3 test_sender.py
+          fi
