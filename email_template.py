@@ -527,7 +527,11 @@ def generate_email(restaurant, demo_url="", city="Praha"):
         demo_html = (
             f"Naše poslední projekty jsou například {PORTFOLIO}.<br><br>"
             f"Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:<br>"
-            f'→ <a href="{demo_url}">{demo_url}</a><br>'
+            # Odkaz vede přes Apps Script redirect, aby se dal změřit proklik.
+            # Zobrazený text zůstává čistá adresa dema. Bez tohohle obalu se
+            # `_click_tracking_url()` nikdy nevolala a prokliky byly od dubna
+            # 2026 nula – ne že by nikdo neklikal, jen se to nikde nezapsalo.
+            f'→ <a href="{_click_tracking_url(slug, demo_url)}">{demo_url}</a><br>'
             f"Texty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
         )
     else:
