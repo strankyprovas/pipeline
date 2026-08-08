@@ -35,6 +35,8 @@ def _walk_parts(payload):
 VLASTNI_ADRESY = {
     "matyas.vrbaa@gmail.com",
     "strankyprovas@strankyprovas.cz",
+    "matyas@strankyprovas.cz",
+    "krystofholec@strankyprovas.cz",
 }
 
 
