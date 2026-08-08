@@ -6,6 +6,8 @@ import os
 import pickle
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.header import Header
+from email.utils import formataddr
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -21,7 +23,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
 ]
 
-from config import SENDER_EMAIL  # jediný zdroj pravdy
+from config import SENDER_EMAIL, SENDER_NAME  # jediný zdroj pravdy
 
 
 def get_gmail_service():
@@ -74,7 +76,9 @@ def create_draft(to_email, subject, body_plain, body_html):
 
     msg = MIMEMultipart("alternative")
     msg["To"] = to_email
-    msg["From"] = SENDER_EMAIL
+    # Jméno se musí zakódovat podle RFC 2047, jinak diakritika v hlavičce
+    # skončí jako mojibake. formataddr + Header to udělá správně.
+    msg["From"] = formataddr((str(Header(SENDER_NAME, "utf-8")), SENDER_EMAIL))
     msg["Subject"] = subject
 
     msg.attach(MIMEText(body_plain, "plain", "utf-8"))

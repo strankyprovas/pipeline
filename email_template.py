@@ -23,7 +23,7 @@ def _click_tracking_url(slug: str, demo_url: str) -> str:
     return f"{PIXEL_BASE_URL}?{urlencode({'slug': slug, 'redirect': demo_url})}"
 
 
-SENDER_NAME = "Matyáš Vrba"
+from config import SENDER_NAME  # jediný zdroj pravdy
 SENDER_COMPANY = "StránkyProVás"
 SENDER_WEBSITE = "https://strankyprovas.cz"
 from config import SENDER_EMAIL  # jediný zdroj pravdy

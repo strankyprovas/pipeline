@@ -18,6 +18,11 @@ Pokud je prázdné, tracking pixely se do emailů nepřidávají.
 # a DMARC, jinak 60 studených mailů denně z čerstvé domény spadne do spamu.
 SENDER_EMAIL = "matyas.vrbaa@gmail.com"
 
+# Jméno, které příjemce vidí v seznamu pošty dřív než cokoli jiného.
+# Dřív se nenastavovalo vůbec a Gmail doplňoval jméno účtu – chodilo to jako
+# „Matyas Vrba" bez diakritiky. Českému příjemci to nesedí.
+SENDER_NAME = "Matyáš Vrba"
+
 PIXEL_BASE_URL = "https://script.google.com/macros/s/AKfycbygnUk6Q7Z3EzWA-rNXFUyzNxgeLWeDEZ41z7QMHqEuFhFOGVVM9xf71tTBAqdKBNSk/exec"
 
 # Podniky pro které již web od StránkyProVás existuje – NESMÍ dostat outreach email
