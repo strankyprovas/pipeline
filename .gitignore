@@ -27,3 +27,13 @@ watchdog.log
 *.bak[0-9]
 fb_debug*.png
 cms-demo/
+
+# ⚠️ Nikdy necommitovat – 8. 8. 2026 se tyhle soubory dostaly do veřejného repa
+# omylem přes `git add -A` a v CONTEXT.md byl Google Places API klíč.
+# Do repa přidávat vždy jmenovitě (`git add soubor.py`), ne -A / -u.
+CONTEXT.md
+sheet_url.txt
+screenshots/
+leads-dashboard/
+pixel_tracker.gs
+add_missing_clients.py
