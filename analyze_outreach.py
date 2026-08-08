@@ -63,6 +63,13 @@ def _sloupec(hlavicky: list[str], nazev: str) -> int:
         return -1
 
 
+# Tracker (Apps Script) zapisuje značky ve tvaru "klik 02.03.2026 20:09".
+ZNACKA = {
+    "klik": re.compile(r"\bklik\s+\d{2}\.\d{2}\.\d{4}"),
+    "pixel": re.compile(r"\bpixel\s+\d{2}\.\d{2}\.\d{4}"),
+}
+
+
 def _mesic(datum: str) -> str:
     """'09.03.2026 14:15' → '2026-03'. Prázdno když se to nepovede rozparsovat."""
     m = re.match(r"(\d{2})\.(\d{2})\.(\d{4})", datum.strip())
@@ -123,12 +130,17 @@ def analyzuj(hlavicky: list[str], radky: list[list[str]]) -> dict:
         proklik = otevrel = False
         for idx, hodnota in enumerate(r):
             h = hodnota.lower()
-            if "klik" in h:
-                proklik = True
-                kde_znacky["klik"][hlavicky[idx] if idx < len(hlavicky) else f"sl. {idx}"] += 1
-            if "pixel" in h:
-                otevrel = True
-                kde_znacky["pixel"][hlavicky[idx] if idx < len(hlavicky) else f"sl. {idx}"] += 1
+            # Hledá se `klik 02.03.2026 20:09`, ne holý podřetězec – na "klik"
+            # sedí i "poliklinika", což nafouklo prokliky o falešné shody
+            # z názvů, e-mailů i adres ordinací.
+            for typ in ("klik", "pixel"):
+                if not ZNACKA[typ].search(h):
+                    continue
+                if typ == "klik":
+                    proklik = True
+                else:
+                    otevrel = True
+                kde_znacky[typ][hlavicky[idx] if idx < len(hlavicky) else f"sl. {idx}"] += 1
         follow_up = bool(bunka(r, i_fup)) or stav == "follow_up_odesl"
 
         obor = bunka(r, i_odvetvi) or "(nevyplněno)"
