@@ -32,6 +32,10 @@ def _hlavicka(payload: dict, jmeno: str) -> str:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Ověří, kterou odesílací adresu Gmail pustí")
+    p.add_argument("--odeslat", action="store_true",
+                   help="Draft opravdu odeslat na vlastní adresu a nemazat ho – "
+                        "Gmail přepisuje neověřený alias až při odeslání, "
+                        "takže samotné založení draftu nic nedokazuje")
     p.add_argument("--adresa", default="",
                    help="Zkusit jinou adresu než tu v config.py (nic se nepřepisuje, "
                         "jen se ověří, jestli ji Gmail uzná)")
@@ -86,6 +90,11 @@ def main() -> int:
     draft_id, payload = nalezen
     from_header = _hlavicka(payload, "From")
     print(f"From v založeném draftu: {from_header}")
+
+    if args.odeslat:
+        service.users().drafts().send(userId="me", body={"id": draft_id}).execute()
+        print(f"📤 Draft ODESLÁN na {PRIJEMCE} – zkontroluj, s jakou adresou dorazil.")
+        return 0
 
     # Úklid, ať v Gmailu nezůstává smetí, které by sender omylem rozeslal.
     service.users().drafts().delete(userId="me", id=draft_id).execute()

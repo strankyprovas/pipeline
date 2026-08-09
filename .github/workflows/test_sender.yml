@@ -13,6 +13,10 @@ on:
         description: 'Zkusit konkrétní adresu (prázdné = ta z config.py)'
         required: false
         default: ''
+      odeslat:
+        description: 'Opravdu odeslat testovací mail na vlastní adresu (true/false)'
+        required: false
+        default: 'false'
 
 
 concurrency:
@@ -45,10 +49,10 @@ jobs:
       - name: Ověř odesílací adresu
         env:
           ADRESA: ${{ github.event.inputs.adresa }}
+          ODESLAT: ${{ github.event.inputs.odeslat || 'false' }}
         run: |
           set -euo pipefail
-          if [ -n "${ADRESA:-}" ]; then
-            python3 test_sender.py --adresa "$ADRESA"
-          else
-            python3 test_sender.py
-          fi
+          FLAGS=""
+          [ -n "${ADRESA:-}" ] && FLAGS="$FLAGS --adresa $ADRESA"
+          [ "$ODESLAT" = "true" ] && FLAGS="$FLAGS --odeslat"
+          python3 test_sender.py $FLAGS

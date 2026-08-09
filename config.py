@@ -12,11 +12,15 @@ Pokud je prázdné, tracking pixely se do emailů nepřidávají.
 # třech místech (gmail_draft.py, email_template.py, read_replies.py) a rozcházely se.
 #
 # ⚠️ Tady musí být adresa, kterou Gmail SKUTEČNĚ pustí, ne ta, kterou chceme.
-# 8. 8. 2026 tu chvíli bylo strankyprovas@strankyprovas.cz a Gmail hlavičku tiše
-# přepisoval zpět (adresa není ověřená jako „Odesílat jako"). Přepnout až potom,
-# co workflow „Test odesilatele" projde zeleně – a až bude doména mít SPF, DKIM
-# a DMARC, jinak 60 studených mailů denně z čerstvé domény spadne do spamu.
-SENDER_EMAIL = "matyas.vrbaa@gmail.com"
+# Ověřuje se workflow „Test odesilatele" – ten založí draft, přečte skutečnou
+# hlavičku From a zase ho smaže. Neověřenou adresu Gmail tiše přepíše zpět na
+# primární adresu účtu a v draftu to není poznat.
+#
+# 9. 8. 2026 ověřeno zeleně: matyas@strankyprovas.cz projde. Cesta tam vedla
+# přes povolení „Authenticated SMTP" u schránky a vypnutí security defaults
+# v Entra (ty blokovaly přihlášení heslem přes SMTP: chyba 535 5.7.139).
+# Doména má SPF, DKIM i DMARC (DNS u Wedosu, MX na M365).
+SENDER_EMAIL = "matyas@strankyprovas.cz"
 
 # Jméno, které příjemce vidí v seznamu pošty dřív než cokoli jiného.
 # Dřív se nenastavovalo vůbec a Gmail doplňoval jméno účtu – chodilo to jako
