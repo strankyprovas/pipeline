@@ -23,6 +23,10 @@ except ImportError:
     # na ModuleNotFoundError ještě před prvním řádkem práce.
     anthropic = None
 from sheets import get_or_create_sheet, HEADERS, mark_followup_sent
+from email.header import Header
+from email.utils import formataddr
+
+from config import REPLY_TO, SENDER_EMAIL
 from gmail_draft import create_draft, get_gmail_service
 from email_template import SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
 
@@ -307,7 +311,12 @@ def _send_email_now(service, to_email: str, subject: str, body_plain: str, body_
     """Odešle email přímo přes Gmail API (bez draftu)."""
     msg = MIMEMultipart("alternative")
     msg["To"] = to_email
-    msg["From"] = f"{SENDER_NAME} <me>"
+    # Dřív tu bylo "<me>", což Gmail přeložil na primární adresu účtu – původní
+    # oslovení tak přišlo z matyas@strankyprovas.cz, ale připomenutí z gmailu.
+    # Příjemci to trhá vlákno a vypadá to jako cizí mail.
+    msg["From"] = formataddr((str(Header(SENDER_NAME, "utf-8")), SENDER_EMAIL))
+    if REPLY_TO:
+        msg["Reply-To"] = REPLY_TO
     msg["Subject"] = subject
     msg.attach(MIMEText(body_plain, "plain", "utf-8"))
     msg.attach(MIMEText(body_html, "html", "utf-8"))

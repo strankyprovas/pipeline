@@ -27,6 +27,16 @@ SENDER_EMAIL = "matyas@strankyprovas.cz"
 # „Matyas Vrba" bez diakritiky. Českému příjemci to nesedí.
 SENDER_NAME = "Matyáš Vrba"
 
+# Kam mají chodit odpovědi. Odesílá se z matyas@strankyprovas.cz, jenže odpovědi
+# na tu adresu končí v Outlooku a `sync_replies` čte Gmail – měření odezvy by
+# tím osleplo a follow-up by mohl přijít i tomu, kdo už odpověděl.
+# Správné řešení je přeposílání M365 → Gmail, jenže to blokuje politika
+# „Automatic forwarding rules" v Defenderu (chyba 550 5.7.520). Do doby, než se
+# povolí, míří odpovědi rovnou do Gmailu přes Reply-To.
+# ⚠️ Až přeposílání pojede, tuhle konstantu vyprázdnit ("") – odesílatel a adresa
+# pro odpověď by se v ideálním případě lišit neměly.
+REPLY_TO = "matyas.vrbaa@gmail.com"
+
 PIXEL_BASE_URL = "https://script.google.com/macros/s/AKfycbygnUk6Q7Z3EzWA-rNXFUyzNxgeLWeDEZ41z7QMHqEuFhFOGVVM9xf71tTBAqdKBNSk/exec"
 
 # Podniky pro které již web od StránkyProVás existuje – NESMÍ dostat outreach email

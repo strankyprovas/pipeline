@@ -89,7 +89,8 @@ def main() -> int:
 
     draft_id, payload = nalezen
     from_header = _hlavicka(payload, "From")
-    print(f"From v založeném draftu: {from_header}")
+    print(f"From v založeném draftu:     {from_header}")
+    print(f"Reply-To v založeném draftu: {_hlavicka(payload, 'Reply-To')}")
 
     if args.odeslat:
         service.users().drafts().send(userId="me", body={"id": draft_id}).execute()

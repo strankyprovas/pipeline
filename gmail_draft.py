@@ -23,7 +23,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
 ]
 
-from config import SENDER_EMAIL, SENDER_NAME  # jediný zdroj pravdy
+from config import REPLY_TO, SENDER_EMAIL, SENDER_NAME  # jediný zdroj pravdy
 
 
 def get_gmail_service():
@@ -80,6 +80,8 @@ def create_draft(to_email, subject, body_plain, body_html):
     # skončí jako mojibake. formataddr + Header to udělá správně.
     msg["From"] = formataddr((str(Header(SENDER_NAME, "utf-8")), SENDER_EMAIL))
     msg["Subject"] = subject
+    if REPLY_TO:
+        msg["Reply-To"] = REPLY_TO
 
     msg.attach(MIMEText(body_plain, "plain", "utf-8"))
     msg.attach(MIMEText(body_html, "html", "utf-8"))
