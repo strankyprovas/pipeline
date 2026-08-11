@@ -23,8 +23,17 @@ from datetime import datetime
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
+from config import NEVER_CONTACT_NAMES, SENDER_EMAIL
 from gmail_draft import get_gmail_service
 from sheets import HEADERS, _retry, get_or_create_sheet
+
+# Vlastní a klientské adresy sem nepatří. Do odeslané pošty se dostane i běžná
+# komunikace s klienty (fakturace, domluvy) a kdyby takový kontakt dostal stav
+# „osloveno", poslal by mu follow-up automatickou upomínku na ukázku webu.
+VLASTNI = {
+    "matyas.vrbaa@gmail.com", "matyas@strankyprovas.cz",
+    "strankyprovas@strankyprovas.cz", "krystofholec@strankyprovas.cz",
+}
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w.-]+\.\w+")
 
@@ -71,17 +80,34 @@ def main() -> int:
     i_stav = hlavicka.index("Stav")
     i_datum = hlavicka.index("Datum emailu")
 
+    i_nazev = hlavicka.index("Název")
+    i_demo = hlavicka.index("Demo URL")
+
     k_oprave = []
+    preskoceno_klient = 0
     for cislo_radku, radek in enumerate(hodnoty[1:], start=2):
         def bunka(i):
             return radek[i].strip() if i < len(radek) else ""
         email = bunka(i_email).lower()
         if not email or email not in odeslane:
             continue
+        if email in VLASTNI or email == SENDER_EMAIL.lower():
+            continue
+        # Náš klient – nikdy neoznačovat jako oslovený lead.
+        nazev = bunka(i_nazev).lower()
+        if any(kw in nazev or kw in email for kw in NEVER_CONTACT_NAMES):
+            preskoceno_klient += 1
+            continue
+        # Bez vygenerované ukázky to nebyl outreachový mail, ale běžná pošta.
+        if not bunka(i_demo):
+            preskoceno_klient += 1
+            continue
         # Mail odešel, ale v databázi to není vidět.
         if bunka(i_stav).lower() in ("", "nový", "novy") or not bunka(i_datum):
             k_oprave.append((cislo_radku, email))
 
+    if preskoceno_klient:
+        print(f"(přeskočeno {preskoceno_klient} kontaktů bez ukázky nebo z klientské pošty)")
     print(f"Kontaktů k opravě: {len(k_oprave)}")
     for _, e in k_oprave[:15]:
         print(f"  {e}")
