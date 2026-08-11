@@ -1,0 +1,28 @@
+name: Diagnostika Sheetu
+
+# Zjistí, proč Sheet odmítá zápis. Vypíše rozsahy tokenu a celé tělo chyby
+# od Googlu (gspread ukazuje jen useknutou větu).
+# Sdílí concurrency group – sahá na týž Google token jako pipeline a sender.
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  diag:
+    name: Prověřit zápis do Sheetu
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: pip install -q gspread google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+      - run: python3 diag_sheet.py
