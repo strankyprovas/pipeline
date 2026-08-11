@@ -1,0 +1,45 @@
+name: Oprava evidence
+
+# Doplní stav "osloveno" kontaktům, kterým mail odešel, ale zápis do Sheetu
+# selhal (výpadek Sheets API). Zdroj pravdy = odeslaná pošta v Gmailu.
+# Sdílí concurrency group – sahá na týž Google token jako pipeline a sender.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dny:
+        description: 'Kolik dní zpět brát odeslanou poštu'
+        required: false
+        default: '3'
+      dry_run:
+        description: 'Jen vypsat, nic nezapisovat (true/false)'
+        required: false
+        default: 'true'
+
+concurrency:
+  group: google-oauth-token
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    name: Doplnit chybějící stavy
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: pip install -q gspread google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+      - name: Obnov Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS_JSON }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN_PICKLE_B64 }}' | base64 -d > token.pickle
+      - name: Doplň stavy
+        env:
+          DNY: ${{ github.event.inputs.dny || '3' }}
+          DRY: ${{ github.event.inputs.dry_run || 'true' }}
+        run: |
+          set -euo pipefail
+          FLAGS="--dny $DNY"
+          [ "$DRY" = "true" ] && FLAGS="$FLAGS --dry-run"
+          python3 repair_status.py $FLAGS
