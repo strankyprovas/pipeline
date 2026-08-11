@@ -44,23 +44,39 @@ def main() -> int:
     print(f"OK, {len(hlavicka)} sloupců, {sheet.row_count} řádků")
     print()
 
-    print("=== ZÁPIS (zkušební buňka daleko za daty) ===")
-    zkusebni = "ZZ1"
+    def _vypis_chybu(e):
+        print(f"❌ {type(e).__name__}: {e}")
+        resp = getattr(e, "response", None)
+        if resp is None:
+            return
+        print(f"HTTP status: {resp.status_code}")
+        print("Celé tělo odpovědi od Googlu:")
+        try:
+            print(json.dumps(resp.json(), indent=2, ensure_ascii=False))
+        except Exception:
+            print(resp.text[:2000])
+
+    # 1) běžný zápis do existující buňky (volná kolona za hlavičkami)
+    print("=== ZÁPIS DO BUŇKY ===")
+    bunka = f"X{sheet.row_count}"
     try:
-        sheet.update_acell(zkusebni, "test")
-        print("✅ Zápis prošel – problém je pryč.")
-        sheet.update_acell(zkusebni, "")
+        sheet.update_acell(bunka, "diag")
+        print(f"✅ update_acell({bunka}) prošel")
+        sheet.update_acell(bunka, "")
+    except Exception as e:
+        _vypis_chybu(e)
+
+    # 2) přesně to, co padá v pipeline
+    print()
+    print("=== APPEND_ROW (to, co padá v pipeline) ===")
+    try:
+        sheet.append_row(["DIAG – smazat"])
+        print("✅ append_row prošel")
+        sheet.delete_rows(sheet.row_count)
+        print("   (zkušební řádek smazán)")
         return 0
     except Exception as e:
-        print(f"❌ Zápis selhal: {type(e).__name__}: {e}")
-        resp = getattr(e, "response", None)
-        if resp is not None:
-            print(f"HTTP status: {resp.status_code}")
-            print("Celé tělo odpovědi od Googlu:")
-            try:
-                print(json.dumps(resp.json(), indent=2, ensure_ascii=False))
-            except Exception:
-                print(resp.text[:2000])
+        _vypis_chybu(e)
         return 1
 
 
