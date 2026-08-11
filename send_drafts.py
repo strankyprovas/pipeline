@@ -198,6 +198,7 @@ def main():
     sent_count = 0
     skipped_count = 0
 
+    nezapsano_v_rade = 0
     for i, draft in enumerate(drafts, 1):
         draft_id = draft["id"]
         try:
@@ -249,7 +250,17 @@ def main():
             sent_count += 1
             # Označ jako osloveno v Sheetu
             try:
-                mark_email_sent(sheet, to)
+                if mark_email_sent(sheet, to):
+                    nezapsano_v_rade = 0
+                else:
+                    nezapsano_v_rade += 1
+                    if nezapsano_v_rade >= 3:
+                        # Radši přestat odesílat, než rozeslat dávku kontaktů,
+                        # které v databázi nezůstanou zaznamenané.
+                        print(f"::error::Sheet {nezapsano_v_rade}x po sobě nepřijal "
+                              f"zápis stavu – zastavuji odesílání, ať nevznikají "
+                              f"neevidované oslovené kontakty.", flush=True)
+                        break
             except Exception as e:
                 print(f"           ⚠️  Sheet update selhal: {e}")
             print(f"           ✓ Odesláno")

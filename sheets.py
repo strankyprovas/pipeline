@@ -14,16 +14,26 @@ import random
 from datetime import datetime, timedelta
 
 
+# 11. 8. 2026 začal Sheets na několik hodin vracet 403 „The caller does not have
+# permission" i na zápisy, ke kterým token oprávnění má (ověřeno: rozsah
+# spreadsheets tam je, o hodiny později tytéž zápisy prošly). Šlo o přechodný
+# výpadek na straně Googlu. Retry ho tehdy nepokryl, protože reagoval jen na 429,
+# takže jediná chyba shodila celý tříhodinový běh pipeline hned u prvního podniku.
+# Trvalý problém s oprávněním se přes retry stejně neprotlačí a spadne dál.
+_DOCASNE_CHYBY = {403, 429, 500, 502, 503, 504}
+
+
 def _retry(fn, *args, max_retries=12, **kwargs):
-    """Volá fn s retry + exponential backoff při 429 (Sheets rate limit)."""
+    """Volá fn s retry + exponential backoff při dočasných chybách Sheets API."""
     for attempt in range(max_retries):
         try:
             return fn(*args, **kwargs)
         except gspread.exceptions.APIError as e:
-            if e.response.status_code == 429 and attempt < max_retries - 1:
+            if e.response.status_code in _DOCASNE_CHYBY and attempt < max_retries - 1:
                 # Delší čekání pro paralelní GitHub Actions joby – kvóta se resetuje za ~60s
                 wait = min(60, (2 ** attempt)) + random.uniform(5, 15)
-                print(f"  ⏳ Sheets rate limit – čekám {wait:.1f}s (pokus {attempt+1}/{max_retries})")
+                print(f"  ⏳ Sheets vrátil {e.response.status_code} – čekám "
+                      f"{wait:.1f}s (pokus {attempt+1}/{max_retries})", flush=True)
                 time.sleep(wait)
             else:
                 raise
@@ -248,22 +258,30 @@ def add_restaurant(sheet, data):
     return True
 
 
-def mark_email_sent(sheet, email, note=""):
-    """Označí podnik jako oslovený a obarví řádek."""
+def mark_email_sent(sheet, email, note="") -> bool:
+    """Označí podnik jako oslovený a obarví řádek. Vrací, zda se to povedlo.
+
+    Návratovou hodnotu volající potřebuje: 11. 8. 2026 Sheets několik hodin
+    odmítal zápisy, mark_email_sent chybu jen vypsal a sender vesele rozeslal
+    dvacet mailů, které v databázi nezůstaly zaznamenané. Takový kontakt pak
+    nemá stav „osloveno", takže se mu nesleduje odpověď a může dostat mail znovu.
+    """
     import re as _re
     # Extrahuj čistý email z formátu "Jméno <email>" nebo jen "email"
     m = _re.search(r'[\w.+-]+@[\w.-]+\.\w+', email)
     clean_email = m.group(0).lower() if m else email.lower().strip()
     try:
-        cell = sheet.find(clean_email)
-        sheet.update_cell(cell.row, HEADERS.index("Datum emailu") + 1,
-                          datetime.now().strftime("%d.%m.%Y %H:%M"))
-        sheet.update_cell(cell.row, HEADERS.index("Stav") + 1, "osloveno")
+        cell = _retry(sheet.find, clean_email)
+        _retry(sheet.update_cell, cell.row, HEADERS.index("Datum emailu") + 1,
+               datetime.now().strftime("%d.%m.%Y %H:%M"))
+        _retry(sheet.update_cell, cell.row, HEADERS.index("Stav") + 1, "osloveno")
         if note:
-            sheet.update_cell(cell.row, HEADERS.index("Poznámka") + 1, note)
+            _retry(sheet.update_cell, cell.row, HEADERS.index("Poznámka") + 1, note)
         _colorize_row(sheet, cell.row, "osloveno")
+        return True
     except Exception as e:
-        print(f"  Chyba při aktualizaci stavu: {e}")
+        print(f"  Chyba při aktualizaci stavu: {e}", flush=True)
+        return False
 
 
 def update_status(sheet, email, status: str, note: str = ""):
