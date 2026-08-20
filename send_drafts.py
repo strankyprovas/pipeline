@@ -192,6 +192,8 @@ def main():
         "legierskym@gmail.com",
         "horackova-kristyna@seznam.cz",
         "autovit@autovit.cz",
+        # Nechce být oslovována – vlastní web má, automat ho nerozpoznal (20. 8. 2026)
+        "z.souckova.pca@gmail.com",
     }
 
     sent_this_run = set()  # deduplikace v rámci tohoto běhu
