@@ -56,7 +56,12 @@ def fetch_czech_cities(min_population: int = 1000) -> list[str]:
     """
     import json, os, time
 
-    # Použij cache pokud existuje a není starší než 7 dní
+    # ⚠️ V GitHub Actions se checkoutem nastaví souboru čerstvý mtime, takže
+    # podmínka „starší než 7 dní" tam nikdy neplatí a cache se NIKDY neobnoví.
+    # Ten commitnutý soubor je proto zdroj pravdy a musí být seřazený podle
+    # počtu obyvatel (největší města první). Když se jednou uložil abecedně,
+    # pipeline měsíc projížděla vesnice od Adamova a vracela 2 podniky z 6
+    # (opraveno 25. 8. 2026). Při ruční aktualizaci seznamu na to pozor.
     if os.path.exists(CITIES_CACHE_FILE):
         age_days = (time.time() - os.path.getmtime(CITIES_CACHE_FILE)) / 86400
         if age_days < CACHE_MAX_AGE_DAYS:
