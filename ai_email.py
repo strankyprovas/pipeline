@@ -7,7 +7,7 @@ Fallback na email_template.generate_email() pokud API selže.
 import os
 import random
 import anthropic
-from email_template import generate_email, SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
+from email_template import generate_email, industry_subpage, SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
 from config import PIXEL_BASE_URL
 from industries import get_industry
 
@@ -200,7 +200,8 @@ DŮLEŽITÉ PRAVIDLA:
             ai_body = "\n".join(new_lines)
 
         # Přidej podpis
-        signature_plain = f"\nS pozdravem,\n{SENDER_NAME}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
+        sub_url, sub_label = industry_subpage(restaurant.get("industry", "restaurace"))
+        signature_plain = f"\nS pozdravem,\n{SENDER_NAME}\n\nCo všechno děláme pro {sub_label}: {sub_url}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
         body = ai_body + signature_plain
 
         # HTML verze
@@ -214,6 +215,7 @@ DŮLEŽITÉ PRAVIDLA:
         pixel = _tracking_pixel_html(slug)
         html_body = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>{ai_body_html}</p>
+<p style="font-size:13px;color:#8a8a8a;">Co všechno děláme pro {sub_label}: <a href="{sub_url}" style="color:#8f6230;">{sub_url.replace("https://", "").rstrip("/")}</a></p>
 <p style="color:#888; font-size:13px;">--<br>{SENDER_NAME}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
 {pixel}
 </div>"""

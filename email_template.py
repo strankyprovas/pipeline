@@ -46,6 +46,23 @@ PORTFOLIO_BY_INDUSTRY = {
 # Fallback pro zpětnou kompatibilitu
 PORTFOLIO = PORTFOLIO_BY_INDUSTRY["restaurace"]
 
+# Oborové podstránky na strankyprovas.cz — malý odkaz „kde najdete víc" u podpisu.
+# Kavárny patří pod /restaurace/ (podstránka je pokrývá), psychologové pod /masaze/
+# (terapie), zbytek oborů spadá pod obecné /sluzby/.
+SUBPAGE_BY_INDUSTRY = {
+    "restaurace": ("https://strankyprovas.cz/restaurace/", "restaurace a kavárny"),
+    "kavarna":    ("https://strankyprovas.cz/restaurace/", "kavárny a restaurace"),
+    "masaze":     ("https://strankyprovas.cz/masaze/",     "masáže a terapie"),
+    "psycholog":  ("https://strankyprovas.cz/masaze/",     "terapeuty a psychology"),
+    "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
+}
+SUBPAGE_DEFAULT = ("https://strankyprovas.cz/sluzby/", "řemesla a služby")
+
+
+def industry_subpage(industry_key):
+    """Vrátí (url, popisek) oborové podstránky pro daný obor."""
+    return SUBPAGE_BY_INDUSTRY.get(industry_key, SUBPAGE_DEFAULT)
+
 CITY_LOCATIVE = {
     "Praha":                 "Praze",
     "Brno":                  "Brně",
@@ -504,6 +521,10 @@ def generate_email(restaurant, demo_url="", city="Praha"):
         f"dopoledne? Stačí odpovědět na tento e-mail. 🙂"
     )
 
+    # Odkaz na oborovou podstránku (malý, u podpisu)
+    sub_url, sub_label = industry_subpage(industry_key)
+    subpage_note = f"Co všechno děláme pro {sub_label}, najdete na {sub_url}"
+
     # Podpis
     signature = f"S přátelským pozdravem,\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
 
@@ -514,6 +535,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
         prinosy_section,
         demo_section,
         cta_section,
+        subpage_note,
         signature,
     ])
 
@@ -545,6 +567,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 <p><strong>Co to přinese</strong><br>{prinosy_formatted.replace(chr(10), '<br>')}</p>
 <p>{demo_html}</p>
 <p>{cta_section.replace(chr(10)+chr(10), '</p><p>').replace(chr(10), '<br>')}</p>
+<p style="font-size:13px;color:#8a8a8a;">Co všechno děláme pro {sub_label}: <a href="{sub_url}" style="color:#8f6230;">{sub_url.replace("https://", "").rstrip("/")}</a></p>
 <p style="margin-top:24px;">S přátelským pozdravem,<br><strong>{SENDER_NAME}</strong><br>
 <a href="{SENDER_WEBSITE}">{SENDER_COMPANY}</a></p>
 {pixel}
