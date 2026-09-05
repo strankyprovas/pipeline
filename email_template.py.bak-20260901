@@ -55,7 +55,6 @@ SUBPAGE_BY_INDUSTRY = {
     "masaze":     ("https://strankyprovas.cz/masaze/",     "masáže a terapie"),
     "psycholog":  ("https://strankyprovas.cz/masaze/",     "terapeuty a psychology"),
     "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
-    "pekarna":    ("https://strankyprovas.cz/restaurace/",  "kavárny a cukrárny"),
 }
 SUBPAGE_DEFAULT = ("https://strankyprovas.cz/sluzby/", "řemesla a služby")
 

@@ -11,6 +11,23 @@ import re
 import time
 import random
 import argparse
+# --- VYPNUTO 18. 8. 2026 ---
+# Meta 16. 8. 2026 omezila ad account mia-wellington 9-N (1083054234065924)
+# kvůli "Account Integrity – automation". Tenhle skript dělá přesně to, co
+# ta pravidla zakazují: automatizované přihlášení do Facebooku a _human_delay,
+# který záměrně napodobuje lidské chování. Dokud běží odvolání, nesmí se
+# spustit ani omylem.
+#
+# Session cookies jsou přejmenované na fb_session.json.disabled.
+# Vědomé zapnutí: FB_DM_ENABLED=1 v prostředí (schválně před load_dotenv,
+# aby to nešlo tiše zapnout přes .env).
+if os.getenv("FB_DM_ENABLED") != "1":
+    raise RuntimeError(
+        "facebook_dm.py je vypnutý – Meta omezila ad account kvůli automatizaci "
+        "(16. 8. 2026). Nespouštět, dokud neproběhne odvolání. "
+        "Vědomé zapnutí: FB_DM_ENABLED=1"
+    )
+
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))

@@ -1,5 +1,6 @@
 .env
 fb_session.json
+fb_session.json*
 token.pickle
 token.pickle.lock
 token_replies.pickle
@@ -37,3 +38,8 @@ screenshots/
 leads-dashboard/
 pixel_tracker.gs
 add_missing_clients.py
+
+# Kontaktni data a logy kampani do repa nepatri - repo je verejne.
+# 5. 9. 2026: pri commitu se omylem chystalo pushnout 985 kontaktu s maily a telefony.
+menicka-kampan/*.csv
+menicka-kampan/*.log

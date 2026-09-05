@@ -1,468 +1,387 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RESTAURANT_NAME</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    img { max-width: 100%; display: block; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESTAURANT_NAME – květinářství RESTAURANT_CITY_LOC</title>
+<meta name="description" content="RESTAURANT_TAGLINE — RESTAURANT_SHORT_NAME RESTAURANT_CITY_LOC. RESTAURANT_ABOUT_SHORT">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --list:#3f5340;     /* list */
+  --stonek:#2b3a2c;   /* stonek */
+  --ruz:#c08585;      /* pudrová růžová */
+  --pudr:#f2e6e3;     /* pudr */
+  --krem:#faf7f2;     /* krém */
+  --bila:#fffdfb;
+  --seda:#6f6a64;
+  --linka:#e7e0d6;
+  --stin:0 18px 50px rgba(43,58,44,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bila);color:var(--stonek);line-height:1.75;overflow-x:hidden;padding-top:38px}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;font-weight:500;line-height:1.18}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.sec{padding:115px 0}
+.sec-alt{background:var(--krem)}
 
-    :root {
-      --espresso: #24402f;
-      --espresso2:#2c4a38;
-      --oat:      #f6eef1;
-      --oat2:     #ecdfe6;
-      --paper:    #fbf8f6;
-      --crema:    #d6819f;
-      --crema2:   #c06687;
-      --roast:    #5a8267;
-      --ink:      #2a2622;
-      --ink2:     #4a4038;
-      --muted:    #8a7d78;
-      --line:     rgba(42,34,30,.14);
-      --ease:     cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+#ukazka-banner{position:fixed;top:0;left:0;width:100%;background:var(--pudr);color:var(--stonek);text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box}
+#progress{position:fixed;top:38px;left:0;height:3px;width:100%;background:var(--ruz);transform:scaleX(0);transform-origin:0 50%;z-index:9998}
 
-    #progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--crema); transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
+/* --- nav --- */
+#navbar{position:fixed;top:38px;left:0;width:100%;z-index:9000;padding:22px 0;transition:.3s;background:transparent}
+#navbar.scrolled{background:rgba(255,253,251,.96);box-shadow:0 2px 22px rgba(43,58,44,.07);padding:13px 0}
+.nav-in{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:500;text-decoration:none;color:var(--list);letter-spacing:.01em}
+.nav-logo span{color:var(--ruz)}
+.nav-links{display:flex;gap:34px;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;font-size:.95rem;font-weight:400;color:var(--stonek);transition:.2s}
+.nav-links a:hover{color:var(--ruz)}
+.nav-tel{background:var(--list);color:var(--bila)!important;padding:11px 25px;border-radius:999px;font-weight:500}
+.ham{display:none;background:none;border:0;font-size:1.7rem;cursor:pointer;color:var(--list)}
+#mobile-nav{position:fixed;inset:0;background:var(--stonek);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transform:translateY(-100%);transition:.35s}
+#mobile-nav.open{transform:translateY(0)}
+#mobile-nav a{color:var(--krem);font-family:'Playfair Display',serif;font-size:1.8rem;text-decoration:none}
+#close-nav{position:absolute;top:24px;right:28px;background:none;border:0;color:var(--krem);font-size:2.2rem;cursor:pointer}
 
-    /* NAV */
-    #navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.5rem 5%; display: flex; align-items: center; justify-content: space-between; transition: all .4s var(--ease); }
-    #navbar.scrolled { background: rgba(251,246,236,.92); backdrop-filter: blur(14px); padding: .95rem 5%; box-shadow: 0 1px 0 var(--line); }
-    .nav-logo { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: -.01em; line-height: 1; text-shadow: 0 1px 18px rgba(0,0,0,.4); transition: color .4s var(--ease), text-shadow .4s var(--ease); }
-    .nav-logo span { color: var(--crema); }
-    #navbar.scrolled .nav-logo { color: var(--ink); text-shadow: none; }
-    .nav-links { display: flex; gap: 2.4rem; list-style: none; align-items: center; }
-    .nav-links a { color: rgba(255,255,255,.9); text-decoration: none; font-size: .82rem; font-weight: 600; letter-spacing: .04em; transition: color .25s; position: relative; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
-    #navbar.scrolled .nav-links a { color: var(--ink2); text-shadow: none; }
-    .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; right: 0; height: 2px; background: var(--crema); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease); }
-    .nav-links a:hover::after { transform: scaleX(1); }
-    .nav-cta { font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 600; color: #fff; background: var(--crema); padding: .7rem 1.5rem; border: none; cursor: pointer; text-decoration: none; transition: all .3s; border-radius: 999px; }
-    .nav-cta:hover { background: var(--crema2); transform: translateY(-1px); }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
-    .hamburger span { display: block; width: 26px; height: 2px; background: #fff; transition: all .3s; box-shadow: 0 1px 8px rgba(0,0,0,.4); }
-    #navbar.scrolled .hamburger span { background: var(--ink); box-shadow: none; }
+/* --- hero --- */
+#hero{position:relative;padding:150px 0 100px;background:
+  radial-gradient(90% 80% at 15% 10%, rgba(242,230,227,.7) 0%, rgba(242,230,227,0) 55%), var(--bila)}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.hero-badge{display:inline-block;font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ruz);font-weight:500;margin-bottom:24px}
+#hero h1{font-size:clamp(2.7rem,5.4vw,4.5rem);letter-spacing:-.01em;margin-bottom:24px}
+#hero h1 em{font-style:italic;color:var(--ruz)}
+.hero-sub{font-size:1.13rem;color:var(--seda);max-width:500px;margin-bottom:34px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;padding:15px 34px;border-radius:999px;text-decoration:none;font-weight:500;font-size:1rem;transition:.25s;border:1.5px solid transparent}
+.btn-prim{background:var(--list);color:var(--bila)}
+.btn-prim:hover{background:var(--stonek)}
+.btn-ghost{border-color:var(--list);color:var(--list)}
+.btn-ghost:hover{background:var(--list);color:var(--bila)}
+.hero-media{position:relative}
+.hero-media img{width:100%;height:580px;object-fit:cover;border-radius:290px 290px 8px 8px;box-shadow:var(--stin)}
 
-    #mobile-nav { display: none; position: fixed; inset: 0; background: var(--espresso); z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 2.2rem; }
-    #mobile-nav.open { display: flex; }
-    #mobile-nav a { font-family: 'Bricolage Grotesque', sans-serif; font-size: 2.4rem; font-weight: 600; color: var(--oat); text-decoration: none; }
-    #mobile-nav a:hover { color: var(--crema); }
-    .close-nav { position: absolute; top: 2rem; right: 6%; background: none; border: none; color: var(--oat); font-size: 2rem; cursor: pointer; }
+/* --- pásek --- */
+.pasek{background:var(--list);color:var(--krem)}
+.pasek-in{display:grid;grid-template-columns:repeat(3,1fr)}
+.pasek-i{padding:34px 28px;text-align:center;border-right:1px solid rgba(250,247,242,.15)}
+.pasek-i:last-child{border-right:0}
+.pasek-i strong{display:block;font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:4px}
+.pasek-i span{font-size:.9rem;opacity:.75}
 
-    /* HERO */
-    #hero { position: relative; min-height: 100vh; background: linear-gradient(135deg, var(--espresso2), var(--espresso)); display: flex; align-items: flex-end; overflow: hidden; }
-    .hero-media { position: absolute; inset: 0; z-index: 0; }
-    .hero-media img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); animation: heroZoom 9s var(--ease) forwards; }
-    @keyframes heroZoom { to { transform: scale(1); } }
-    .hero-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(26,18,13,.94) 0%, rgba(26,18,13,.35) 45%, rgba(26,18,13,.12) 70%, rgba(26,18,13,.5) 100%), linear-gradient(to right, rgba(26,18,13,.5), transparent 62%); }
-    .hero-inner { position: relative; z-index: 2; width: 100%; padding: 0 5% 6rem 8%; max-width: 1400px; }
-    .hero-badge { display: inline-flex; align-items: center; gap: .8rem; font-size: .72rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--oat); margin-bottom: 1.6rem; opacity: 0; animation: fadeUp .9s .2s var(--ease) forwards; }
-    .hero-badge::before { content: ''; width: 34px; height: 2px; background: var(--crema); }
-    .hero-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(3rem, 6.6vw, 6rem); font-weight: 700; line-height: 1; color: #fff; letter-spacing: -.02em; margin-bottom: 1.5rem; max-width: 16ch; opacity: 0; animation: fadeUp .9s .38s var(--ease) forwards; }
-    .hero-title em { font-style: normal; color: var(--crema); display: block; font-weight: 500; font-size: .66em; }
-    .hero-sub { font-size: 1.05rem; font-weight: 300; line-height: 1.7; color: rgba(244,236,223,.85); max-width: 470px; margin-bottom: 2.4rem; opacity: 0; animation: fadeUp .9s .56s var(--ease) forwards; }
-    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; opacity: 0; animation: fadeUp .9s .74s var(--ease) forwards; }
-    .btn-solid { background: var(--crema); color: var(--espresso); padding: 1.05rem 2.3rem; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600; letter-spacing: .02em; text-decoration: none; display: inline-block; border-radius: 999px; transition: all .3s; }
-    .btn-solid:hover { background: #dda05f; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(201,138,76,.4); }
-    .btn-ghost { background: transparent; color: #fff; padding: 1.05rem 2.3rem; border: 1px solid rgba(255,255,255,.4); font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600; text-decoration: none; display: inline-block; border-radius: 999px; transition: all .3s; }
-    .btn-ghost:hover { border-color: #fff; background: rgba(255,255,255,.1); transform: translateY(-2px); }
-    .hero-status { margin-top: 2.4rem; display: inline-flex; align-items: center; gap: .8rem; opacity: 0; animation: fadeUp .9s .92s var(--ease) forwards; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #86c58f; box-shadow: 0 0 0 4px rgba(134,197,143,.18); animation: pulse 2.4s infinite; }
-    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 4px rgba(134,197,143,.18); } 50% { box-shadow: 0 0 0 8px rgba(134,197,143,.06); } }
-    .hero-status-text { font-size: .82rem; color: rgba(244,236,223,.72); line-height: 1.4; }
-    .hero-status-text strong { color: #fff; display: block; font-size: .86rem; font-weight: 600; }
+/* --- o nás --- */
+.onas-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center}
+.onas-img img{width:100%;height:540px;object-fit:cover;border-radius:8px 8px 240px 240px}
+.oko{font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ruz);font-weight:500;margin-bottom:16px;display:block}
+.sec h2{font-size:clamp(2rem,3.6vw,2.95rem);margin-bottom:22px}
+.sec p.lead{color:var(--seda);font-size:1.05rem;margin-bottom:18px}
+.stat-radek{display:flex;gap:44px;margin-top:34px;padding-top:28px;border-top:1px solid var(--linka)}
+.stat b{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--list);display:block;line-height:1}
+.stat span{font-size:.86rem;color:var(--seda)}
 
-    /* STATS */
-    .stats-bar { background: var(--espresso); display: flex; justify-content: center; flex-wrap: wrap; }
-    .stat-item { padding: 2.8rem 3.5rem; text-align: center; border-right: 1px solid rgba(255,255,255,.09); flex: 1; min-width: 160px; }
-    .stat-item:last-child { border-right: none; }
-    .stat-number { font-family: 'Bricolage Grotesque', sans-serif; font-size: 3rem; font-weight: 700; line-height: 1; color: var(--oat); }
-    .stat-suffix { color: var(--crema); }
-    .stat-label { font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(244,236,223,.5); margin-top: .7rem; }
+/* --- SIGNATURE 1: příležitosti --- */
+.prilez{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:54px}
+.prilez-k{background:var(--bila);border:1px solid var(--linka);border-radius:8px;padding:38px 34px;transition:.3s;position:relative;overflow:hidden}
+.prilez-k::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--ruz);opacity:0;transition:.3s}
+.prilez-k:hover{box-shadow:var(--stin);transform:translateY(-3px)}
+.prilez-k:hover::before{opacity:1}
+.prilez-k .cis{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--ruz);display:block;margin-bottom:10px}
+.prilez-k h3{font-size:1.5rem;margin-bottom:10px}
+.prilez-k p{color:var(--seda);font-size:.98rem}
 
-    /* SECTION SHARED */
-    section { padding: 7.5rem 8%; }
-    .eyebrow { display: inline-flex; align-items: center; gap: .8rem; font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--crema2); margin-bottom: 1.1rem; }
-    .eyebrow::before { content: ''; width: 30px; height: 2px; background: var(--crema); }
-    .eyebrow.center { justify-content: center; }
-    .eyebrow.center::before { display: none; }
-    h2.title { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(2.3rem, 4.2vw, 3.7rem); font-weight: 700; line-height: 1.06; letter-spacing: -.02em; margin-bottom: 1.4rem; }
-    h2.title em { font-style: normal; color: var(--roast); }
-    .lead { font-size: 1rem; line-height: 1.85; color: var(--ink2); max-width: 540px; }
+/* --- SIGNATURE 2: sezóna --- */
+.sezona{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:54px;border:1px solid var(--linka);border-radius:8px;overflow:hidden}
+.sez-i{padding:36px 26px;border-right:1px solid var(--linka);background:var(--bila);transition:.3s}
+.sez-i:last-child{border-right:0}
+.sez-i:hover{background:var(--pudr)}
+.sez-i h4{font-size:1.25rem;margin-bottom:8px;color:var(--list)}
+.sez-i .mes{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ruz);display:block;margin-bottom:14px}
+.sez-i p{font-size:.94rem;color:var(--seda);line-height:1.65}
 
-    /* ABOUT */
-    #onas { background: var(--paper); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
-    .about-figure { position: relative; }
-    .about-figure img { width: 100%; height: 580px; object-fit: cover; border-radius: 14px; background: linear-gradient(135deg, var(--roast), var(--espresso)); }
-    .about-seal { position: absolute; top: 1.8rem; left: -1.8rem; width: 118px; height: 118px; border-radius: 50%; background: var(--crema); color: var(--espresso); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 14px 34px rgba(201,138,76,.4); }
-    .about-seal strong { font-family: 'Bricolage Grotesque', sans-serif; font-size: 2.2rem; font-weight: 700; line-height: 1; }
-    .about-seal span { font-size: .58rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-top: .2rem; }
-    .about-text { font-size: 1rem; line-height: 1.95; color: var(--ink2); margin-bottom: 2.4rem; }
-    .about-features { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 1.8rem; margin-bottom: 2.4rem; }
-    .feat { display: flex; align-items: flex-start; gap: 1rem; }
-    .feat-ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--oat2); display: flex; align-items: center; justify-content: center; color: var(--roast); }
-    .feat-ico svg { width: 21px; height: 21px; }
-    .feat h4 { font-size: .92rem; font-weight: 600; margin-bottom: .15rem; color: var(--ink); }
-    .feat p { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+/* --- special --- */
+#special{position:relative;padding:125px 0;background:var(--stonek);color:var(--krem);background-size:cover;background-position:center}
+#special::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(43,58,44,.93) 0%,rgba(43,58,44,.7) 100%)}
+#special .wrap{position:relative;z-index:1;max-width:660px}
+#special h2{color:var(--krem)}
+#special p{opacity:.86;margin-bottom:28px}
 
-    /* MENU BOARD */
-    #napoje { background: var(--espresso); color: var(--oat); }
-    #napoje .eyebrow { color: var(--crema); }
-    #napoje h2.title { color: #fff; }
-    #napoje h2.title em { color: var(--crema); }
-    #napoje .lead { color: rgba(244,236,223,.7); }
-    .board-head { text-align: center; max-width: 620px; margin: 0 auto 4rem; }
-    .board-head .eyebrow { justify-content: center; }
-    .board-head .eyebrow::before { display: none; }
-    .board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5rem; max-width: 1150px; margin: 0 auto; }
-    .board-col h3 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.35rem; font-weight: 600; color: var(--crema); margin-bottom: 1.5rem; padding-bottom: .8rem; border-bottom: 1px solid rgba(244,236,223,.18); letter-spacing: -.01em; }
-    .board-item { padding: .85rem 0; }
-    .board-item-top { display: flex; align-items: baseline; gap: .6rem; }
-    .board-name { font-size: 1rem; font-weight: 600; color: #fff; white-space: nowrap; }
-    .board-dots { flex: 1; border-bottom: 1px dotted rgba(244,236,223,.3); transform: translateY(-4px); }
-    .board-price { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1rem; font-weight: 600; color: var(--crema); white-space: nowrap; }
-    .board-desc { font-size: .78rem; color: rgba(244,236,223,.55); line-height: 1.5; margin-top: .25rem; }
-    .board-note { text-align: center; margin-top: 3.5rem; font-size: .82rem; color: rgba(244,236,223,.5); }
+/* --- galerie --- */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:48px}
+.gal img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;transition:.35s;cursor:pointer}
+.gal img:hover{transform:scale(1.03)}
 
-    /* GALLERY */
-    #galerie { padding: 6rem 0; background: var(--oat2); overflow: hidden; }
-    .gallery-head { text-align: center; padding: 0 8%; margin-bottom: 3.2rem; }
-    .gallery-head .eyebrow { justify-content: center; }
-    .gallery-head .eyebrow::before { display: none; }
-    .marquee-wrap { display: flex; flex-direction: column; gap: .8rem; }
-    .marquee-row { display: flex; gap: .8rem; width: max-content; animation: marquee 42s linear infinite; }
-    .marquee-row.reverse { animation-direction: reverse; animation-duration: 52s; }
-    .marquee-row img { width: 320px; height: 220px; object-fit: cover; flex-shrink: 0; border-radius: 12px; transition: transform .4s; }
-    .marquee-row img:hover { transform: scale(1.015); }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* --- recenze --- */
+.test-wrap{max-width:760px;margin:52px auto 0;overflow:hidden;position:relative}
+#test-track{display:flex;transition:transform .5s ease}
+.test-i{min-width:100%;text-align:center;padding:0 18px}
+.test-i p{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;line-height:1.6;margin-bottom:20px}
+.test-i cite{font-style:normal;font-size:.9rem;color:var(--seda)}
+.hvezdy{color:var(--ruz);letter-spacing:3px;margin-bottom:18px}
+#test-dots{display:flex;gap:9px;justify-content:center;margin-top:28px}
+#test-dots button{width:9px;height:9px;border-radius:50%;border:0;background:var(--linka);cursor:pointer;padding:0}
+#test-dots button.on{background:var(--list);width:26px;border-radius:5px}
 
-    /* TESTIMONIALS */
-    #recenze { background: var(--paper); }
-    .test-head { text-align: center; max-width: 560px; margin: 0 auto 3.5rem; }
-    .test-slider { position: relative; max-width: 860px; margin: 0 auto; overflow: hidden; }
-    .test-track { display: flex; transition: transform .7s var(--ease); }
-    .test-slide { min-width: 100%; padding: 3.5rem 3rem; text-align: center; }
-    .test-mark { font-family: 'Bricolage Grotesque', sans-serif; font-size: 4rem; line-height: .5; color: var(--crema); height: 2rem; margin-bottom: 1.2rem; }
-    .test-stars { color: var(--crema); font-size: 1rem; letter-spacing: 5px; margin-bottom: 1.3rem; }
-    .test-quote { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(1.3rem, 2.2vw, 1.7rem); font-weight: 500; line-height: 1.5; color: var(--ink); margin-bottom: 1.8rem; letter-spacing: -.01em; }
-    .test-author { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--roast); }
-    .test-dots { display: flex; justify-content: center; gap: .6rem; margin-top: 2rem; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(201,138,76,.3); border: none; cursor: pointer; transition: all .3s; padding: 0; }
-    .dot.active { background: var(--crema); transform: scale(1.4); }
+/* --- kontakt --- */
+.kont-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.kont-i{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--linka)}
+.kont-i:last-child{border-bottom:0}
+.kont-i .ik{width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:var(--pudr);color:var(--list);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.kont-i strong{display:block;font-size:.76rem;letter-spacing:.15em;text-transform:uppercase;color:var(--seda);margin-bottom:2px}
+.map-wrap{margin-top:30px;border-radius:8px;overflow:hidden;height:260px}
+.map-wrap iframe{width:100%;height:100%;border:0}
+.form-g{margin-bottom:16px}
+.form-g label{display:block;font-size:.82rem;font-weight:500;margin-bottom:6px}
+.form-g input,.form-g textarea{width:100%;padding:13px 15px;border:1px solid var(--linka);border-radius:6px;font-family:inherit;font-size:.95rem;background:var(--bila)}
+.form-g textarea{min-height:120px;resize:vertical}
+.form-submit{width:100%;padding:15px;background:var(--list);color:var(--bila);border:0;border-radius:999px;font-family:inherit;font-weight:500;font-size:1rem;cursor:pointer}
+.form-submit:hover{background:var(--stonek)}
 
-    /* SPECIAL */
-    #special { position: relative; overflow: hidden; padding: 7.5rem 8%; background: var(--roast); }
-    .special-bg { position: absolute; inset: 0; background: var(--special-img, none) center/cover; opacity: .16; }
-    .special-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
-    .special-inner h2 { color: #fff; }
-    .special-inner h2 em { color: var(--crema); }
-    .special-inner .lead { color: rgba(244,236,223,.8); margin-bottom: 2rem; }
-    .special-cards { display: flex; flex-direction: column; gap: 1rem; }
-    .special-card { background: rgba(255,255,255,.07); border: 1px solid rgba(244,236,223,.16); padding: 1.5rem 1.8rem; border-radius: 12px; display: flex; gap: 1.3rem; align-items: flex-start; transition: background .3s, border-color .3s; }
-    .special-card:hover { background: rgba(201,138,76,.16); border-color: rgba(201,138,76,.45); }
-    .special-card-ico { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: rgba(244,236,223,.1); color: var(--crema); display: flex; align-items: center; justify-content: center; }
-    .special-card-ico svg { width: 21px; height: 21px; }
-    .special-card h4 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.15rem; font-weight: 600; color: #fff; margin-bottom: .3rem; }
-    .special-card p { font-size: .82rem; color: rgba(244,236,223,.65); line-height: 1.6; }
+/* --- footer --- */
+footer{background:var(--stonek);color:var(--krem);padding:72px 0 28px}
+.footer-grid{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:1.6rem;text-decoration:none;color:var(--krem)}
+.footer-logo span{color:var(--ruz)}
+.footer-brand p{opacity:.72;font-size:.95rem;margin-top:12px;max-width:330px}
+.footer-col h4{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:16px;color:var(--pudr)}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:9px}
+.footer-col a{color:var(--krem);opacity:.75;text-decoration:none;font-size:.94rem}
+.footer-col a:hover{opacity:1}
+.footer-bottom{max-width:1180px;margin:44px auto 0;padding:22px 24px 0;border-top:1px solid rgba(250,247,242,.14);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-copy{font-size:.86rem;opacity:.65}
+.footer-copy a{color:var(--pudr)}
 
-    /* CONTACT */
-    #kontakt { background: var(--paper); }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 5.5rem; align-items: start; }
-    .contact-item { display: flex; gap: 1.3rem; align-items: flex-start; margin-bottom: 2.2rem; }
-    .contact-ico { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--oat2); color: var(--roast); display: flex; align-items: center; justify-content: center; }
-    .contact-ico svg { width: 20px; height: 20px; }
-    .contact-label { font-size: .64rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--crema2); margin-bottom: .3rem; }
-    .contact-val { font-size: .96rem; color: var(--ink); line-height: 1.55; }
-    .map-wrap { margin-top: 1.5rem; width: 100%; height: 210px; background: var(--oat2); overflow: hidden; border-radius: 12px; }
-    .map-wrap iframe { width: 100%; height: 100%; border: none; filter: grayscale(.3) sepia(.15); }
-    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: .45rem; }
-    .form-group label { font-size: .64rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-    .form-group input, .form-group textarea { background: #fff; border: 1px solid var(--line); padding: .9rem 1.1rem; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--ink); outline: none; transition: border-color .3s, box-shadow .3s; resize: none; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--crema); box-shadow: 0 0 0 3px rgba(201,138,76,.14); }
-    .form-group textarea { height: 120px; }
-    .form-submit { background: var(--espresso); color: var(--oat); border: none; padding: 1.05rem 2.5rem; cursor: pointer; border-radius: 999px; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 600; transition: all .3s; align-self: flex-start; }
-    .form-submit:hover { background: var(--espresso2); box-shadow: 0 8px 22px rgba(42,32,26,.3); }
+#back-top{position:fixed;right:26px;bottom:26px;width:46px;height:46px;border-radius:50%;border:0;background:var(--list);color:var(--bila);font-size:1.2rem;cursor:pointer;opacity:0;pointer-events:none;transition:.3s;z-index:8000}
+#back-top.show{opacity:1;pointer-events:auto}
 
-    /* FOOTER */
-    footer { background: var(--espresso); padding: 5rem 8% 2.2rem; color: var(--oat); }
-    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 4rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(244,236,223,.12); margin-bottom: 2rem; }
-    .footer-logo { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.7rem; font-weight: 700; color: var(--oat); text-decoration: none; display: block; margin-bottom: 1rem; }
-    .footer-logo span { color: var(--crema); }
-    .footer-desc { font-size: .84rem; color: rgba(244,236,223,.5); line-height: 1.8; margin-bottom: 1.5rem; }
-    .social-links { display: flex; gap: .7rem; }
-    .social-link { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(244,236,223,.18); display: flex; align-items: center; justify-content: center; color: rgba(244,236,223,.6); text-decoration: none; transition: all .3s; }
-    .social-link svg { width: 16px; height: 16px; }
-    .social-link:hover { border-color: var(--crema); color: var(--crema); }
-    .footer-col h4 { font-size: .68rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: rgba(244,236,223,.5); margin-bottom: 1.4rem; }
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
-    .footer-col ul a { font-size: .84rem; color: rgba(244,236,223,.5); text-decoration: none; transition: color .25s; }
-    .footer-col ul a:hover { color: var(--crema); }
-    .footer-hours li { display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: rgba(244,236,223,.5); padding-bottom: .6rem; margin-bottom: .6rem; border-bottom: 1px solid rgba(244,236,223,.08); }
-    .footer-hours li:last-child { border-bottom: none; }
-    .footer-hours li span:last-child { color: rgba(244,236,223,.78); }
-    .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    .footer-copy { font-size: .76rem; color: rgba(244,236,223,.32); }
-    .footer-copy a { color: var(--crema); text-decoration: none; }
+[data-r]{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+[data-r].vis{opacity:1;transform:none}
 
-    #back-top { position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px; border-radius: 50%; background: var(--crema); color: var(--espresso); border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; z-index: 500; }
-    #back-top.show { opacity: 1; visibility: visible; }
-    #back-top:hover { background: var(--crema2); transform: translateY(-2px); }
-
-    [data-r] { opacity: 0; transform: translateY(34px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
-    [data-r="left"] { transform: translateX(-34px); }
-    [data-r="right"] { transform: translateX(34px); }
-    [data-r].visible { opacity: 1; transform: none; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } [data-r] { opacity: 1 !important; transform: none !important; } }
-
-    @media (max-width: 1024px) {
-      section { padding: 5.5rem 6%; }
-      .hero-inner { padding: 0 6% 4.5rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 4rem; }
-      .about-figure img { height: 420px; }
-      .board-grid { grid-template-columns: 1fr; gap: 2.5rem; max-width: 560px; }
-      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .special-inner { grid-template-columns: 1fr; gap: 3rem; }
-      .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
-    }
-    @media (max-width: 768px) {
-      .nav-links, .nav-cta { display: none; }
-      .hamburger { display: flex; }
-      #navbar { padding: 1.2rem 6%; }
-      .about-features { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      .stat-item { padding: 2.2rem; min-width: 140px; }
-      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .about-seal { left: 0; width: 96px; height: 96px; }
-    }
-    @media (max-width: 480px) { section { padding: 4.5rem 5%; } .hero-inner { padding: 0 5% 3.5rem; } .hero-btns { flex-direction: column; align-items: stretch; } .btn-solid, .btn-ghost { text-align: center; } }
-  </style>
+@media(max-width:960px){
+  .hero-grid,.onas-grid,.kont-grid{grid-template-columns:1fr;gap:40px}
+  .hero-media img{height:400px;border-radius:200px 200px 8px 8px}
+  .prilez{grid-template-columns:1fr}
+  .sezona{grid-template-columns:1fr}
+  .sez-i{border-right:0;border-bottom:1px solid var(--linka)}
+  .pasek-in{grid-template-columns:1fr}
+  .pasek-i{border-right:0;border-bottom:1px solid rgba(250,247,242,.15)}
+  .nav-links{display:none}
+  .ham{display:block}
+  .footer-grid{grid-template-columns:1fr}
+  .sec{padding:78px 0}
+  .stat-radek{gap:26px;flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  [data-r]{opacity:1;transform:none}
+}
+</style>
 </head>
 <body>
-<div id="ukazka-banner" style="position:fixed;top:0;left:0;width:100%;background:#d6819f;color:#3a1f2b;text-align:center;padding:10px;font-size:14px;font-weight:600;z-index:9999;box-sizing:border-box;">
-  ⚡ UKÁZKA – finální web bude s vašimi fotkami a texty
-</div>
-<style>body{margin-top:40px !important;}</style>
 
+<div id="ukazka-banner">⚡ UKÁZKA – finální web bude s vašimi fotkami a texty</div>
 <div id="progress"></div>
 
 <nav id="navbar">
-  <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="#onas">O nás</a></li>
-    <li><a href="#napoje">Nabídka</a></li>
-    <li><a href="#galerie">Galerie</a></li>
-    <li><a href="#special">Novinky</a></li>
-    <li><a href="#kontakt">Kontakt</a></li>
-  </ul>
-  <a href="#kontakt" class="nav-cta">Najdete nás</a>
-  <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
+  <div class="wrap nav-in">
+    <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#onas">O nás</a></li>
+      <li><a href="#prilezitosti">Příležitosti</a></li>
+      <li><a href="#sezona">Sezóna</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="tel:RESTAURANT_PHONE" class="nav-tel">RESTAURANT_PHONE</a></li>
+    </ul>
+    <button class="ham" id="ham" aria-label="Menu">☰</button>
+  </div>
 </nav>
 
 <div id="mobile-nav">
-  <button class="close-nav" id="close-nav">✕</button>
+  <button id="close-nav" aria-label="Zavřít">×</button>
   <a href="#onas">O nás</a>
-  <a href="#napoje">Nabídka</a>
+  <a href="#prilezitosti">Příležitosti</a>
+  <a href="#sezona">Sezóna</a>
   <a href="#galerie">Galerie</a>
-  <a href="#special">Novinky</a>
   <a href="#kontakt">Kontakt</a>
+  <a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a>
 </div>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-media"><img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'"></div>
-  <div class="hero-scrim"></div>
-  <div class="hero-inner">
-    <div class="hero-badge">RESTAURANT_CITY · Květinářství</div>
-    <h1 class="hero-title">RESTAURANT_NAME<em>RESTAURANT_TAGLINE</em></h1>
-    <p class="hero-sub">RESTAURANT_SUBTITLE</p>
-    <div class="hero-btns">
-      <a href="#napoje" class="btn-solid">Naše květiny</a>
-      <a href="#kontakt" class="btn-ghost">Kde nás najdete</a>
-    </div>
-    <div class="hero-status">
-      <div class="status-dot"></div>
-      <div class="hero-status-text"><strong>Dnes otevřeno</strong>Po–Pá 8:00–18:00 · So 8:00–12:00</div>
-    </div>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat-item" data-r><div class="stat-number"><span data-count="7">0</span><span class="stat-suffix">+</span></div><div class="stat-label">Let s květinami</div></div>
-  <div class="stat-item" data-r><div class="stat-number"><span data-count="30">0</span></div><div class="stat-label">Druhů květin</div></div>
-  <div class="stat-item" data-r data-stat="reviews"><div class="stat-number"><span data-count="RESTAURANT_REVIEWS">0</span><span class="stat-suffix">+</span></div><div class="stat-label">Recenzí na Googlu</div></div>
-  <div class="stat-item" data-r><div class="stat-number">RESTAURANT_RATING<span class="stat-suffix">★</span></div><div class="stat-label">Průměrné hodnocení</div></div>
-</div>
-
-<!-- ABOUT -->
-<section id="onas" data-r>
-  <div class="about-grid">
-    <div class="about-figure" data-r="left">
-      <img src="../stock_photos/PHOTO_2" alt="Interiér – RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
-      <div class="about-seal"><strong>♥</strong><span>Děláme<br>s láskou</span></div>
-    </div>
-    <div class="about-content" data-r="right">
-      <div class="eyebrow">O nás</div>
-      <h2 class="title">Vaše oblíbené květinářství<br>v <em>RESTAURANT_CITY_LOC</em></h2>
-      <p class="about-text">RESTAURANT_ABOUT</p>
-      <div class="about-features">
-        <div class="feat">
-          <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="2.2"/><path d="M12 6.8c.6-2 2.8-2.4 3.6-1s-.4 3-2 3.4M12 6.8c-.6-2-2.8-2.4-3.6-1s.4 3 2 3.4M14.2 9.6c2-.4 3 1.4 2.4 2.8s-2.8 1-3.6-.4M9.8 9.6c-2-.4-3 1.4-2.4 2.8s2.8 1 3.6-.4M12 11.2V21"/></svg></div>
-          <div><h4>Čerstvé květiny</h4><p>Nové dodávky několikrát týdně</p></div>
-        </div>
-        <div class="feat">
-          <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div>
-          <div><h4>Vazba na míru</h4><p>Kytice přesně dle vašeho přání</p></div>
-        </div>
-        <div class="feat">
-          <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19c3-3 5-5 9-7"/></svg></div>
-          <div><h4>Svatby & akce</h4><p>Květinová výzdoba na klíč</p></div>
-        </div>
-        <div class="feat">
-          <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></div>
-          <div><h4>Rozvoz květin</h4><p>Doručíme kamkoliv ve městě</p></div>
-        </div>
+<header id="hero">
+  <div class="wrap hero-grid">
+    <div data-r>
+      <span class="hero-badge">Květinářství RESTAURANT_CITY_LOC</span>
+      <h1>RESTAURANT_TAGLINE</h1>
+      <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+      <div class="hero-cta">
+        <a href="#prilezitosti" class="btn btn-prim">Co pro vás uvážeme</a>
+        <a href="tel:RESTAURANT_PHONE" class="btn btn-ghost">Zavolat</a>
       </div>
-      <a href="#kontakt" class="btn-solid">Přijďte si vybrat</a>
+    </div>
+    <div class="hero-media" data-r>
+      <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'">
+    </div>
+  </div>
+</header>
+
+<!-- PÁSEK -->
+<section class="pasek">
+  <div class="wrap pasek-in">
+    <div class="pasek-i"><strong>Čerstvé květiny</strong><span>Vazba na počkání</span></div>
+    <div class="pasek-i"><strong>Poradíme s výběrem</strong><span>Řekněte nám příležitost</span></div>
+    <div class="pasek-i"><strong>RESTAURANT_CITY</strong><span>Jsme kousek od vás</span></div>
+  </div>
+</section>
+
+<!-- O NÁS -->
+<section class="sec" id="onas">
+  <div class="wrap onas-grid">
+    <div data-r>
+      <span class="oko">O nás</span>
+      <h2>Kytice, která řekne to, co se špatně říká</h2>
+      <p class="lead">RESTAURANT_ABOUT</p>
+      <div class="stat-radek">
+        <div class="stat" id="stat-hodnoceni"><b>RESTAURANT_RATING</b><span>hodnocení na Googlu</span></div>
+        <div class="stat" id="stat-recenze"><b>RESTAURANT_REVIEWS</b><span>spokojených zákazníků</span></div>
+      </div>
+    </div>
+    <div class="onas-img" data-r>
+      <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
     </div>
   </div>
 </section>
 
-<!-- MENU BOARD -->
-<section id="napoje">
-  <div class="board-head" data-r>
-    <div class="eyebrow center">Z naší nabídky</div>
-    <h2 class="title">Co u nás <em>najdete</em></h2>
-    <p class="lead" style="margin:0 auto;">Malá ukázka nabídky. Kompletní sortiment květin a vazeb najdete u nás v prodejně.</p>
-  </div>
-  <div class="board-grid">
-    <div class="board-col" data-r>
-      <h3>Kytice</h3>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Kytice na míru</span><span class="board-dots"></span><span class="board-price">od 250 Kč</span></div><p class="board-desc">Vytvoříme přesně dle vašeho přání.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Svatební kytice</span><span class="board-dots"></span><span class="board-price">od 900 Kč</span></div><p class="board-desc">Nevěstě i pro celou svatbu.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Dárková kytice</span><span class="board-dots"></span><span class="board-price">od 350 Kč</span></div><p class="board-desc">K narozeninám, výročí i jen tak.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Smuteční vazba</span><span class="board-dots"></span><span class="board-price">od 500 Kč</span></div><p class="board-desc">Věnce a kytice s citem a úctou.</p></div>
+<!-- SIGNATURE 1: PŘÍLEŽITOSTI -->
+<section class="sec sec-alt" id="prilezitosti">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Příležitosti</span>
+      <h2>Ke každé příležitosti se hodí něco jiného</h2>
+      <p class="lead">Nemusíte vědět, jaké květiny chcete. Stačí říct, o co jde a pro koho — zbytek vymyslíme za vás.</p>
     </div>
-    <div class="board-col" data-r>
-      <h3>Řezané &amp; hrnkové</h3>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Řezané květiny</span><span class="board-dots"></span><span class="board-price">od 30 Kč/ks</span></div><p class="board-desc">Růže, tulipány, gerbery i sezónní.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Hrnkové rostliny</span><span class="board-dots"></span><span class="board-price">od 120 Kč</span></div><p class="board-desc">Pokojové květiny i dárkové.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Sezónní květiny</span><span class="board-dots"></span><span class="board-price">dle nabídky</span></div><p class="board-desc">To nejčerstvější podle ročního období.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Sukulenty</span><span class="board-dots"></span><span class="board-price">od 90 Kč</span></div><p class="board-desc">Nenáročné a moderní do interiéru.</p></div>
+    <div class="prilez">
+      <div class="prilez-k" data-r>
+        <span class="cis">01</span>
+        <h3>Svatby a oslavy</h3>
+        <p>Svatební kytice, korsáže, výzdoba stolů i obřadu. Domluvíme se dopředu a sladíme barvy s tím, jak má den vypadat.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">02</span>
+        <h3>Dárek a poděkování</h3>
+        <p>Narozeniny, výročí, „jen tak". Uvážeme kytici na počkání a poradíme, co se k dané osobě hodí.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">03</span>
+        <h3>Smuteční vazba</h3>
+        <p>Věnce, kytice a smuteční vazba s citem a bez zbytečných dotazů. Postaráme se o to rychle a důstojně.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">04</span>
+        <h3>Firmy a pravidelná vazba</h3>
+        <p>Květiny do recepce, na provozovnu nebo ke stálým příležitostem. Domluvíme se na pravidelném rytmu.</p>
+      </div>
     </div>
-    <div class="board-col" data-r>
-      <h3>Doplňky &amp; služby</h3>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Květinová výzdoba</span><span class="board-dots"></span><span class="board-price">dle dohody</span></div><p class="board-desc">Svatby, oslavy, firemní akce.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Dárkové balení</span><span class="board-dots"></span><span class="board-price">od 40 Kč</span></div><p class="board-desc">Krásně zabalíme i váš vlastní dárek.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Rozvoz květin</span><span class="board-dots"></span><span class="board-price">od 80 Kč</span></div><p class="board-desc">Doručíme kytici kamkoliv ve městě.</p></div>
-      <div class="board-item"><div class="board-item-top"><span class="board-name">Předplatné květin</span><span class="board-dots"></span><span class="board-price">od 300 Kč</span></div><p class="board-desc">Čerstvá kytice pravidelně k vám domů.</p></div>
-    </div>
-  </div>
-  <p class="board-note">Ceny jsou orientační. Aktuální nabídku a ceny ovlivňuje sezóna a dostupnost květin.</p>
-</section>
-
-<!-- GALLERY -->
-<section id="galerie">
-  <div class="gallery-head" data-r>
-    <div class="eyebrow center">Naše květiny</div>
-    <h2 class="title">Nahlédněte <em>k nám</em></h2>
-  </div>
-  <div class="marquee-wrap">
-    <div class="marquee-row" id="row1"></div>
-    <div class="marquee-row reverse" id="row2"></div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section id="recenze">
-  <div class="test-head" data-r>
-    <div class="eyebrow center">Zákazníci říkají</div>
-    <h2 class="title">Co říkají <em>naši zákazníci</em></h2>
-  </div>
-  <div class="test-slider" data-r>
-    <div class="test-track" id="test-track">
-      <div class="test-slide"><div class="test-mark">"</div><div class="test-stars">★★★★★</div><p class="test-quote">Nejkrásnější kytice v RESTAURANT_CITY_LOC. Vždy čerstvé květiny, milý přístup a skvělé nápady na vazbu.</p><div class="test-author">Petra K. · RESTAURANT_CITY</div></div>
-      <div class="test-slide"><div class="test-mark">"</div><div class="test-stars">★★★★★</div><p class="test-quote">Nechala jsem si tu udělat svatební kytici a byla nádherná. Paní floristka má úžasný cit pro barvy.</p><div class="test-author">Martin J. · RESTAURANT_CITY</div></div>
-      <div class="test-slide"><div class="test-mark">"</div><div class="test-stars">★★★★★</div><p class="test-quote">Kytice vydržela krásná přes týden. Poradí, vytvoří na míru a ještě doručí. Vřele doporučuji.</p><div class="test-author">Jana M. · RESTAURANT_CITY</div></div>
-      <div class="test-slide"><div class="test-mark">"</div><div class="test-stars">★★★★★</div><p class="test-quote">Moje oblíbené květinářství. Vždycky odcházím s krásnou kyticí a dobrou náladou.</p><div class="test-author">Tomáš B. · RESTAURANT_CITY</div></div>
+<!-- SIGNATURE 2: SEZÓNA -->
+<section class="sec" id="sezona">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Sezóna</span>
+      <h2>Co u nás najdete v průběhu roku</h2>
+      <p class="lead">Nejhezčí kytice vzniknou z toho, co je zrovna v sezóně. Konkrétní nabídku vám rádi řekneme po telefonu.</p>
     </div>
-  </div>
-  <div class="test-dots" id="test-dots">
-    <button class="dot active" data-i="0"></button><button class="dot" data-i="1"></button><button class="dot" data-i="2"></button><button class="dot" data-i="3"></button>
+    <div class="sezona">
+      <div class="sez-i" data-r><span class="mes">Březen – květen</span><h4>Jaro</h4>
+        <p>Tulipány, narcisy, hyacinty a první pivoňky. Období, kdy je všechno barevné a voní to po zahradě.</p></div>
+      <div class="sez-i" data-r><span class="mes">Červen – srpen</span><h4>Léto</h4>
+        <p>Pivoňky, růže, slunečnice a letničky. Hlavní svatební sezóna, na kterou je dobré myslet s předstihem.</p></div>
+      <div class="sez-i" data-r><span class="mes">Září – listopad</span><h4>Podzim</h4>
+        <p>Jiřiny, chryzantémy a sušené vazby. Čas dušiček, věnců a teplých barev.</p></div>
+      <div class="sez-i" data-r><span class="mes">Prosinec – únor</span><h4>Zima</h4>
+        <p>Adventní věnce, vánoční vazba, amarylky a jarní cibuloviny napřed. Kus jara doma dřív, než přijde.</p></div>
+    </div>
   </div>
 </section>
 
 <!-- SPECIAL -->
 <section id="special">
-  <div class="special-bg"></div>
-  <div class="special-inner">
-    <div class="special-content" data-r="left">
-      <div class="eyebrow" style="color:var(--crema)">Novinky &amp; akce</div>
-      <h2 class="title">Vždy je se na co <em>těšit</em></h2>
-      <p class="lead">Sezónní květiny, svatební vazby i dárkové kytice. Sledujte nás a nenechte si nic utéct.</p>
-      <a href="#kontakt" class="btn-solid">Přijďte si vybrat</a>
+  <div class="wrap" data-r>
+    <span class="oko">Na objednávku</span>
+    <h2>Řekněte nám příležitost, zbytek je na nás</h2>
+    <p>Svatba, výročí nebo smuteční obřad — u větších vazeb se ozvěte pár dní dopředu, ať máme čas sehnat přesně to, co si představujete.</p>
+    <a href="tel:RESTAURANT_PHONE" class="btn btn-prim">Domluvit objednávku</a>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section class="sec sec-alt" id="galerie">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Galerie</span>
+      <h2>Z naší práce</h2>
     </div>
-    <div class="special-cards" data-r="right">
-      <div class="special-card">
-        <div class="special-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="2.2"/><path d="M12 6.8c.6-2 2.8-2.4 3.6-1s-.4 3-2 3.4M12 6.8c-.6-2-2.8-2.4-3.6-1s.4 3 2 3.4M14.2 9.6c2-.4 3 1.4 2.4 2.8s-2.8 1-3.6-.4M9.8 9.6c-2-.4-3 1.4-2.4 2.8s2.8 1 3.6-.4M12 11.2V21"/></svg></div>
-        <div><h4>Kytice týdne</h4><p>Každý týden nová sezónní kytice za zvýhodněnou cenu.</p></div>
+    <div class="gal" id="gal-grid"></div>
+  </div>
+</section>
+
+<!-- RECENZE -->
+<section class="sec" id="recenze">
+  <div class="wrap">
+    <div style="max-width:640px;margin:0 auto;text-align:center" data-r>
+      <span class="oko">Ohlasy</span>
+      <h2>Co říkají zákazníci</h2>
+    </div>
+    <div class="test-wrap">
+      <div id="test-track">
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Svatební kytice byla přesně podle představ a ještě hezčí, než jsem doufala. Květiny vydržely celý víkend."</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Přišel jsem na poslední chvíli bez nápadu a odešel s kyticí, ze které měla maminka slzy v očích."</p>
+          <cite>Zákazník · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Smuteční vazbu vyřídili rychle a s obrovským citem. V takové chvíli to člověk ocení nejvíc."</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
       </div>
-      <div class="special-card">
-        <div class="special-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div>
-        <div><h4>Svatební floristika</h4><p>Kompletní květinová výzdoba svatby na klíč.</p></div>
-      </div>
-      <div class="special-card">
-        <div class="special-card-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg></div>
-        <div><h4>Rozvoz po okolí</h4><p>Doručíme květiny čerstvé až ke dveřím.</p></div>
-      </div>
+      <div id="test-dots"></div>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="kontakt">
-  <div class="contact-grid">
-    <div data-r="left">
-      <div class="eyebrow">Najdete nás</div>
-      <h2 class="title">Navštivte nás<br>v <em>RESTAURANT_CITY_LOC</em></h2>
-      <div class="contact-info" style="margin-top:2rem;">
-        <div class="contact-item">
-          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-          <div><div class="contact-label">Adresa</div><div class="contact-val">RESTAURANT_ADDRESS</div></div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
-          <div><div class="contact-label">Telefon</div><div class="contact-val">RESTAURANT_PHONE</div></div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <div><div class="contact-label">Otevírací doba</div><div class="contact-val">Po–Pá: 8:00–18:00<br>So: 8:00–12:00 · Ne: zavřeno</div></div>
-        </div>
+<!-- KONTAKT -->
+<section class="sec sec-alt" id="kontakt">
+  <div class="wrap">
+    <div style="max-width:640px;margin-bottom:50px" data-r>
+      <span class="oko">Kontakt</span>
+      <h2>Zastavte se u nás</h2>
+    </div>
+    <div class="kont-grid">
+      <div data-r>
+        <div class="kont-i"><div class="ik">📍</div><div><strong>Kde nás najdete</strong>RESTAURANT_ADDRESS</div></div>
+        <div class="kont-i"><div class="ik">📞</div><div><strong>Telefon</strong><a href="tel:RESTAURANT_PHONE" style="text-decoration:none">RESTAURANT_PHONE</a></div></div>
+        <div class="kont-i"><div class="ik">✉️</div><div><strong>E-mail</strong><a href="mailto:RESTAURANT_EMAIL" style="text-decoration:none">RESTAURANT_EMAIL</a></div></div>
+        <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
       </div>
-      <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
+      <div data-r>
+        <form onsubmit="return false;">
+          <div class="form-g"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-g"><label>Telefon</label><input type="tel" placeholder="Číslo, kam se ozveme"></div>
+          <div class="form-g"><label>Zpráva</label><textarea placeholder="Jaká příležitost, pro koho a kdy to potřebujete…"></textarea></div>
+          <button type="submit" class="form-submit">Odeslat zprávu</button>
+        </form>
+      </div>
     </div>
-    <div data-r="right">
-      <form class="contact-form" onsubmit="return false;">
-        <div class="form-row">
-          <div class="form-group"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
-          <div class="form-group"><label>Email</label><input type="email" placeholder="email@example.com"></div>
-        </div>
-        <div class="form-group"><label>Zpráva</label><textarea placeholder="Dotaz na rezervaci prostoru, akci nebo cokoliv dalšího…"></textarea></div>
-        <button type="submit" class="form-submit">Odeslat zprávu</button>
-      </form>
+    <div style="text-align:center;margin:3rem 0 0;">
+      <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:var(--list);color:var(--bila);border-radius:999px;padding:15px 40px;font-size:17px;text-decoration:none;font-weight:600;">Chci takový web</a>
     </div>
-  </div>
-  <div style="text-align:center;margin:3rem 0 0;">
-    <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:#d6819f;color:#3a1f2b;border-radius:999px;padding:15px 40px;font-size:17px;text-decoration:none;font-weight:700;">Chci takový web</a>
   </div>
 </section>
 
@@ -471,23 +390,24 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <a href="#" class="footer-logo">RESTAURANT_NAME<span>.</span></a>
-      <p class="footer-desc">RESTAURANT_ABOUT_SHORT</p>
-      <div class="social-links">
-        <a href="#" class="social-link" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 9h3V6h-3c-1.7 0-3 1.3-3 3v2H9v3h2v6h3v-6h2.5l.5-3H14V9z"/></svg></a>
-        <a href="#" class="social-link" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
-      </div>
+      <p>RESTAURANT_ABOUT_SHORT</p>
     </div>
     <div class="footer-col">
-      <h4>Navigace</h4>
-      <ul><li><a href="#onas">O nás</a></li><li><a href="#napoje">Nabídka</a></li><li><a href="#galerie">Galerie</a></li><li><a href="#special">Novinky</a></li><li><a href="#kontakt">Kontakt</a></li></ul>
-    </div>
-    <div class="footer-col">
-      <h4>Otevírací doba</h4>
-      <ul class="footer-hours"><li><span>Po–Pá</span><span>8:00–18:00</span></li><li><span>Sobota</span><span>8:00–12:00</span></li><li><span>Neděle</span><span>zavřeno</span></li></ul>
+      <h4>Květinářství</h4>
+      <ul>
+        <li><a href="#onas">O nás</a></li>
+        <li><a href="#prilezitosti">Příležitosti</a></li>
+        <li><a href="#sezona">Sezóna</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+      </ul>
     </div>
     <div class="footer-col">
       <h4>Kontakt</h4>
-      <ul><li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li><li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li><li><a href="#">RESTAURANT_EMAIL</a></li></ul>
+      <ul>
+        <li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li>
+        <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
+        <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
+      </ul>
     </div>
   </div>
   <div class="footer-bottom">
@@ -499,39 +419,70 @@
 <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
 
 <script>
-(function(){ var img=new Image(); img.onload=function(){ document.getElementById('special').style.setProperty('--special-img',"url('SPECIAL_IMAGE')"); }; img.src='SPECIAL_IMAGE'; })();
+(function(){ var img=new Image(); img.onload=function(){ var s=document.getElementById('special'); if(s) s.style.backgroundImage="url('SPECIAL_IMAGE')"; }; img.src='SPECIAL_IMAGE'; })();
 
-window.addEventListener('scroll', () => {
-  const s = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
-  document.getElementById('progress').style.transform = `scaleX(${s/h})`;
-  document.getElementById('navbar').classList.toggle('scrolled', s > 60);
-  document.getElementById('back-top').classList.toggle('show', s > 400);
+window.addEventListener('scroll', function(){
+  var h = document.documentElement.scrollHeight - innerHeight;
+  var p = document.getElementById('progress');
+  if (p && h > 0) p.style.transform = 'scaleX(' + (scrollY / h) + ')';
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60);
+  document.getElementById('back-top').classList.toggle('show', scrollY > 420);
 }, {passive:true});
 
-const ham = document.getElementById('ham'), mNav = document.getElementById('mobile-nav');
-ham.addEventListener('click', () => mNav.classList.add('open'));
-document.getElementById('close-nav').addEventListener('click', () => mNav.classList.remove('open'));
-mNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mNav.classList.remove('open')));
+var ham = document.getElementById('ham'), mnav = document.getElementById('mobile-nav');
+ham.addEventListener('click', function(){ mnav.classList.add('open'); });
+document.getElementById('close-nav').addEventListener('click', function(){ mnav.classList.remove('open'); });
+mnav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mnav.classList.remove('open'); }); });
 
-document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const el = document.querySelector(a.getAttribute('href')); if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); } }); });
+var obs = new IntersectionObserver(function(es){
+  es.forEach(function(e,i){ if(e.isIntersecting){ setTimeout(function(){ e.target.classList.add('vis'); }, i*70); obs.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(function(el){ obs.observe(el); });
 
-const revObs = new IntersectionObserver(es => { es.forEach((e,i) => { if(e.isIntersecting){ setTimeout(() => e.target.classList.add('visible'), i*70); revObs.unobserve(e.target); } }); }, {threshold:.12});
-document.querySelectorAll('[data-r]').forEach(el => revObs.observe(el));
+(function(){
+  var h = document.querySelector('#stat-hodnoceni b'), r = document.querySelector('#stat-recenze b');
+  if (h && (!h.textContent.trim() || h.textContent.trim() === '0')) document.getElementById('stat-hodnoceni').style.display = 'none';
+  if (r && (!r.textContent.trim() || r.textContent.trim() === '0')) document.getElementById('stat-recenze').style.display = 'none';
+})();
 
-function animCount(el, target){ const dur=2000, start=performance.now(); const tick=now=>{ const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3); el.textContent=Math.floor(e*target).toLocaleString('cs'); if(p<1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
-document.querySelectorAll('[data-stat="reviews"]').forEach(item => { const sp=item.querySelector('[data-count]'); if(!sp || !(+sp.dataset.count>0)) item.style.display='none'; });
-const cntObs = new IntersectionObserver(es => { es.forEach(e => { if(e.isIntersecting){ const n=+e.target.dataset.count; if(n) animCount(e.target,n); cntObs.unobserve(e.target); } }); }, {threshold:.5});
-document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
+(function(){
+  var photos = [GALLERY_PHOTOS_JS].filter(function(s){ return s && s.length; });
+  var grid = document.getElementById('gal-grid');
+  if (!photos.length) { document.getElementById('galerie').style.display = 'none'; return; }
+  photos.forEach(function(src){
+    var im = document.createElement('img');
+    im.src = '../stock_photos/' + src;
+    im.alt = 'RESTAURANT_NAME';
+    im.loading = 'lazy';
+    im.onerror = function(){ this.remove(); if (!grid.children.length) document.getElementById('galerie').style.display = 'none'; };
+    grid.appendChild(im);
+  });
+})();
 
-const photos = [GALLERY_PHOTOS_JS].filter(s => s && s.length);
-const rows = [document.getElementById('row1'), document.getElementById('row2')];
-if(photos.length > 0){ rows.forEach(row => { [...photos,...photos,...photos,...photos].forEach(src => { const img=document.createElement('img'); img.src=src; img.alt='Galerie'; img.loading='lazy'; img.onerror=function(){ this.remove(); }; row.appendChild(img); }); }); }
-else { document.getElementById('galerie').style.display='none'; }
+(function(){
+  var track = document.getElementById('test-track'), dots = document.getElementById('test-dots');
+  if (!track) return;
+  var n = track.children.length, i = 0;
+  for (var k = 0; k < n; k++) {
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Recenze ' + (k+1));
+    b.addEventListener('click', (function(idx){ return function(){ jdi(idx); }; })(k));
+    dots.appendChild(b);
+  }
+  function jdi(x){ i = x; track.style.transform = 'translateX(-' + (i*100) + '%)';
+    Array.prototype.forEach.call(dots.children, function(d, di){ d.classList.toggle('on', di === i); }); }
+  jdi(0);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function(){ jdi((i+1) % n); }, 6000);
+  }
+})();
 
-let cur=0; const track=document.getElementById('test-track'), dots=document.querySelectorAll('.dot'), slides=track.querySelectorAll('.test-slide');
-function goTo(n){ cur=n; track.style.transform=`translateX(-${n*100}%)`; dots.forEach((d,i)=>d.classList.toggle('active',i===n)); }
-dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
-setInterval(() => goTo((cur+1)%slides.length), 5000);
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var el = document.querySelector(a.getAttribute('href'));
+    if (el) { e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+  });
+});
 </script>
 </body>
 </html>
