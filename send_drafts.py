@@ -7,6 +7,7 @@ Použití: venv/bin/python3 send_drafts.py
 import argparse
 import base64
 import re
+import random
 import time
 from datetime import datetime
 
@@ -85,6 +86,37 @@ def get_draft_info(service, draft_id):
     return info.get("To", "?"), info.get("Subject", "?")
 
 
+_MX_CACHE = {}
+
+
+def domena_prijima_postu(email: str) -> bool:
+    """Má doména příjemce MX záznam?
+
+    Odraz od neexistující domény je nejrychlejší způsob, jak si pokazit
+    pověst odesílatele — a ve frontě jich pár je (Kohn, ERPEKO, Webglobe).
+    Jeden DNS dotaz navíc je proti tomu levný. Když se dotaz nepovede,
+    vracíme True, ať kvůli výpadku DNS nezahodíme platný kontakt.
+    Doplněno 5. 9. 2026.
+    """
+    domena = email.rsplit("@", 1)[-1].strip().lower()
+    if not domena:
+        return False
+    if domena in _MX_CACHE:
+        return _MX_CACHE[domena]
+    try:
+        import dns.resolver
+        odpoved = dns.resolver.resolve(domena, "MX", lifetime=5)
+        vysledek = len(odpoved) > 0
+    except ImportError:
+        vysledek = True
+    except Exception as e:
+        nazev = type(e).__name__
+        # NXDOMAIN / NoAnswer = doména poštu nepřijímá, zbytek je výpadek
+        vysledek = nazev not in ("NXDOMAIN", "NoAnswer", "NoNameservers")
+    _MX_CACHE[domena] = vysledek
+    return vysledek
+
+
 def send_draft(service, draft_id):
     import re
     for attempt in range(10):
@@ -116,6 +148,12 @@ def send_draft(service, draft_id):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--delay", type=int, default=60, help="Sekund mezi emaily (default: 60)")
+    # Pevný takt vypadá strojově. Náhodné rozptýlení kolem --delay je levná
+    # obrana; při --delay 90 se čeká 45–135 s. Doplněno 5. 9. 2026.
+    parser.add_argument("--jitter", type=float, default=0.5,
+                        help="Rozptyl prodlevy, 0 = pevná. 0.5 = ±50 %% kolem --delay")
+    parser.add_argument("--skip-no-mx", action="store_true",
+                        help="Přeskočit adresy, jejichž doména nemá MX záznam")
     parser.add_argument("--dry-run", action="store_true", help="Jen vypíše drafty, nic neposílá")
     parser.add_argument("--limit", type=int, default=0,
                         help="Max. počet odeslaných e-mailů za běh (0 = bez omezení)")
@@ -243,6 +281,11 @@ def main():
             skipped_count += 1
             continue
 
+        if args.skip_no_mx and not domena_prijima_postu(to_email):
+            print(f"[{ts}] [{i}/{len(drafts)}] ✗ Doména nepřijímá poštu (bez MX) → {to}")
+            skipped_count += 1
+            continue
+
         if args.dry_run:
             print(f"[{ts}] [{i}/{len(drafts)}] {to} | {subject}")
         else:
@@ -272,8 +315,14 @@ def main():
                 break
 
             if i < len(drafts):
-                print(f"           Čekám {args.delay}s...")
-                time.sleep(args.delay)
+                if args.jitter > 0:
+                    dolni = max(15, int(args.delay * (1 - args.jitter)))
+                    horni = int(args.delay * (1 + args.jitter))
+                    pauza = random.randint(dolni, horni)
+                else:
+                    pauza = args.delay
+                print(f"           Čekám {pauza}s...")
+                time.sleep(pauza)
 
     print(f"\nHotovo! {'(dry run)' if args.dry_run else f'Odesláno {sent_count}, přeskočeno {skipped_count}.'}")
 

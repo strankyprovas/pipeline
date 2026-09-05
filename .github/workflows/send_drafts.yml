@@ -24,9 +24,17 @@ on:
     # Pondělí dobráno taky (pipeline jede 7 dní v týdnu, odesílalo se jen Út–Pá).
     # Sloty MUSÍ zůstat mimo okno pipeline: ta drží stejnou concurrency group
     # od ~18:20 UTC do ~03:30 UTC (3 obory × 180 min).
-    - cron: '0 6 * * 1-5'
-    - cron: '0 9 * * 1-5'
-    - cron: '0 13 * * 1-5'
+    #
+    # 5. 9. 2026: 3×20 Po–Pá (300/týden) nestíhalo — ve frontě leželo ~4000
+    # draftů a výroba přidávala víc, než se odeslalo. Rozšířeno na 4 sloty
+    # a všech 7 dní: 80/den, 560/týden. Výroba běží 7 dní v týdnu, takže
+    # víkendy byly zadarmo ležící kapacita.
+    # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
+    # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
+    - cron: '0 6 * * *'
+    - cron: '0 9 * * *'
+    - cron: '0 13 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch:
     inputs:
       limit:
@@ -56,7 +64,8 @@ jobs:
         run: |
           pip install -q \
             requests gspread google-auth google-auth-oauthlib \
-            google-auth-httplib2 google-api-python-client
+            google-auth-httplib2 google-api-python-client \
+            dnspython
 
       - name: Obnov Google credentials
         run: |
@@ -69,7 +78,11 @@ jobs:
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           set -euo pipefail
-          FLAGS="--delay 60 --limit $LIMIT"
+          # --delay 90 s rozptylem ±50 % = 45–135 s mezi maily. Pevný takt
+          # vypadá strojově; 20 mailů tak trvá ~30 min, do timeoutu se vejde.
+          # --skip-no-mx zahodí adresy, jejichž doména neexistuje — odrazy
+          # kazí pověst odesílatele rychleji než cokoliv jiného.
+          FLAGS="--delay 90 --jitter 0.5 --skip-no-mx --limit $LIMIT"
           if [ "$DRY" = "true" ]; then
             FLAGS="$FLAGS --dry-run"
           fi
