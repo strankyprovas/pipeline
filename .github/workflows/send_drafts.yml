@@ -30,10 +30,16 @@ on:
     # a všech 7 dní: 80/den, 560/týden. Výroba běží 7 dní v týdnu, takže
     # víkendy byly zadarmo ležící kapacita.
     # 6. 9. 2026: dávka 20 → 30, tedy 120/den a 840/týden.
+    # Téhož dne přidán pátý slot v 11:00 → 150/den, 1050/týden.
+    # ⚠️ Tady bych se zastavil. Strop běžného Gmailu je 500/den, ale brzdou
+    # není kvóta — do 5. 9. každý mail propadal na SPF (v záznamu chyběl
+    # Google), takže pověst je poškozená a potřebuje se usadit. Další skok
+    # až podle odezvy, jinak si tu opravu znehodnotíme.
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
     - cron: '0 6 * * *'
     - cron: '0 9 * * *'
+    - cron: '0 11 * * *'
     - cron: '0 13 * * *'
     - cron: '0 15 * * *'
   workflow_dispatch:
