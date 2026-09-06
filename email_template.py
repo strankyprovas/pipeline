@@ -35,25 +35,45 @@ PORTFOLIO_BY_INDUSTRY = {
     "kavarna":      "piavarestaurace.cz (kavárna/bistro) a padthairestaurace.cz",
     "pekarna":      "dortycvikov.cz (cukrárna) a piavarestaurace.cz",
     "kvetinarstvi": "bylinarstvimedunka.cz a dortycvikov.cz",
-    "penzion":      "piavarestaurace.cz a dortycvikov.cz",
+    "penzion":      "penzionlada.cz a piavarestaurace.cz",
     "kadernictvi":  "bylinarstvimedunka.cz a dortycvikov.cz",
     "kosmetika":    "bylinarstvimedunka.cz a petrakovalska.cz",
     "autoservis":   "sekventcar.cz a sojkafinance.cz",
-    "masaze":       "petrakovalska.cz a bylinarstvimedunka.cz",
-    "zubni":        "petrakovalska.cz a psychologiejurakova.cz",
-    "psycholog":    "psychologiejurakova.cz a petrakovalska.cz",
+    "masaze":       "lymfanelle.cz a petrakovalska.cz",
+    "zubni":        "proeste.cz a psychologiejurakova.cz",
+    "psycholog":    "avis-terapie.cz, psychologiejurakova.cz a terapiepolacek.cz",
 }
 # Fallback pro zpětnou kompatibilitu
 PORTFOLIO = PORTFOLIO_BY_INDUSTRY["restaurace"]
 
+# Věta s referencemi do těla mailu. U oborů se silnými živými klienty jmenujeme
+# spokojené zákazníky konkrétně (schváleno 6. 9. 2026) — reference prodává líp
+# než výčet domén. Ostatní obory mají obecnou větu s portfoliem.
+REFERENCE_SENTENCE_BY_INDUSTRY = {
+    "psycholog": (
+        "Weby pro terapeuty jsou naše hlavní parketa — mezi naše spokojené klienty patří "
+        "psychoterapeutka Iva Semíková (avis-terapie.cz), psycholožka Petra Juráková "
+        "(psychologiejurakova.cz) a psychoterapeut Martin Poláček (terapiepolacek.cz). "
+        "Všechny tři weby jsou živé, klidně se podívejte."
+    ),
+    "masaze": (
+        "Mezi naše spokojené klienty patří třeba Lymfanelle — lymfodrenáže v Brně "
+        "(lymfanelle.cz) — a Petra Kovalská, akupunktura a TCM v Ostravě (petrakovalska.cz)."
+    ),
+    "penzion": (
+        "Čerstvě jsme spustili web Penzionu Lada (penzionlada.cz) a kompletní ukázku "
+        "penzionu s pokoji, ceníkem i virtuálními prohlídkami najdete v našem portfoliu."
+    ),
+}
+
 # Oborové podstránky na strankyprovas.cz — malý odkaz „kde najdete víc" u podpisu.
-# Kavárny patří pod /restaurace/ (podstránka je pokrývá), psychologové pod /masaze/
-# (terapie), zbytek oborů spadá pod obecné /sluzby/.
+# Kavárny patří pod /restaurace/ (podstránka je pokrývá), psychologové mají
+# vlastní /terapeuti/ (od 6. 9. 2026), zbytek oborů spadá pod obecné /sluzby/.
 SUBPAGE_BY_INDUSTRY = {
     "restaurace": ("https://strankyprovas.cz/restaurace/", "restaurace a kavárny"),
     "kavarna":    ("https://strankyprovas.cz/restaurace/", "kavárny a restaurace"),
     "masaze":     ("https://strankyprovas.cz/masaze/",     "masáže a terapie"),
-    "psycholog":  ("https://strankyprovas.cz/masaze/",     "terapeuty a psychology"),
+    "psycholog":  ("https://strankyprovas.cz/terapeuti/",  "psychology a terapeuty"),
     "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
     "pekarna":    ("https://strankyprovas.cz/restaurace/",  "kavárny a cukrárny"),
 }
@@ -505,15 +525,17 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     prinosy_section = f"Co to přinese\n{prinosy_formatted}"
 
     # Demo odkaz
+    ref_sentence = REFERENCE_SENTENCE_BY_INDUSTRY.get(
+        industry_key, f"Naše poslední projekty jsou například {portfolio}.")
     if demo_url:
         demo_section = (
-            f"Naše poslední projekty jsou například {portfolio}.\n\n"
+            f"{ref_sentence}\n\n"
             f"Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:\n"
             f"→ {demo_url}\n"
             f"Texty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
         )
     else:
-        demo_section = f"Naše poslední projekty jsou například {portfolio}."
+        demo_section = ref_sentence
 
     # CTA. Cenu do studeného mailu schválně nepíšeme (rozhodnuto 5. 8. 2026) –
     # řeší se až v odpovědi, kdy je o čem mluvit. HTML verze cta_section přebírá.
@@ -548,7 +570,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 
     if demo_url:
         demo_html = (
-            f"Naše poslední projekty jsou například {PORTFOLIO}.<br><br>"
+            f"{ref_sentence}<br><br>"
             f"Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:<br>"
             # Přímý odkaz na demo – žádný redirect. Klient v dřívějším obalu přes
             # Apps Script (`_click_tracking_url`) viděl dlouhou script.google.com
@@ -558,7 +580,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
             f"Texty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
         )
     else:
-        demo_html = f"Naše poslední projekty jsou například {PORTFOLIO}."
+        demo_html = ref_sentence
 
     pixel = _tracking_pixel_html(slug)
     html_body = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.7; color: #222; max-width: 680px;">
