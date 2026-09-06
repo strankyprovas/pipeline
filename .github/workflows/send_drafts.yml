@@ -29,6 +29,7 @@ on:
     # draftů a výroba přidávala víc, než se odeslalo. Rozšířeno na 4 sloty
     # a všech 7 dní: 80/den, 560/týden. Výroba běží 7 dní v týdnu, takže
     # víkendy byly zadarmo ležící kapacita.
+    # 6. 9. 2026: dávka 20 → 30, tedy 120/den a 840/týden.
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
     - cron: '0 6 * * *'
@@ -40,7 +41,7 @@ on:
       limit:
         description: 'Max. počet e-mailů za tento běh'
         required: false
-        default: '20'
+        default: '30'
       dry_run:
         description: 'Jen vypsat, nic neodesílat (true/false)'
         required: false
@@ -74,15 +75,18 @@ jobs:
 
       - name: Odešli drafty
         env:
-          LIMIT: ${{ github.event.inputs.limit || '20' }}
+          LIMIT: ${{ github.event.inputs.limit || '30' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           set -euo pipefail
-          # --delay 90 s rozptylem ±50 % = 45–135 s mezi maily. Pevný takt
-          # vypadá strojově; 20 mailů tak trvá ~30 min, do timeoutu se vejde.
+          # 6. 9. 2026: takt zrychlen na ~1 mail/min (--delay 60, rozptyl
+          # ±25 % = 45–75 s) a dávka z 20 na 30 → 120/den, 840/týden.
+          # ⚠️ Běžný Gmail má strop 500 příjemců/den; při 120 zůstává velká
+          # rezerva. Nezvedat nad ~150/den bez přechodu na Workspace.
+          # 30 mailů × max 75 s ≈ 38 min, do 60min timeoutu se vejde.
           # --skip-no-mx zahodí adresy, jejichž doména neexistuje — odrazy
           # kazí pověst odesílatele rychleji než cokoliv jiného.
-          FLAGS="--delay 90 --jitter 0.5 --skip-no-mx --limit $LIMIT"
+          FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT"
           if [ "$DRY" = "true" ]; then
             FLAGS="$FLAGS --dry-run"
           fi
