@@ -30,24 +30,33 @@ on:
     # a všech 7 dní: 80/den, 560/týden. Výroba běží 7 dní v týdnu, takže
     # víkendy byly zadarmo ležící kapacita.
     # 6. 9. 2026: dávka 20 → 30, tedy 120/den a 840/týden.
-    # Téhož dne přidán pátý slot v 11:00 → 150/den, 1050/týden.
-    # ⚠️ Tady bych se zastavil. Strop běžného Gmailu je 500/den, ale brzdou
-    # není kvóta — do 5. 9. každý mail propadal na SPF (v záznamu chyběl
-    # Google), takže pověst je poškozená a potřebuje se usadit. Další skok
-    # až podle odezvy, jinak si tu opravu znehodnotíme.
+    # Téhož dne na přání navýšeno na 8 slotů × 50 = 400/den, 2800/týden.
+    #
+    # ⚠️ POZOR, tohle je blízko hrany. Strop běžného Gmailu je 500 příjemců
+    # za den; s follow-upy (10/den) jsme na ~410 a rezerva je jen ~90.
+    # Při překročení Google odesílání zamkne na 24 h.
+    # Navíc: do 5. 9. každý outreach mail propadal na SPF (v záznamu domény
+    # chyběl Google), takže pověst je poškozená a tenhle skok jde proti
+    # doporučenému postupnému náběhu. Rozhodnutí uživatele, zdokumentováno.
+    #
+    # Sloty po 1,5 h, poslední v 14:30 UTC (reálně ~15:36) skončí kolem
+    # 16:30 — s rezervou před 18:20, kdy si concurrency group bere pipeline.
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
-    - cron: '0 6 * * *'
-    - cron: '0 9 * * *'
-    - cron: '0 11 * * *'
+    - cron: '0 4 * * *'
+    - cron: '30 5 * * *'
+    - cron: '0 7 * * *'
+    - cron: '30 8 * * *'
+    - cron: '0 10 * * *'
+    - cron: '30 11 * * *'
     - cron: '0 13 * * *'
-    - cron: '0 15 * * *'
+    - cron: '30 14 * * *'
   workflow_dispatch:
     inputs:
       limit:
         description: 'Max. počet e-mailů za tento běh'
         required: false
-        default: '30'
+        default: '50'
       dry_run:
         description: 'Jen vypsat, nic neodesílat (true/false)'
         required: false
@@ -61,7 +70,7 @@ jobs:
   send:
     name: Odeslat drafty
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 80
 
     steps:
       - name: Checkout
@@ -81,15 +90,12 @@ jobs:
 
       - name: Odešli drafty
         env:
-          LIMIT: ${{ github.event.inputs.limit || '30' }}
+          LIMIT: ${{ github.event.inputs.limit || '50' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
         run: |
           set -euo pipefail
-          # 6. 9. 2026: takt zrychlen na ~1 mail/min (--delay 60, rozptyl
-          # ±25 % = 45–75 s) a dávka z 20 na 30 → 120/den, 840/týden.
-          # ⚠️ Běžný Gmail má strop 500 příjemců/den; při 120 zůstává velká
-          # rezerva. Nezvedat nad ~150/den bez přechodu na Workspace.
-          # 30 mailů × max 75 s ≈ 38 min, do 60min timeoutu se vejde.
+          # Takt ~1 mail/min (--delay 60, rozptyl ±25 % = 45–75 s).
+          # Dávka 50 × max 75 s ≈ 62 min → timeout zvednut na 80 min.
           # --skip-no-mx zahodí adresy, jejichž doména neexistuje — odrazy
           # kazí pověst odesílatele rychleji než cokoliv jiného.
           FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT"
