@@ -197,11 +197,15 @@ def pick_subject(name, category) -> tuple:
 
 
 def _rating_note(restaurant: dict, category: str) -> str:
-    """Věta o hodnocení na Googlu. Data se scrapují, ale v mailu se nepoužívala.
+    """Věta o hodnocení na Googlu — VYPNUTO 7. 9. 2026.
 
-    Přidá se jen když je hodnocení opravdu dobré a postavené na dost recenzích –
-    u podniku se třemi hvězdami by to vyznělo jako výsměch.
+    Scrapovaná hodnocení se opakovaně přiřadila jinému podniku (Lele Flowers
+    dostala cizí 4,6/133, salon Adelaid neplatné 4,9/130, Psychoterapie Jičín
+    si stěžoval na „špatné údaje" — tři stížnosti během jediného dne).
+    Špatné číslo v prvním mailu spolehlivě zabije důvěru; dokud nebude párování
+    hodnocení na správnou entitu spolehlivé, věta se do mailů NEPŘIDÁVÁ.
     """
+    return ""
     try:
         rating = float(restaurant.get("rating") or 0)
         reviews = int(restaurant.get("reviews_count") or 0)
