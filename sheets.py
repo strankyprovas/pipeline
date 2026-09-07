@@ -272,6 +272,24 @@ def mark_email_sent(sheet, email, note="") -> bool:
     clean_email = m.group(0).lower() if m else email.lower().strip()
     try:
         cell = _retry(sheet.find, clean_email)
+
+        # Kontakt v tabulce není. Novější gspread nevyhodí CellNotFound, jen
+        # vrátí None — a `cell.row` pak spadlo na 'NoneType has no attribute row'.
+        # Volající to bral jako odmítnutý zápis a po třech takových zastavil
+        # celé odesílání; 6. 9. 2026 proto každý běh poslal jen ~4 maily místo 50.
+        # Nastává to u draftů vyrobených mimo hlavní pipeline (kampaň Meníčka
+        # z vlastního CSV). Kontakt tedy doplníme, ať je oslovení evidované
+        # a nikdo ho nedostane podruhé. Doplněno 7. 9. 2026.
+        if cell is None:
+            radek = [""] * len(HEADERS)
+            radek[HEADERS.index("Email")]        = clean_email
+            radek[HEADERS.index("Datum emailu")] = datetime.now().strftime("%d.%m.%Y %H:%M")
+            radek[HEADERS.index("Stav")]         = "osloveno"
+            radek[HEADERS.index("Poznámka")]     = note or "doplněno při odeslání (nebyl v tabulce)"
+            _retry(sheet.append_row, radek)
+            print(f"  Kontakt {clean_email} nebyl v tabulce – doplněn.", flush=True)
+            return True
+
         _retry(sheet.update_cell, cell.row, HEADERS.index("Datum emailu") + 1,
                datetime.now().strftime("%d.%m.%Y %H:%M"))
         _retry(sheet.update_cell, cell.row, HEADERS.index("Stav") + 1, "osloveno")

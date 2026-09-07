@@ -30,7 +30,10 @@ on:
     # a všech 7 dní: 80/den, 560/týden. Výroba běží 7 dní v týdnu, takže
     # víkendy byly zadarmo ležící kapacita.
     # 6. 9. 2026: dávka 20 → 30, tedy 120/den a 840/týden.
-    # Téhož dne na přání navýšeno na 8 slotů × 50 = 400/den, 2800/týden.
+    # Téhož dne na přání navýšeno na 8 slotů × 50 = 400/den.
+    # 7. 9. 2026: 9 slotů × 50 = 450/den. Sloty po 80 min, poslední v 14:40
+    # UTC (reálně ~15:46) skončí kolem 16:40 — tedy dřív, než si v 18:20
+    # bere concurrency group večerní pipeline.
     #
     # ⚠️ POZOR, tohle je blízko hrany. Strop běžného Gmailu je 500 příjemců
     # za den; s follow-upy (10/den) jsme na ~410 a rezerva je jen ~90.
@@ -44,13 +47,14 @@ on:
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
     - cron: '0 4 * * *'
-    - cron: '30 5 * * *'
-    - cron: '0 7 * * *'
-    - cron: '30 8 * * *'
-    - cron: '0 10 * * *'
-    - cron: '30 11 * * *'
-    - cron: '0 13 * * *'
-    - cron: '30 14 * * *'
+    - cron: '20 5 * * *'
+    - cron: '40 6 * * *'
+    - cron: '0 8 * * *'
+    - cron: '20 9 * * *'
+    - cron: '40 10 * * *'
+    - cron: '0 12 * * *'
+    - cron: '20 13 * * *'
+    - cron: '40 14 * * *'
   workflow_dispatch:
     inputs:
       limit:
