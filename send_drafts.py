@@ -154,6 +154,12 @@ def main():
                         help="Rozptyl prodlevy, 0 = pevná. 0.5 = ±50 %% kolem --delay")
     parser.add_argument("--skip-no-mx", action="store_true",
                         help="Přeskočit adresy, jejichž doména nemá MX záznam")
+    # GitHub spouští cron sloty nespolehlivě (8. 9. 2026 vypadl celý den,
+    # ranní sloty vypadávají běžně). Řešení: slotů je naplánováno víc, než
+    # je potřeba, a skutečný denní objem hlídá tenhle strop — počítá se
+    # z tabulky, takže platí napříč všemi běhy dne. 0 = vypnuto.
+    parser.add_argument("--daily-cap", type=int, default=0,
+                        help="Denní strop odeslaných napříč běhy (0 = bez stropu)")
     parser.add_argument("--dry-run", action="store_true", help="Jen vypíše drafty, nic neposílá")
     parser.add_argument("--limit", type=int, default=0,
                         help="Max. počet odeslaných e-mailů za běh (0 = bez omezení)")
@@ -170,20 +176,35 @@ def main():
     print("📊 Načítám již oslovené kontakty ze Sheetu...")
     sheet = get_or_create_sheet()
     already_sent = set()
+    sent_today = 0
     try:
         all_values = sheet.get_all_values()
         if len(all_values) > 1:
             header = all_values[0]
             email_col = header.index("Email") if "Email" in header else 3
             stav_col = header.index("Stav") if "Stav" in header else 10
+            datum_col = header.index("Datum emailu") if "Datum emailu" in header else 9
+            dnes = datetime.now().strftime("%d.%m.%Y")
             for row in all_values[1:]:
                 email_val = row[email_col].lower().strip() if len(row) > email_col else ""
                 stav_val = row[stav_col].strip() if len(row) > stav_col else ""
                 if email_val and stav_val == "osloveno":
                     already_sent.add(email_val)
+                    datum_val = row[datum_col].strip() if len(row) > datum_col else ""
+                    if datum_val.startswith(dnes):
+                        sent_today += 1
     except Exception as e:
         print(f"   ⚠️  Nepodařilo se načíst Sheet: {e}")
-    print(f"   Již osloveno: {len(already_sent)} kontaktů\n")
+    print(f"   Již osloveno: {len(already_sent)} kontaktů, z toho dnes: {sent_today}\n")
+
+    if args.daily_cap > 0:
+        zbyva = args.daily_cap - sent_today
+        if zbyva <= 0:
+            print(f"🧢 Denní strop {args.daily_cap} už je vyčerpán ({sent_today} dnes), končím.")
+            return
+        if not args.limit or args.limit > zbyva:
+            print(f"🧢 Denní strop: do {args.daily_cap} zbývá {zbyva}, snižuji limit běhu.")
+            args.limit = zbyva
 
     print(f"Nalezeno {len(drafts)} draftů. {'(DRY RUN)' if args.dry_run else f'Odesílám 1 za {args.delay}s.'}\n")
 

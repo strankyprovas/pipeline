@@ -31,9 +31,13 @@ on:
     # víkendy byly zadarmo ležící kapacita.
     # 6. 9. 2026: dávka 20 → 30, tedy 120/den a 840/týden.
     # Téhož dne na přání navýšeno na 8 slotů × 50 = 400/den.
-    # 7. 9. 2026: 9 slotů × 50 = 450/den. Sloty po 80 min, poslední v 14:40
-    # UTC (reálně ~15:46) skončí kolem 16:40 — tedy dřív, než si v 18:20
-    # bere concurrency group večerní pipeline.
+    # 7. 9. 2026: 9 slotů × 50 = 450/den.
+    # 10. 9. 2026: GitHub sloty spouští nespolehlivě — 8. 9. vypadl celý den,
+    # ranní sloty vypadávají běžně; reálně se tak posílalo ~300/den. Proto je
+    # slotů 12 (po hodině, 4:00–15:00) a skutečný objem hlídá --daily-cap 450
+    # ve skriptu: počítá dnešní odeslání z tabulky, takže funguje napříč běhy
+    # a vypadlé sloty dohoní ty další. Poslední slot (reálně ~16:00) skončí
+    # do ~16:50, s rezervou před večerní pipeline (18:20).
     #
     # ⚠️ POZOR, tohle je blízko hrany. Strop běžného Gmailu je 500 příjemců
     # za den; s follow-upy (10/den) jsme na ~410 a rezerva je jen ~90.
@@ -47,14 +51,17 @@ on:
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
     - cron: '0 4 * * *'
-    - cron: '20 5 * * *'
-    - cron: '40 6 * * *'
+    - cron: '0 5 * * *'
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
     - cron: '0 8 * * *'
-    - cron: '20 9 * * *'
-    - cron: '40 10 * * *'
+    - cron: '0 9 * * *'
+    - cron: '0 10 * * *'
+    - cron: '0 11 * * *'
     - cron: '0 12 * * *'
-    - cron: '20 13 * * *'
-    - cron: '40 14 * * *'
+    - cron: '0 13 * * *'
+    - cron: '0 14 * * *'
+    - cron: '0 15 * * *'
   workflow_dispatch:
     inputs:
       limit:
@@ -102,7 +109,7 @@ jobs:
           # Dávka 50 × max 75 s ≈ 62 min → timeout zvednut na 80 min.
           # --skip-no-mx zahodí adresy, jejichž doména neexistuje — odrazy
           # kazí pověst odesílatele rychleji než cokoliv jiného.
-          FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT"
+          FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT --daily-cap 450"
           if [ "$DRY" = "true" ]; then
             FLAGS="$FLAGS --dry-run"
           fi
