@@ -88,8 +88,18 @@ def generate_ai_email(restaurant: dict, demo_url: str = "", city: str = "Praha")
     domain = website.replace("https://", "").replace("http://", "").rstrip("/") if website else ""
     problems_text = _format_reasons(reasons)
 
-    # A/B výběr předmětu
-    subject, ab_variant = pick_subject_variant(category, name, domain)
+    # A/B výběr předmětu.
+    # U masáží běží od 14. 9. 2026 A/B test ŠABLON (klasik/retro/ultra,
+    # viz generator.py) a do sloupce „AB Varianta" se zapisuje šablona.
+    # Předmět proto fixujeme na vítěze testu předmětů (A: 4,1 % ▲,
+    # report 1. 9.) — kdyby se losovaly obě dimenze naráz, 3×3 kombinace
+    # rozdrobí vzorek a test nikdy nedoběhne k závěru.
+    if industry_key == "masaze":
+        variants = SUBJECT_VARIANTS.get(category, SUBJECT_VARIANTS["spatny_web"])
+        klic = sorted(variants.keys())[0]  # varianta A
+        subject, ab_variant = variants[klic](name, domain), klic
+    else:
+        subject, ab_variant = pick_subject_variant(category, name, domain)
 
     # Doplňkový kontext z Google Maps
     extra_context_parts = []
