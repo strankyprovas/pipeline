@@ -390,6 +390,13 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             try:
                 email_data = generate_ai_email(row, demo_url=demo_url, city=city_real)
                 ab_variant = email_data.get("ab_variant", "")
+                # A/B test ŠABLON (masáže, od 14. 9. 2026): do sloupce jde
+                # varianta šablony (klasik/retro/ultra) místo písmene předmětu.
+                # Test předmětů má vítěze (A: 4,1 % ▲, report 1. 9.), takže
+                # jednu dimenzi zafixujeme a sloupec uvolníme pro druhou —
+                # jinak by 3×3 kombinace rozdrobily vzorek na nic.
+                if row.get("sablona_varianta"):
+                    ab_variant = row["sablona_varianta"]
                 create_draft(
                     to_email=email,
                     subject=email_data["subject"],

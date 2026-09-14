@@ -40,29 +40,25 @@ jobs:
           else
             # 1 = pondělí … 7 = neděle (runner běží v UTC)
             #
-            # Rozdělení slotů podle NAMĚŘENÉ odezvy (report z 8. 8. 2026,
-            # reports/outreach-2026-08-08.md, 14 960 odeslaných mailů):
-            #   masáže 1,1 % ▲ | penzion 0,8 % ▲ | psycholog 0,7 % | kavárna 0,5 %
-            #   kadeřnictví 0,4 % | kosmetika/zubní/autoservis 0,3 % | restaurace 0,2 % ▼
-            # Intervaly restaurací (0,1–0,5 %) a masáží (0,7–1,7 %) se nepřekrývají,
-            # takže to není šum. Restaurace přitom měly dosud největší objem ze všech
-            # oborů (3 067 mailů) při nejhorší odezvě.
+            # Od 14. 9. 2026 JEN obory s nejlepší naměřenou odezvou
+            # (report 1. 9., reports/outreach-2026-09-01.md, 15 862 mailů):
+            #   psycholog 1,7 % ▲ | květinářství 2,0 % ▲ (malý vzorek 255)
+            #   masáže 1,2 % | penzion 1,1 % | pekárna 1,5 % (vzorek 132)
+            # Vyřazeno: restaurace/kosmetika/kavárna 0,5 %, autoservis
+            # a kadeřnictví 0,3 % ▼. Zubní (0,9 %) na hraně — vynecháno,
+            # ať se kapacita nedrobí.
             #
-            # Slotů je 21 za týden. Nově: masáže 4, penzion 3, psycholog 3, kavárna 3,
-            # kadeřnictví 2, zbytek po jednom. Každý obor má aspoň jeden slot schválně –
-            # pekárny (131 mailů) a květinářství (24) zatím nemají dost dat na soud
-            # a bez slotu by je nikdy nezískaly.
-            #
-            # ⚠️ Masáže teď projedou seznam měst 4× rychleji než dřív. Až se začne
-            # vracet málo leadů na město, bude to tím – ne rozbitou pipeline.
+            # Masáže mají slotů nejvíc kvůli A/B testu tří šablon
+            # (klasik/retro/ultra, viz generator.py) — na tři varianty
+            # je potřeba nasbírat vzorek co nejrychleji.
             case "$(date -u +%u)" in
-              1) MATRIX='["masaze","penzion","psycholog"]' ;;
-              2) MATRIX='["kavarna","kadernictvi","restaurace"]' ;;
-              3) MATRIX='["masaze","psycholog","kosmetika"]' ;;
-              4) MATRIX='["penzion","kavarna","zubni"]' ;;
-              5) MATRIX='["masaze","psycholog","kadernictvi"]' ;;
-              6) MATRIX='["penzion","kavarna","autoservis"]' ;;
-              7) MATRIX='["masaze","pekarna","kvetinarstvi"]' ;;
+              1) MATRIX='["masaze","psycholog","penzion"]' ;;
+              2) MATRIX='["masaze","kvetinarstvi","pekarna"]' ;;
+              3) MATRIX='["masaze","psycholog","penzion"]' ;;
+              4) MATRIX='["masaze","kvetinarstvi","penzion"]' ;;
+              5) MATRIX='["masaze","psycholog","pekarna"]' ;;
+              6) MATRIX='["masaze","penzion","kvetinarstvi"]' ;;
+              7) MATRIX='["masaze","psycholog","penzion"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"

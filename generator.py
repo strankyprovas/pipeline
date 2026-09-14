@@ -40,13 +40,43 @@ INDUSTRY_TEMPLATES = {
     "psycholog":    "psycholog.html",
 }
 
-def get_template_path(industry: str) -> str:
+# A/B test šablon pro masáže (14. 9. 2026). Tři varianty; kterou kontakt
+# dostane, určuje otisk jeho e-mailu — deterministicky, takže opakovaný běh
+# vygeneruje stejnému podniku stejnou variantu a nevznikne mišmaš.
+# Varianta se propisuje do Sheetu (sloupec „AB Varianta"), viz ai_email.py.
+AB_TEMPLATES = {
+    "masaze": [
+        ("klasik", "masaze.html"),
+        ("retro",  "masaze-retro.html"),
+        ("ultra",  "masaze-ultra.html"),
+    ],
+}
+
+
+def pick_ab_template(industry: str, seed: str):
+    """Vrátí (nazev_varianty, soubor) pro obory v A/B testu, jinak None."""
+    varianty = AB_TEMPLATES.get(industry)
+    if not varianty:
+        return None
+    import hashlib
+    i = int(hashlib.md5((seed or "").lower().encode("utf-8")).hexdigest(), 16) % len(varianty)
+    return varianty[i]
+
+
+def get_template_path(industry: str, seed: str = ""):
+    ab = pick_ab_template(industry, seed)
+    if ab:
+        nazev, filename = ab
+        path = os.path.join(TEMPLATE_DIR, filename)
+        if os.path.exists(path):
+            return path, nazev
+        # šablona varianty chybí → spadnout na základní, ať se výroba nezastaví
     filename = INDUSTRY_TEMPLATES.get(industry, "index.html")
     path = os.path.join(TEMPLATE_DIR, filename)
     # Fallback na restauraci pokud šablona ještě neexistuje
     if not os.path.exists(path):
         path = TEMPLATE_PATH
-    return path
+    return path, ""
 
 TAGLINES = [
     "Kde každé jídlo vypráví příběh",
@@ -87,7 +117,10 @@ def generate_demo(restaurant_data, template_path=None):
     """
     if template_path is None:
         industry = restaurant_data.get("industry", "restaurace")
-        template_path = get_template_path(industry)
+        template_path, ab_sablona = get_template_path(
+            industry, restaurant_data.get("email", "") or restaurant_data.get("name", ""))
+        # název varianty si odnáší volající přes restaurant_data
+        restaurant_data["sablona_varianta"] = ab_sablona
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
 
