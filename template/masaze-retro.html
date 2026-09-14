@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESTAURANT_NAME – masáže RESTAURANT_CITY</title>
+<meta name="description" content="RESTAURANT_NAME – RESTAURANT_TAGLINE. Masáže v RESTAURANT_CITY_LOC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papir:#f7f0e6;      /* starý papír */
+  --papir2:#efe6d6;
+  --inkoust:#3a2f28;    /* tmavá hněď */
+  --mahagon:#6e4a38;    /* mahagon */
+  --salvej:#5c6b57;     /* šalvějová zeleň */
+  --zlato:#9c7c3c;      /* mosaz */
+  --seda:#6f6355;
+  --linka:#cfc0a4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'EB Garamond',Georgia,serif;background:var(--papir);color:var(--inkoust);line-height:1.75;font-size:18px;overflow-x:hidden;padding-top:38px}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;background-image:radial-gradient(rgba(58,47,40,.05) 1px, transparent 1px);background-size:5px 5px}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15;color:var(--inkoust)}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+.sec{padding:100px 0}
+.sec-alt{background:var(--papir2);border-top:1px solid var(--linka);border-bottom:1px solid var(--linka)}
+
+#ukazka-banner{position:fixed;top:0;left:0;width:100%;background:var(--salvej);color:var(--papir);text-align:center;padding:9px;font-size:14px;letter-spacing:.06em;z-index:9999;box-sizing:border-box;font-family:'EB Garamond',serif}
+
+.orn{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--zlato);margin:0 auto 18px;font-size:1.1rem}
+.orn::before,.orn::after{content:"";height:1px;width:70px}
+.orn::before{background:linear-gradient(to right,transparent,var(--zlato))}
+.orn::after{background:linear-gradient(to left,transparent,var(--zlato))}
+.oko{font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--mahagon);display:block;text-align:center;margin-bottom:14px}
+.sec h2{font-size:clamp(2.1rem,4vw,3rem);text-align:center;margin-bottom:20px}
+.sec h2 em{font-style:italic;font-weight:500;color:var(--salvej)}
+.lead{color:var(--seda);font-size:1.08rem;max-width:640px;margin:0 auto 18px;text-align:center}
+
+#navbar{position:fixed;top:38px;left:0;width:100%;z-index:9000;background:var(--papir);border-bottom:3px double var(--linka);transition:.3s}
+.nav-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:600;text-decoration:none;color:var(--salvej);letter-spacing:.02em}
+.nav-logo span{color:var(--mahagon);font-style:italic}
+.nav-links{display:flex;gap:30px;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;font-size:.98rem;color:var(--inkoust);transition:.2s;letter-spacing:.03em}
+.nav-links a:hover{color:var(--mahagon)}
+.nav-tel{border:1px solid var(--salvej);outline:1px solid var(--salvej);outline-offset:3px;color:var(--salvej)!important;padding:8px 20px;font-weight:500;transition:.25s}
+.nav-tel:hover{background:var(--salvej);color:var(--papir)!important}
+.ham{display:none;background:none;border:0;font-size:1.7rem;cursor:pointer;color:var(--salvej)}
+#mobile-nav{position:fixed;inset:0;background:var(--salvej);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transform:translateY(-100%);transition:.35s}
+#mobile-nav.open{transform:translateY(0)}
+#mobile-nav a{color:var(--papir);font-family:'Cormorant Garamond',serif;font-size:1.9rem;text-decoration:none}
+#close-nav{position:absolute;top:24px;right:28px;background:none;border:0;color:var(--papir);font-size:2.2rem;cursor:pointer}
+
+#hero{padding:170px 0 90px;text-align:center;position:relative}
+.hero-badge{font-size:.85rem;letter-spacing:.38em;text-transform:uppercase;color:var(--mahagon);display:block;margin-bottom:22px}
+#hero h1{font-size:clamp(2.6rem,6vw,4.6rem);font-weight:500;margin-bottom:8px}
+#hero h1 em{font-style:italic;color:var(--salvej)}
+.hero-est{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;color:var(--zlato);margin-bottom:26px}
+.hero-sub{font-size:1.15rem;color:var(--seda);max-width:620px;margin:0 auto 38px}
+.hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:14px 36px;text-decoration:none;font-family:'EB Garamond',serif;font-size:1.02rem;letter-spacing:.06em;transition:.25s}
+.btn-prim{background:var(--salvej);color:var(--papir);border:1px solid var(--salvej);outline:1px solid var(--salvej);outline-offset:3px}
+.btn-prim:hover{background:var(--inkoust);border-color:var(--inkoust);outline-color:var(--inkoust)}
+.btn-ghost{border:1px solid var(--mahagon);outline:1px solid var(--mahagon);outline-offset:3px;color:var(--mahagon)}
+.btn-ghost:hover{background:var(--mahagon);color:var(--papir)}
+.hero-foto{max-width:880px;margin:64px auto 0;padding:0 24px}
+.hero-foto .ram{transform:rotate(-.5deg)}
+.hero-foto img{height:440px}
+.hero-foto figcaption{font-size:1rem}
+
+.ram{background:#fffdf8;padding:12px 12px 40px;border:1px solid var(--linka);box-shadow:0 14px 34px rgba(58,47,40,.13)}
+.ram img{width:100%;height:480px;object-fit:cover;filter:sepia(.15) saturate(.95)}
+.ram figcaption{font-style:italic;text-align:center;margin-top:12px;color:var(--seda)}
+.ram.nakloneny{transform:rotate(1deg)}
+
+.pasek{background:var(--salvej);color:var(--papir);position:relative;z-index:2}
+.pasek-in{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.pasek-i{padding:30px 26px;text-align:center;border-right:1px solid rgba(247,240,230,.22)}
+.pasek-i:last-child{border-right:0}
+.pasek-i strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;margin-bottom:2px}
+.pasek-i span{font-size:.95rem;opacity:.8;font-style:italic}
+
+.onas-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.stat-radek{display:flex;gap:40px;margin-top:30px;padding-top:24px;border-top:3px double var(--linka)}
+.stat b{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:var(--salvej);display:block;line-height:1}
+.stat span{font-size:.92rem;color:var(--seda);font-style:italic}
+
+.sluzby{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:56px}
+.sluzba{background:var(--papir);border:1px solid var(--linka);outline:1px solid var(--linka);outline-offset:4px;padding:36px 32px;text-align:center;transition:.3s}
+.sluzba:hover{outline-color:var(--mahagon);border-color:var(--mahagon)}
+.sluzba .zn{color:var(--zlato);display:block;margin-bottom:12px;font-size:1.3rem}
+.sluzba h3{font-size:1.55rem;margin-bottom:10px}
+.sluzba p{color:var(--seda);font-size:1rem}
+
+#special{background:var(--salvej);color:var(--papir);padding:95px 0;text-align:center;position:relative;z-index:2}
+#special h2{color:var(--papir);font-size:clamp(2.1rem,4vw,3rem);margin-bottom:20px}
+#special h2 em{color:#d9cba6;font-style:italic;font-weight:500}
+#special p{opacity:.88;max-width:620px;margin:0 auto 30px;font-size:1.1rem}
+#special .orn{color:#d9cba6}
+#special .orn::before{background:linear-gradient(to right,transparent,#d9cba6)}
+#special .orn::after{background:linear-gradient(to left,transparent,#d9cba6)}
+#special .btn-prim{background:var(--papir);color:var(--salvej);border-color:var(--papir);outline-color:var(--papir)}
+#special .btn-prim:hover{background:#fff;color:var(--inkoust)}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px;margin-top:56px}
+.gal figure{background:#fffdf8;padding:10px 10px 34px;border:1px solid var(--linka);box-shadow:0 10px 26px rgba(58,47,40,.12);transition:.3s}
+.gal figure:nth-child(odd){transform:rotate(-.7deg)}
+.gal figure:nth-child(even){transform:rotate(.7deg)}
+.gal figure:hover{transform:rotate(0) translateY(-4px)}
+.gal img{width:100%;aspect-ratio:3/4;object-fit:cover;filter:sepia(.15) saturate(.95)}
+
+.test-wrap{max-width:760px;margin:48px auto 0;overflow:hidden;position:relative}
+#test-track{display:flex;transition:transform .5s ease}
+.test-i{min-width:100%;text-align:center;padding:0 18px}
+.test-i .uvoz{font-family:'Cormorant Garamond',serif;font-size:4rem;line-height:.6;color:var(--zlato);margin-bottom:18px}
+.test-i p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;line-height:1.55;margin-bottom:18px}
+.test-i cite{font-style:normal;font-size:.95rem;color:var(--seda);letter-spacing:.1em;text-transform:uppercase}
+.hvezdy{color:var(--zlato);letter-spacing:4px;margin-bottom:14px}
+#test-dots{display:flex;gap:10px;justify-content:center;margin-top:26px}
+#test-dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--zlato);background:transparent;cursor:pointer;padding:0}
+#test-dots button.on{background:var(--zlato)}
+
+.kont-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:56px}
+.kont-i{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--linka)}
+.kont-i:last-of-type{border-bottom:0}
+.kont-i .ik{color:var(--zlato);font-size:1.15rem;line-height:1.6}
+.kont-i strong{display:block;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mahagon);margin-bottom:2px}
+.map-wrap{margin-top:26px;border:1px solid var(--linka);outline:1px solid var(--linka);outline-offset:4px;overflow:hidden;height:250px}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:sepia(.22) saturate(.85)}
+.form-g{margin-bottom:16px}
+.form-g label{display:block;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--seda);margin-bottom:6px}
+.form-g input,.form-g textarea{width:100%;padding:13px 15px;border:1px solid var(--linka);font-family:'EB Garamond',serif;font-size:1rem;background:#fffdf8;color:var(--inkoust)}
+.form-g input:focus,.form-g textarea:focus{outline:1px solid var(--salvej);border-color:var(--salvej)}
+.form-g textarea{min-height:120px;resize:vertical}
+.form-submit{width:100%;padding:15px;background:var(--salvej);color:var(--papir);border:1px solid var(--salvej);outline:1px solid var(--salvej);outline-offset:3px;font-family:'EB Garamond',serif;font-size:1.02rem;letter-spacing:.06em;cursor:pointer;transition:.25s}
+.form-submit:hover{background:var(--inkoust);border-color:var(--inkoust);outline-color:var(--inkoust)}
+
+footer{background:var(--inkoust);color:var(--papir);padding:64px 0 26px;position:relative;z-index:2}
+.footer-grid{max-width:1120px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;text-decoration:none;color:var(--papir)}
+.footer-brand p{opacity:.72;font-size:.98rem;margin-top:12px;max-width:330px}
+.footer-col h4{font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px;color:#d9cba6}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:9px}
+.footer-col a{color:var(--papir);opacity:.75;text-decoration:none;font-size:.96rem}
+.footer-col a:hover{opacity:1}
+.footer-bottom{max-width:1120px;margin:44px auto 0;padding:22px 24px 0;border-top:1px solid rgba(247,240,230,.18);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-copy{font-size:.88rem;opacity:.6}
+.footer-copy a{color:#d9cba6}
+
+#back-top{position:fixed;right:26px;bottom:26px;width:46px;height:46px;border:1px solid var(--salvej);outline:1px solid var(--salvej);outline-offset:2px;background:var(--papir);color:var(--salvej);font-size:1.1rem;cursor:pointer;opacity:0;pointer-events:none;transition:.3s;z-index:8000}
+#back-top.show{opacity:1;pointer-events:auto}
+
+[data-r]{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+[data-r].vis{opacity:1;transform:none}
+
+@media(max-width:960px){
+  .onas-grid,.kont-grid{grid-template-columns:1fr;gap:40px}
+  .sluzby{grid-template-columns:1fr}
+  .pasek-in{grid-template-columns:1fr}
+  .pasek-i{border-right:0;border-bottom:1px solid rgba(247,240,230,.22)}
+  .nav-links{display:none}
+  .ham{display:block}
+  .footer-grid{grid-template-columns:1fr}
+  .sec{padding:72px 0}
+  #hero{padding:150px 0 70px}
+  .hero-foto img{height:300px}
+  .ram img{height:380px}
+  .stat-radek{gap:26px;flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  [data-r]{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="ukazka-banner">⚡ UKÁZKA – finální web bude s vašimi fotkami a texty</div>
+
+<nav id="navbar">
+  <div class="nav-in">
+    <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#onas">O nás</a></li>
+      <li><a href="#sluzby">Masáže</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="tel:RESTAURANT_PHONE" class="nav-tel">RESTAURANT_PHONE</a></li>
+    </ul>
+    <button class="ham" id="ham" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div id="mobile-nav">
+  <button id="close-nav" aria-label="Zavřít">×</button>
+  <a href="#onas">O nás</a>
+  <a href="#sluzby">Masáže</a>
+  <a href="#galerie">Galerie</a>
+  <a href="#kontakt">Kontakt</a>
+  <a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a>
+</div>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="wrap">
+    <span class="hero-badge" data-r>Masáže · RESTAURANT_CITY</span>
+    <h1 data-r>RESTAURANT_NAME</h1>
+    <p class="hero-est" data-r>— RESTAURANT_TAGLINE —</p>
+    <p class="hero-sub" data-r>RESTAURANT_SUBTITLE</p>
+    <div class="hero-cta" data-r>
+      <a href="#sluzby" class="btn btn-prim">Naše masáže</a>
+      <a href="tel:RESTAURANT_PHONE" class="btn btn-ghost">Objednat se</a>
+    </div>
+  </div>
+  <figure class="hero-foto" data-r>
+    <div class="ram">
+      <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.closest('.hero-foto').style.display='none'">
+      <figcaption>Chvíle klidu jen pro vás</figcaption>
+    </div>
+  </figure>
+</header>
+
+<!-- PÁSEK -->
+<section class="pasek">
+  <div class="pasek-in">
+    <div class="pasek-i"><strong>Individuální přístup</strong><span>masáž šitá na míru</span></div>
+    <div class="pasek-i"><strong>Objednání po telefonu</strong><span>termín, který vám sedne</span></div>
+    <div class="pasek-i"><strong>RESTAURANT_CITY</strong><span>jsme kousek od vás</span></div>
+  </div>
+</section>
+
+<!-- O NÁS -->
+<section class="sec" id="onas">
+  <div class="wrap onas-grid">
+    <div data-r>
+      <span class="oko" style="text-align:left">O nás</span>
+      <h2 style="text-align:left">Dopřejte tělu,<br>co si zaslouží</h2>
+      <p class="lead" style="text-align:left;margin:0 0 18px">RESTAURANT_ABOUT</p>
+      <div class="stat-radek">
+        <div class="stat" id="stat-hodnoceni"><b>RESTAURANT_RATING</b><span>hodnocení na Googlu</span></div>
+        <div class="stat" id="stat-recenze"><b>RESTAURANT_REVIEWS</b><span>hodnocení zákazníků</span></div>
+      </div>
+    </div>
+    <figure class="ram nakloneny" data-r>
+      <img src="../stock_photos/PHOTO_2" alt="Studio – RESTAURANT_NAME" onerror="this.closest('figure').style.visibility='hidden'">
+      <figcaption>Z našeho studia</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- SLUŽBY -->
+<section class="sec sec-alt" id="sluzby">
+  <div class="wrap">
+    <div data-r>
+      <span class="oko">Naše masáže</span>
+      <div class="orn">❦</div>
+      <h2>Každé tělo potřebuje <em>něco jiného</em></h2>
+      <p class="lead">Nemusíte vědět, kterou masáž zvolit. Řekněte, co vás trápí — zbytek doporučíme podle toho, co vaše tělo právě potřebuje.</p>
+    </div>
+    <div class="sluzby">
+      <div class="sluzba" data-r>
+        <span class="zn">❦</span>
+        <h3>Klasická a relaxační masáž</h3>
+        <p>Uvolnění celého těla postaru a poctivě — pomalé tahy, žádný spěch. Ideální, když potřebujete vypnout hlavu i svaly.</p>
+      </div>
+      <div class="sluzba" data-r>
+        <span class="zn">❦</span>
+        <h3>Masáž zad a šíje</h3>
+        <p>Na ztuhlá záda od počítače i těžké práce. Cílené uvolnění míst, která nesou největší zátěž.</p>
+      </div>
+      <div class="sluzba" data-r>
+        <span class="zn">❦</span>
+        <h3>Regenerace a uvolnění</h3>
+        <p>Po sportu i náročném týdnu. Pomůžeme svalům zotavit se a tělu vrátit lehkost.</p>
+      </div>
+      <div class="sluzba" data-r>
+        <span class="zn">❦</span>
+        <h3>Dárkový poukaz</h3>
+        <p>Darujte chvíli klidu — poukaz na masáž potěší, když nevíte, co koupit, a nikdy se neomrzí.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIAL -->
+<section id="special">
+  <div class="wrap" data-r>
+    <div class="orn">❦</div>
+    <h2>Rezervujte si svou <em>chvíli klidu</em></h2>
+    <p>Stačí jeden telefonát — domluvíme termín, který vám sedne, a probereme, co vaše tělo právě potřebuje.</p>
+    <a href="tel:RESTAURANT_PHONE" class="btn btn-prim">Zavolat a objednat se</a>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section class="sec" id="galerie">
+  <div class="wrap">
+    <div data-r>
+      <span class="oko">Galerie</span>
+      <div class="orn">❦</div>
+      <h2>Nahlédněte <em>k nám</em></h2>
+    </div>
+    <div class="gal" id="gal-grid"></div>
+  </div>
+</section>
+
+<!-- RECENZE -->
+<section class="sec sec-alt" id="recenze">
+  <div class="wrap">
+    <div data-r>
+      <span class="oko">Ohlasy</span>
+      <div class="orn">❦</div>
+      <h2>Co říkají <em>zákazníci</em></h2>
+    </div>
+    <div class="test-wrap" data-r>
+      <div id="test-track">
+        <div class="test-i"><div class="uvoz">„</div><div class="hvezdy">★★★★★</div>
+          <p>Odcházela jsem jako vyměněná. Konečně masáž, kde na mě nikdo nespěchal.</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="uvoz">„</div><div class="hvezdy">★★★★★</div>
+          <p>Záda mě trápila měsíce. Po pár návštěvách je to úplně jiný život.</p>
+          <cite>Zákazník · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="uvoz">„</div><div class="hvezdy">★★★★★</div>
+          <p>Krásné prostředí, příjemné jednání a ruce, které vědí, co dělají. Doporučuji všem.</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
+      </div>
+      <div id="test-dots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section class="sec" id="kontakt">
+  <div class="wrap">
+    <div data-r>
+      <span class="oko">Kontakt</span>
+      <div class="orn">❦</div>
+      <h2>Zastavte se <em>u nás</em></h2>
+    </div>
+    <div class="kont-grid">
+      <div data-r>
+        <div class="kont-i"><span class="ik">❦</span><div><strong>Kde nás najdete</strong>RESTAURANT_ADDRESS_SHORT, RESTAURANT_CITY</div></div>
+        <div class="kont-i"><span class="ik">❦</span><div><strong>Telefon</strong><a href="tel:RESTAURANT_PHONE" style="text-decoration:none">RESTAURANT_PHONE</a></div></div>
+        <div class="kont-i"><span class="ik">❦</span><div><strong>E-mail</strong><a href="mailto:RESTAURANT_EMAIL" style="text-decoration:none">RESTAURANT_EMAIL</a></div></div>
+        <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
+      </div>
+      <div data-r>
+        <form onsubmit="return false;">
+          <div class="form-g"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-g"><label>Telefon</label><input type="tel" placeholder="Číslo, kam se ozveme"></div>
+          <div class="form-g"><label>Zpráva</label><textarea placeholder="Jaká masáž vás zajímá a kdy se vám to hodí…"></textarea></div>
+          <button type="submit" class="form-submit">Odeslat zprávu</button>
+        </form>
+      </div>
+    </div>
+    <div style="text-align:center;margin:3rem 0 0;">
+      <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:var(--salvej);color:var(--papir);padding:15px 40px;font-size:17px;text-decoration:none;border:1px solid var(--salvej);outline:1px solid var(--salvej);outline-offset:3px;">Chci takový web</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">RESTAURANT_SHORT_NAME</a>
+      <p>RESTAURANT_ABOUT_SHORT</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigace</h4>
+      <ul>
+        <li><a href="#onas">O nás</a></li>
+        <li><a href="#sluzby">Masáže</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li>
+        <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
+        <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
+  </div>
+</footer>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
+<script>
+window.addEventListener('scroll', function(){
+  document.getElementById('back-top').classList.toggle('show', scrollY > 420);
+}, {passive:true});
+
+var ham = document.getElementById('ham'), mnav = document.getElementById('mobile-nav');
+ham.addEventListener('click', function(){ mnav.classList.add('open'); });
+document.getElementById('close-nav').addEventListener('click', function(){ mnav.classList.remove('open'); });
+mnav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mnav.classList.remove('open'); }); });
+
+var obs = new IntersectionObserver(function(es){
+  es.forEach(function(e,i){ if(e.isIntersecting){ setTimeout(function(){ e.target.classList.add('vis'); }, i*70); obs.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(function(el){ obs.observe(el); });
+
+(function(){
+  var h = document.querySelector('#stat-hodnoceni b'), r = document.querySelector('#stat-recenze b');
+  if (h && (!h.textContent.trim() || h.textContent.trim() === '0')) document.getElementById('stat-hodnoceni').style.display = 'none';
+  if (r && (!r.textContent.trim() || r.textContent.trim() === '0')) document.getElementById('stat-recenze').style.display = 'none';
+})();
+
+(function(){
+  var photos = [GALLERY_PHOTOS_JS].filter(function(s){ return s && s.length; });
+  var grid = document.getElementById('gal-grid');
+  if (!photos.length) { document.getElementById('galerie').style.display = 'none'; return; }
+  photos.forEach(function(src){
+    var fig = document.createElement('figure');
+    var im = document.createElement('img');
+    im.src = src;
+    im.alt = 'RESTAURANT_NAME – galerie';
+    im.loading = 'lazy';
+    im.onerror = function(){ fig.remove(); if (!grid.children.length) document.getElementById('galerie').style.display = 'none'; };
+    fig.appendChild(im);
+    grid.appendChild(fig);
+  });
+})();
+
+(function(){
+  var track = document.getElementById('test-track'), dots = document.getElementById('test-dots');
+  if (!track) return;
+  var n = track.children.length, i = 0;
+  for (var k = 0; k < n; k++) {
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Recenze ' + (k+1));
+    b.addEventListener('click', (function(idx){ return function(){ jdi(idx); }; })(k));
+    dots.appendChild(b);
+  }
+  function jdi(x){ i = x; track.style.transform = 'translateX(-' + (i*100) + '%)';
+    Array.prototype.forEach.call(dots.children, function(d, di){ d.classList.toggle('on', di === i); }); }
+  jdi(0);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function(){ jdi((i+1) % n); }, 6000);
+  }
+})();
+
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var el = document.querySelector(a.getAttribute('href'));
+    if (el) { e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>
