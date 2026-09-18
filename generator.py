@@ -50,6 +50,12 @@ AB_TEMPLATES = {
         ("retro",  "masaze-retro.html"),
         ("ultra",  "masaze-ultra.html"),
     ],
+    # 18. 9. 2026: květinářství — obor s nejvyšší odezvou (2,0 %), druhá
+    # varianta „botanická retro" (papír/lahvová/bordó, Cormorant).
+    "kvetinarstvi": [
+        ("klasik", "kvetinarstvi.html"),
+        ("retro",  "kvetinarstvi-retro.html"),
+    ],
 }
 
 
