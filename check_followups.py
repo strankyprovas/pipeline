@@ -27,6 +27,7 @@ from email.header import Header
 from email.utils import formataddr
 
 from config import REPLY_TO, SENDER_EMAIL
+from email_template import industry_subpage
 from gmail_draft import create_draft, get_gmail_service
 from email_template import SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
 
@@ -247,13 +248,19 @@ Napiš jen tělo emailu."""
         )
         ai_text = message.content[0].text.strip()
 
-        plain = ai_text + f"\n\nS pozdravem,\n{SENDER_NAME}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
+        sub_url, sub_popis = industry_subpage(industry)
+        podstranka_plain = f"Co všechno děláme pro {sub_popis}: {sub_url}"
+        podstranka_html = (f'<p style="color:#888; font-size:13px;">Co všechno děláme pro '
+                           f'{sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>')
+
+        plain = ai_text + f"\n\n{podstranka_plain}\n\nS pozdravem,\n{SENDER_NAME}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
 
         html_body = ai_text.replace("\n", "<br>")
         if demo_url:
             html_body = html_body.replace(demo_url, f'<a href="{demo_url}">{demo_url}</a>')
         html = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>{html_body}</p>
+{podstranka_html}
 <p style="color:#888; font-size:13px;">--<br>{SENDER_NAME}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
 </div>"""
 
@@ -292,6 +299,9 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
           "jednorázově od 6 000 Kč — zaplatíte jednou a web je váš, "
           "žádné další poplatky u nás.")
 
+    sub_url, sub_popis = industry_subpage(contact.get("industry", ""))
+    podstranka_plain = f"Co všechno děláme pro {sub_popis}: {sub_url}"
+
     plain = (
         f"Dobrý den,\n\n"
         f"{opener}\n\n"
@@ -301,6 +311,7 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
         f"Pokud máte zájem nebo otázky, stačí odpovědět. "
         f"Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.\n\n"
         f"{ps}\n\n"
+        f"{podstranka_plain}\n\n"
         f"Hezký den,\n{SENDER_NAME}\n{SENDER_COMPANY}"
     )
 
@@ -313,6 +324,7 @@ Demo stránka je stále k dispozici:<br>→ {demo_link}</p>
 <p>Pokud máte zájem nebo otázky, stačí odpovědět.
 Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.</p>
 <p style="color:#555">{ps}</p>
+<p style="color:#888; font-size:13px;">Co všechno děláme pro {sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>
 <p>Hezký den,<br>{SENDER_NAME}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
 </div>"""
 
