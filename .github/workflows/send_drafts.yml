@@ -81,7 +81,9 @@ jobs:
   send:
     name: Odeslat drafty
     runs-on: ubuntu-latest
-    timeout-minutes: 80
+    # 18. 9. 2026: timeout zvednut kvuli dorovnavacim davkam (limit až 250
+    # při ~72 s/mail ≈ 5 h). Bezne slotove behy po 50 konci do hodiny.
+    timeout-minutes: 350
 
     steps:
       - name: Checkout
