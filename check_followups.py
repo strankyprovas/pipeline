@@ -214,11 +214,10 @@ def _generate_ai_followup(contact: dict) -> tuple[str, str] | None:
     days_ago = contact["days_ago"]
     industry = contact.get("industry", "restaurace")
 
-    opener_hint = (
-        "Víš, že příjemce email otevřel (máš tracking pixel). Zmínit to přirozeně."
-        if opened else
-        f"Příjemce se pravděpodobně nedostal k emailu (odeslán před {days_ago} dny)."
-    )
+    # 18. 9. 2026: zmínku o otevření mailu z promptu vyhazujeme i pro opened=True
+    # — pixel je nespolehlivý (proxy Gmailu/Seznamu) a "vím, že jste si mail
+    # otevřel" působí jako sledování. Neutrální připomenutí je bezpečné vždy.
+    opener_hint = f"Příjemce zatím neodpověděl (email odeslán před {days_ago} dny)."
 
     prompt = f"""Napiš krátký follow-up cold email (max 3 věty) v češtině.
 
@@ -232,8 +231,10 @@ Požadavky:
 - Začni "Dobrý den," pak prázdný řádek, pak tělo
 - Maximálně 3 věty – krátké, přátelské, nenásilné
 - Zmínit demo URL s šipkou →
+- Na konec přidej P.S. o jedné větě: web umíme udělat i jednorázově od 6 000 Kč — bez ročních poplatků, web je pak jejich
 - Podpis NEVKLÁDEJ (bude přidán automaticky)
 - Tón: přátelský, bez tlaku
+- NIKDY nezmiňuj, že víš o otevření/přečtení předchozího mailu
 
 Napiš jen tělo emailu."""
 
@@ -277,10 +278,19 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
         return subject, plain, html
 
     # Fallback – statická šablona
-    if opened:
-        opener = f"Vidím, že jste se na email podíval/a – možná vás zaujal."
-    else:
-        opener = f"Před pár dny jsem vám posílal ukázku webu pro {name}."
+    # Pozn.: dřívější otvírák "Vidím, že jste se na email podíval/a" (podle
+    # tracking pixelu) byl odstraněn 18. 9. 2026 — pixel je nespolehlivý
+    # (Gmail/Seznam proxují obrázky, viz report) a přiznání sledování působí
+    # nepříjemně. Neutrální připomenutí funguje bez rizika.
+    opener = f"Před pár dny jsem vám posílal ukázku webu pro {name}."
+
+    # Jednorázovka je aktuálně nejúčinnější protinabídka na "roční poplatky
+    # nechci" (v týdnu 14.–18. 9. otočila tři odmítnutí na domluvu). Ve
+    # follow-upu ji zmiňujeme jako P.S. — kdo neodpověděl kvůli ceně, dostane
+    # důvod se ozvat.
+    ps = ("P.S. Kdyby vám nevyhovoval roční model, web umíme udělat i "
+          "jednorázově od 6 000 Kč — zaplatíte jednou a web je váš, "
+          "žádné další poplatky u nás.")
 
     plain = (
         f"Dobrý den,\n\n"
@@ -290,6 +300,7 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
         f"→ {demo_url}\n\n"
         f"Pokud máte zájem nebo otázky, stačí odpovědět. "
         f"Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.\n\n"
+        f"{ps}\n\n"
         f"Hezký den,\n{SENDER_NAME}\n{SENDER_COMPANY}"
     )
 
@@ -301,6 +312,7 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
 Demo stránka je stále k dispozici:<br>→ {demo_link}</p>
 <p>Pokud máte zájem nebo otázky, stačí odpovědět.
 Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.</p>
+<p style="color:#555">{ps}</p>
 <p>Hezký den,<br>{SENDER_NAME}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
 </div>"""
 

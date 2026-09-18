@@ -55,7 +55,7 @@ SHEETS_ENABLED = os.path.exists(os.path.join(os.path.dirname(__file__), "credent
 if SHEETS_ENABLED:
     from sheets import get_or_create_sheet, add_restaurant, is_duplicate
 
-from config import NEVER_CONTACT_NAMES
+from config import NEVER_CONTACT_NAMES, NEVER_CONTACT_EMAILS, INDUSTRY_NAME_BLOCK
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -180,6 +180,14 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             print(f"  🚫 Vyloučeno (náš klient) – přeskakuji\n")
             continue
 
+        # Název neodpovídá cílenému oboru → šum ze scraperu, neoslovovat
+        # (fotografka v penzionovém běhu = jistá negativní reakce)
+        _blocked_words = INDUSTRY_NAME_BLOCK.get(industry, ())
+        _hit = next((w for w in _blocked_words if w in name_lower), None)
+        if _hit:
+            print(f"  🚫 Název obsahuje '{_hit}' – neodpovídá oboru {industry}, přeskakuji\n")
+            continue
+
         # OSM data – vše je už v place dict (žádný druhý API call)
         website       = place.get("website", "")
         address       = place.get("address", "")
@@ -258,6 +266,11 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                 print(f"  📧 Email ani Facebook nenalezeny – přeskakuji\n")
             continue
 
+        # 1a2. Tvrdě vyloučené adresy (klienti, opt-out, dřívější špatné zacílení)
+        if email.lower() in {e.lower() for e in NEVER_CONTACT_EMAILS}:
+            print(f"  🚫 Adresa {email} je na seznamu NIKDY NEKONTAKTOVAT – přeskakuji\n")
+            continue
+
         # 1b. MX kontrola – doména musí přijímat poštu
         if not check_mx(email):
             print(f"  ❌ Doména {email.split('@')[1]} nemá MX záznam – přeskakuji\n")
@@ -298,6 +311,9 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                 quality_score, category, reasons = assess_website(website)
                 for r in reasons:
                     print(f"    {r}")
+                if category == "zavreno":
+                    print(f"  ⛔ Web hlásí ukončený provoz – přeskakuji\n")
+                    continue
             else:
                 # Web je v OSM ale nereaguje → přeskočíme, NECHCEME poslat
                 # email "nemáte web" podnikům, kteří web mají (jen je dočasně down)
@@ -327,6 +343,9 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                     quality_score, category, reasons = assess_website(website)
                     for r in reasons:
                         print(f"    {r}")
+                    if category == "zavreno":
+                        print(f"  ⛔ Web hlásí ukončený provoz – přeskakuji\n")
+                        continue
                 else:
                     # Custom doména nereaguje → web je nefunkční nebo expirovaný
                     # Perfektní lead: posíláme jim demo jako "bez_webu"

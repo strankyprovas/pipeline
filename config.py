@@ -47,3 +47,27 @@ NEVER_CONTACT_NAMES = [
     "bratrs bistro",
     "sekvent",
 ]
+
+# E-maily, kterým se NIKDY nesmí poslat automat — klienti, výslovné odmítnutí
+# nebo lidé, kterým už jednou přišel špatně zacílený mail (další kontakt by
+# jen eskaloval). Rozšířeno 18. 9. 2026.
+NEVER_CONTACT_EMAILS = [
+    "sekvent.d@seznam.cz",
+    "z.souckova.pca@gmail.com",     # nechce být oslovována (20. 8.)
+    "photo.hanny@gmail.com",        # fotografka — omylem penzionový mail (17. 9.)
+    "info@waiwari.cz",              # výslovné „už nám nepište" (18. 9.)
+    "info@jc-sluzby.cz",            # ostré odmítnutí (18. 9.)
+    "selskeleceni@gmail.com",       # na webu uvádí, že nepracuje (18. 9.)
+]
+
+# Slova v názvu podniku, která se NESHODUJÍ s cíleným oborem → scraper vrátil
+# šum a mail by působil jako spam („PHOTO Hanny" dostala penzionový mail).
+# Klíč = industry, hodnota = zakázaná slova v názvu.
+INDUSTRY_NAME_BLOCK = {
+    "penzion": ("photo", "foto", "ateliér", "atelier", "tattoo", "servis",
+                "kadeřnic", "kosmetik", "autoškola"),
+    "masaze": ("photo", "foto", "autoservis", "pneu", "tattoo", "autoškola"),
+    "psycholog": ("photo", "foto", "autoservis", "pneu", "tattoo"),
+    "kvetinarstvi": ("photo", "foto", "autoservis", "pneu", "tattoo"),
+    "pekarna": ("photo", "foto", "autoservis", "pneu", "tattoo"),
+}

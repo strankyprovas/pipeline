@@ -40,6 +40,21 @@ def analyze_technical(url):
         return 0, [f"Web nedostupný: {e}"]
 
     soup = BeautifulSoup(html, "html.parser")
+
+    # 0. Podnik na webu píše, že končí / nefunguje → vůbec neoslovovat.
+    # Přidáno 18. 9. 2026 po Selském léčení („Mám tam napsané, že nepracuji…")
+    # — mail podniku, který na první stránce oznamuje konec, je jistá negativní
+    # reakce a poškozuje reputaci odesílací domény.
+    _CLOSED_PHRASES = (
+        "nepracuji", "nepřijímám nové klienty", "provoz ukončen",
+        "ukončili jsme činnost", "ukončení provozu", "trvale zavřeno",
+        "již nefunguje", "činnost ukončena",
+    )
+    page_text = " ".join(soup.get_text(" ").lower().split())
+    for _ph in _CLOSED_PHRASES:
+        if _ph in page_text:
+            return -1, [f"⛔ Web uvádí '{_ph}' – podnik zřejmě nefunguje, přeskočit"]
+
     score = 50  # začínáme na 50
     reasons = []
 
@@ -239,6 +254,9 @@ def assess_website(url, screenshots_dir="output/screenshots"):
 
     print(f"  🔍 Technická analýza...")
     tech_score, tech_reasons = analyze_technical(url)
+    if tech_score < 0:
+        # Web hlásí ukončený/nefunkční provoz → speciální verdikt, main.py přeskočí
+        return 0, "zavreno", tech_reasons
     print(f"  📊 Technické skóre: {tech_score}/100")
 
     # Hraniční pásmo 35-65 → použij Claude Vision
