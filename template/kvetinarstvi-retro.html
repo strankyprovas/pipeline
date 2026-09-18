@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESTAURANT_NAME – květinářství RESTAURANT_CITY_LOC</title>
+<meta name="description" content="RESTAURANT_TAGLINE — RESTAURANT_SHORT_NAME RESTAURANT_CITY_LOC. RESTAURANT_ABOUT_SHORT">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── KVĚTINÁŘSTVÍ — RETRO „BOTANICKÁ SÍŇ" ─────────────────────────────
+   Papír, lahvová zelená, bordó, ornamenty. Pro zákazníky, kterým moderní
+   weby přijdou studené — stará květinová síň, ne ateliér. */
+:root{
+  --papir:#f6efe0;
+  --papir2:#efe5d0;
+  --inkoust:#33402f;
+  --lahev:#33503c;
+  --bordo:#7d3441;
+  --zlatava:#a98944;
+  --seda:#6d6a58;
+  --linka:#c9bb9b;
+  --bila:#fdfaf1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'EB Garamond',Georgia,serif;background:var(--papir);color:var(--inkoust);line-height:1.75;font-size:1.06rem;overflow-x:hidden;padding-top:38px}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.16;color:var(--lahev)}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.sec{padding:100px 0}
+.sec-alt{background:var(--papir2);border-top:1px solid var(--linka);border-bottom:1px solid var(--linka)}
+
+#ukazka-banner{position:fixed;top:0;left:0;width:100%;background:var(--bordo);color:var(--papir);text-align:center;padding:10px;font-size:14px;font-weight:500;z-index:9999;box-sizing:border-box;letter-spacing:.04em}
+#progress{position:fixed;top:38px;left:0;height:3px;width:100%;background:var(--bordo);transform:scaleX(0);transform-origin:0 50%;z-index:9998}
+
+/* nav */
+#navbar{position:fixed;top:38px;left:0;width:100%;z-index:9000;padding:20px 0;transition:.3s;background:transparent}
+#navbar.scrolled{background:rgba(246,239,224,.97);box-shadow:0 2px 18px rgba(51,64,47,.12);padding:12px 0;border-bottom:1px solid var(--linka)}
+.nav-in{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:600;text-decoration:none;color:var(--lahev);letter-spacing:.02em}
+.nav-logo span{color:var(--bordo)}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;font-size:1rem;color:var(--inkoust);transition:.2s;font-style:italic}
+.nav-links a:hover{color:var(--bordo)}
+.nav-tel{background:var(--lahev);color:var(--papir)!important;padding:10px 26px;font-style:normal!important;border:1px solid var(--lahev);outline:1px solid var(--lahev);outline-offset:3px}
+.nav-tel:hover{background:var(--bordo);border-color:var(--bordo);outline-color:var(--bordo)}
+.ham{display:none;background:none;border:0;font-size:1.7rem;cursor:pointer;color:var(--lahev)}
+#mobile-nav{position:fixed;inset:0;background:var(--lahev);z-index:9500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transform:translateY(-100%);transition:.35s}
+#mobile-nav.open{transform:translateY(0)}
+#mobile-nav a{color:var(--papir);font-family:'Cormorant Garamond',serif;font-size:1.9rem;text-decoration:none}
+#close-nav{position:absolute;top:24px;right:28px;background:none;border:0;color:var(--papir);font-size:2.2rem;cursor:pointer}
+
+/* hero */
+#hero{position:relative;padding:170px 0 90px;background:var(--papir)}
+#hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--linka)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
+.hero-badge{display:inline-block;font-size:.85rem;letter-spacing:.32em;text-transform:uppercase;color:var(--bordo);margin-bottom:22px;font-family:'EB Garamond',serif}
+.hero-badge::before{content:"❦  "}
+#hero h1{font-size:clamp(2.7rem,5.4vw,4.3rem);letter-spacing:0;margin-bottom:22px}
+#hero h1 em{font-style:italic;color:var(--bordo)}
+.hero-sub{font-size:1.18rem;color:var(--seda);max-width:500px;margin-bottom:34px;font-style:italic}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-block;padding:14px 34px;text-decoration:none;font-size:1.02rem;transition:.25s;font-family:'EB Garamond',serif;letter-spacing:.03em}
+.btn-prim{background:var(--lahev);color:var(--papir);border:1px solid var(--lahev);outline:1px solid var(--lahev);outline-offset:3px}
+.btn-prim:hover{background:var(--bordo);border-color:var(--bordo);outline-color:var(--bordo)}
+.btn-ghost{border:1px solid var(--lahev);color:var(--lahev)}
+.btn-ghost:hover{background:var(--lahev);color:var(--papir)}
+.hero-media{position:relative;padding:14px;border:1px solid var(--linka);background:var(--bila);box-shadow:0 16px 40px rgba(51,64,47,.14)}
+.hero-media::after{content:"";position:absolute;inset:7px;border:1px solid var(--linka);pointer-events:none}
+.hero-media img{width:100%;height:520px;object-fit:cover}
+
+/* pásek */
+.pasek{background:var(--lahev);color:var(--papir)}
+.pasek-in{display:grid;grid-template-columns:repeat(3,1fr)}
+.pasek-i{padding:30px 22px;text-align:center;border-right:1px solid rgba(246,239,224,.25)}
+.pasek-i:last-child{border-right:0}
+.pasek-i strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;margin-bottom:3px}
+.pasek-i span{font-style:italic;opacity:.85;font-size:.98rem}
+
+/* o nás */
+.oko{display:block;font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--bordo);margin-bottom:14px}
+.oko::after{content:"";display:block;width:56px;height:1px;background:var(--zlatava);margin-top:10px}
+.sec h2{font-size:clamp(1.9rem,3.8vw,2.8rem);margin-bottom:18px}
+.lead{color:var(--seda);font-size:1.1rem}
+.onas-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
+.onas-img{padding:14px;border:1px solid var(--linka);background:var(--bila);box-shadow:0 16px 40px rgba(51,64,47,.12)}
+.onas-img img{width:100%;height:440px;object-fit:cover}
+.stat-radek{display:flex;gap:44px;margin-top:34px;border-top:1px solid var(--linka);padding-top:26px}
+.stat b{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:var(--bordo);display:block;line-height:1}
+.stat span{color:var(--seda);font-size:.95rem;font-style:italic}
+
+/* příležitosti */
+.prilez{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:52px}
+.prilez-k{background:var(--bila);border:1px solid var(--linka);padding:34px 34px 30px;position:relative}
+.prilez-k::before{content:"";position:absolute;inset:6px;border:1px solid var(--linka);pointer-events:none}
+.prilez-k .cis{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--zlatava);display:block;margin-bottom:12px;letter-spacing:.2em}
+.prilez-k h3{font-size:1.45rem;margin-bottom:8px}
+.prilez-k p{color:var(--seda);font-size:1rem;position:relative}
+
+/* sezóna */
+.sezona{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;border:1px solid var(--linka);background:var(--bila)}
+.sez-i{padding:32px 26px;border-right:1px solid var(--linka)}
+.sez-i:last-child{border-right:0}
+.sez-i .mes{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--bordo);display:block;margin-bottom:10px}
+.sez-i h4{font-size:1.5rem;margin-bottom:8px}
+.sez-i h4::after{content:" ❦";color:var(--zlatava);font-size:1rem}
+.sez-i p{color:var(--seda);font-size:.98rem}
+
+/* special */
+#special{position:relative;padding:110px 0;background-color:var(--lahev);background-size:cover;background-position:center;text-align:center;color:var(--papir)}
+#special::before{content:"";position:absolute;inset:0;background:rgba(41,56,44,.78)}
+#special .wrap{position:relative;max-width:680px}
+#special .oko{color:var(--zlatava)}
+#special .oko::after{margin-left:auto;margin-right:auto}
+#special h2{color:var(--papir);font-size:clamp(1.9rem,3.8vw,2.7rem);margin-bottom:16px}
+#special p{opacity:.9;margin-bottom:30px;font-style:italic}
+#special .btn-prim{background:var(--papir);color:var(--lahev);border-color:var(--papir);outline-color:var(--papir)}
+#special .btn-prim:hover{background:var(--zlatava);border-color:var(--zlatava);outline-color:var(--zlatava);color:var(--inkoust)}
+#special .oko{margin-left:auto;margin-right:auto;text-align:center}
+
+/* galerie */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:48px}
+.gal img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--linka);padding:8px;background:var(--bila);transition:.3s}
+.gal img:hover{transform:rotate(-1deg) scale(1.02)}
+
+/* recenze */
+.test-wrap{max-width:680px;margin:48px auto 0;overflow:hidden;border:1px solid var(--linka);background:var(--bila);position:relative}
+.test-wrap::before{content:"❝";position:absolute;top:18px;left:26px;font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--zlatava);line-height:1}
+#test-track{display:flex;transition:transform .6s ease}
+.test-i{min-width:100%;padding:52px 56px 40px;text-align:center}
+.hvezdy{color:var(--zlatava);letter-spacing:.3em;margin-bottom:16px}
+.test-i p{font-size:1.18rem;font-style:italic;color:var(--inkoust);margin-bottom:16px;font-family:'Cormorant Garamond',serif}
+.test-i cite{font-style:normal;color:var(--seda);font-size:.95rem;letter-spacing:.06em}
+#test-dots{display:flex;gap:10px;justify-content:center;padding:0 0 26px}
+#test-dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--bordo);background:transparent;cursor:pointer;padding:0}
+#test-dots button.on{background:var(--bordo)}
+
+/* kontakt */
+.kont-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.kont-i{display:flex;gap:16px;padding:15px 0;border-bottom:1px solid var(--linka);align-items:baseline}
+.kont-i .ik{font-size:1.1rem}
+.kont-i strong{display:block;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:var(--bordo);margin-bottom:2px;font-weight:500}
+.map-wrap{margin-top:24px;height:230px;overflow:hidden;border:1px solid var(--linka);padding:8px;background:var(--bila)}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:sepia(.25) saturate(.85)}
+.form-g{margin-bottom:16px}
+.form-g label{display:block;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:var(--bordo);margin-bottom:6px}
+.form-g input,.form-g textarea{width:100%;padding:13px 15px;border:1px solid var(--linka);background:var(--bila);color:var(--inkoust);font-family:'EB Garamond',serif;font-size:1.02rem}
+.form-g input:focus,.form-g textarea:focus{outline:none;border-color:var(--lahev)}
+.form-g textarea{min-height:110px;resize:vertical}
+.form-submit{width:100%;padding:15px;background:var(--lahev);color:var(--papir);border:1px solid var(--lahev);outline:1px solid var(--lahev);outline-offset:3px;font-family:'EB Garamond',serif;font-size:1.02rem;letter-spacing:.04em;cursor:pointer;transition:.25s}
+.form-submit:hover{background:var(--bordo);border-color:var(--bordo);outline-color:var(--bordo)}
+
+/* footer */
+footer{background:var(--lahev);color:var(--papir);padding:60px 0 26px}
+.footer-grid{max-width:1080px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;text-decoration:none;color:var(--papir)}
+.footer-logo span{color:var(--zlatava)}
+.footer-brand p{color:rgba(246,239,224,.7);font-size:.98rem;margin-top:12px;max-width:320px;font-style:italic}
+.footer-col h4{font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;margin-bottom:16px;color:var(--zlatava);font-weight:500}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:9px;font-size:.98rem}
+.footer-col a{color:rgba(246,239,224,.75);text-decoration:none}
+.footer-col a:hover{color:var(--zlatava)}
+.footer-bottom{max-width:1080px;margin:44px auto 0;padding:22px 24px 0;border-top:1px solid rgba(246,239,224,.25);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-copy{font-size:.85rem;color:rgba(246,239,224,.6)}
+.footer-copy a{color:var(--zlatava)}
+
+#back-top{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:0;border:1px solid var(--lahev);background:var(--papir);color:var(--lahev);font-size:1.2rem;cursor:pointer;opacity:0;pointer-events:none;transition:.3s;z-index:9000}
+#back-top.show{opacity:1;pointer-events:auto}
+#back-top:hover{background:var(--lahev);color:var(--papir)}
+
+[data-r]{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+[data-r].vis{opacity:1;transform:none}
+
+@media(max-width:960px){
+  .nav-links{display:none}
+  .ham{display:block}
+  #hero{padding:140px 0 70px}
+  .hero-grid,.onas-grid,.kont-grid{grid-template-columns:1fr;gap:40px}
+  .hero-media img{height:340px}
+  .onas-img img{height:320px}
+  .pasek-in{grid-template-columns:1fr}
+  .pasek-i{border-right:0;border-bottom:1px solid rgba(246,239,224,.25)}
+  .pasek-i:last-child{border-bottom:0}
+  .prilez{grid-template-columns:1fr}
+  .sezona{grid-template-columns:1fr 1fr}
+  .sez-i:nth-child(2n){border-right:0}
+  .sez-i{border-bottom:1px solid var(--linka)}
+  .gal{grid-template-columns:1fr 1fr}
+  .sec{padding:70px 0}
+  .test-i{padding:44px 26px 32px}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  [data-r]{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="ukazka-banner">⚡ UKÁZKA – finální web bude s vašimi fotkami a texty</div>
+<div id="progress"></div>
+
+<nav id="navbar">
+  <div class="wrap nav-in">
+    <a href="#" class="nav-logo">RESTAURANT_SHORT_NAME<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#onas">O nás</a></li>
+      <li><a href="#prilezitosti">Příležitosti</a></li>
+      <li><a href="#sezona">Sezóna</a></li>
+      <li><a href="#galerie">Galerie</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="tel:RESTAURANT_PHONE" class="nav-tel">RESTAURANT_PHONE</a></li>
+    </ul>
+    <button class="ham" id="ham" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<div id="mobile-nav">
+  <button id="close-nav" aria-label="Zavřít">×</button>
+  <a href="#onas">O nás</a>
+  <a href="#prilezitosti">Příležitosti</a>
+  <a href="#sezona">Sezóna</a>
+  <a href="#galerie">Galerie</a>
+  <a href="#kontakt">Kontakt</a>
+  <a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a>
+</div>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="wrap hero-grid">
+    <div data-r>
+      <span class="hero-badge">Květinářství RESTAURANT_CITY_LOC</span>
+      <h1>RESTAURANT_TAGLINE</h1>
+      <p class="hero-sub">RESTAURANT_SUBTITLE</p>
+      <div class="hero-cta">
+        <a href="#prilezitosti" class="btn btn-prim">Co pro vás uvážeme</a>
+        <a href="tel:RESTAURANT_PHONE" class="btn btn-ghost">Zavolat</a>
+      </div>
+    </div>
+    <div class="hero-media" data-r>
+      <img src="../stock_photos/PHOTO_1" alt="RESTAURANT_NAME" onerror="this.style.display='none'">
+    </div>
+  </div>
+</header>
+
+<!-- PÁSEK -->
+<section class="pasek">
+  <div class="wrap pasek-in">
+    <div class="pasek-i"><strong>Čerstvé květiny</strong><span>Vazba na počkání</span></div>
+    <div class="pasek-i"><strong>Poradíme s výběrem</strong><span>Řekněte nám příležitost</span></div>
+    <div class="pasek-i"><strong>RESTAURANT_CITY</strong><span>Jsme kousek od vás</span></div>
+  </div>
+</section>
+
+<!-- O NÁS -->
+<section class="sec" id="onas">
+  <div class="wrap onas-grid">
+    <div data-r>
+      <span class="oko">O nás</span>
+      <h2>Kytice, která řekne to, co se špatně říká</h2>
+      <p class="lead">RESTAURANT_ABOUT</p>
+      <div class="stat-radek">
+        <div class="stat" id="stat-hodnoceni"><b>RESTAURANT_RATING</b><span>hodnocení na Googlu</span></div>
+        <div class="stat" id="stat-recenze"><b>RESTAURANT_REVIEWS</b><span>spokojených zákazníků</span></div>
+      </div>
+    </div>
+    <div class="onas-img" data-r>
+      <img src="../stock_photos/PHOTO_2" alt="RESTAURANT_NAME" onerror="this.style.visibility='hidden'">
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE 1: PŘÍLEŽITOSTI -->
+<section class="sec sec-alt" id="prilezitosti">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Příležitosti</span>
+      <h2>Ke každé příležitosti se hodí něco jiného</h2>
+      <p class="lead">Nemusíte vědět, jaké květiny chcete. Stačí říct, o co jde a pro koho — zbytek vymyslíme za vás.</p>
+    </div>
+    <div class="prilez">
+      <div class="prilez-k" data-r>
+        <span class="cis">01</span>
+        <h3>Svatby a oslavy</h3>
+        <p>Svatební kytice, korsáže, výzdoba stolů i obřadu. Domluvíme se dopředu a sladíme barvy s tím, jak má den vypadat.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">02</span>
+        <h3>Dárek a poděkování</h3>
+        <p>Narozeniny, výročí, „jen tak". Uvážeme kytici na počkání a poradíme, co se k dané osobě hodí.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">03</span>
+        <h3>Smuteční vazba</h3>
+        <p>Věnce, kytice a smuteční vazba s citem a bez zbytečných dotazů. Postaráme se o to rychle a důstojně.</p>
+      </div>
+      <div class="prilez-k" data-r>
+        <span class="cis">04</span>
+        <h3>Firmy a pravidelná vazba</h3>
+        <p>Květiny do recepce, na provozovnu nebo ke stálým příležitostem. Domluvíme se na pravidelném rytmu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE 2: SEZÓNA -->
+<section class="sec" id="sezona">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Sezóna</span>
+      <h2>Co u nás najdete v průběhu roku</h2>
+      <p class="lead">Nejhezčí kytice vzniknou z toho, co je zrovna v sezóně. Konkrétní nabídku vám rádi řekneme po telefonu.</p>
+    </div>
+    <div class="sezona">
+      <div class="sez-i" data-r><span class="mes">Březen – květen</span><h4>Jaro</h4>
+        <p>Tulipány, narcisy, hyacinty a první pivoňky. Období, kdy je všechno barevné a voní to po zahradě.</p></div>
+      <div class="sez-i" data-r><span class="mes">Červen – srpen</span><h4>Léto</h4>
+        <p>Pivoňky, růže, slunečnice a letničky. Hlavní svatební sezóna, na kterou je dobré myslet s předstihem.</p></div>
+      <div class="sez-i" data-r><span class="mes">Září – listopad</span><h4>Podzim</h4>
+        <p>Jiřiny, chryzantémy a sušené vazby. Čas dušiček, věnců a teplých barev.</p></div>
+      <div class="sez-i" data-r><span class="mes">Prosinec – únor</span><h4>Zima</h4>
+        <p>Adventní věnce, vánoční vazba, amarylky a jarní cibuloviny napřed. Kus jara doma dřív, než přijde.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIAL -->
+<section id="special">
+  <div class="wrap" data-r>
+    <span class="oko">Na objednávku</span>
+    <h2>Řekněte nám příležitost, zbytek je na nás</h2>
+    <p>Svatba, výročí nebo smuteční obřad — u větších vazeb se ozvěte pár dní dopředu, ať máme čas sehnat přesně to, co si představujete.</p>
+    <a href="tel:RESTAURANT_PHONE" class="btn btn-prim">Domluvit objednávku</a>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section class="sec sec-alt" id="galerie">
+  <div class="wrap">
+    <div style="max-width:640px" data-r>
+      <span class="oko">Galerie</span>
+      <h2>Z naší práce</h2>
+    </div>
+    <div class="gal" id="gal-grid"></div>
+  </div>
+</section>
+
+<!-- RECENZE -->
+<section class="sec" id="recenze">
+  <div class="wrap">
+    <div style="max-width:640px;margin:0 auto;text-align:center" data-r>
+      <span class="oko">Ohlasy</span>
+      <h2>Co říkají zákazníci</h2>
+    </div>
+    <div class="test-wrap">
+      <div id="test-track">
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Svatební kytice byla přesně podle představ a ještě hezčí, než jsem doufala. Květiny vydržely celý víkend."</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Přišel jsem na poslední chvíli bez nápadu a odešel s kyticí, ze které měla maminka slzy v očích."</p>
+          <cite>Zákazník · RESTAURANT_CITY</cite></div>
+        <div class="test-i"><div class="hvezdy">★★★★★</div>
+          <p>„Smuteční vazbu vyřídili rychle a s obrovským citem. V takové chvíli to člověk ocení nejvíc."</p>
+          <cite>Zákaznice · RESTAURANT_CITY</cite></div>
+      </div>
+      <div id="test-dots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section class="sec sec-alt" id="kontakt">
+  <div class="wrap">
+    <div style="max-width:640px;margin-bottom:50px" data-r>
+      <span class="oko">Kontakt</span>
+      <h2>Zastavte se u nás</h2>
+    </div>
+    <div class="kont-grid">
+      <div data-r>
+        <div class="kont-i"><div class="ik">📍</div><div><strong>Kde nás najdete</strong>RESTAURANT_ADDRESS</div></div>
+        <div class="kont-i"><div class="ik">📞</div><div><strong>Telefon</strong><a href="tel:RESTAURANT_PHONE" style="text-decoration:none">RESTAURANT_PHONE</a></div></div>
+        <div class="kont-i"><div class="ik">✉️</div><div><strong>E-mail</strong><a href="mailto:RESTAURANT_EMAIL" style="text-decoration:none">RESTAURANT_EMAIL</a></div></div>
+        <div class="map-wrap"><iframe src="GOOGLE_MAPS_EMBED" allowfullscreen loading="lazy" title="Mapa – RESTAURANT_NAME"></iframe></div>
+      </div>
+      <div data-r>
+        <form onsubmit="return false;">
+          <div class="form-g"><label>Jméno</label><input type="text" placeholder="Vaše jméno"></div>
+          <div class="form-g"><label>Telefon</label><input type="tel" placeholder="Číslo, kam se ozveme"></div>
+          <div class="form-g"><label>Zpráva</label><textarea placeholder="Jaká příležitost, pro koho a kdy to potřebujete…"></textarea></div>
+          <button type="submit" class="form-submit">Odeslat zprávu</button>
+        </form>
+      </div>
+    </div>
+    <div style="text-align:center;margin:3rem 0 0;">
+      <a href="mailto:matyas.vrbaa@gmail.com?subject=Mám zájem o web – RESTAURANT_NAME" style="display:inline-block;background:var(--list);color:var(--bila);border-radius:999px;padding:15px 40px;font-size:17px;text-decoration:none;font-weight:600;">Chci takový web</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">RESTAURANT_NAME<span>.</span></a>
+      <p>RESTAURANT_ABOUT_SHORT</p>
+    </div>
+    <div class="footer-col">
+      <h4>Květinářství</h4>
+      <ul>
+        <li><a href="#onas">O nás</a></li>
+        <li><a href="#prilezitosti">Příležitosti</a></li>
+        <li><a href="#sezona">Sezóna</a></li>
+        <li><a href="#galerie">Galerie</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="#">RESTAURANT_ADDRESS_SHORT</a></li>
+        <li><a href="tel:RESTAURANT_PHONE">RESTAURANT_PHONE</a></li>
+        <li><a href="mailto:RESTAURANT_EMAIL">RESTAURANT_EMAIL</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 RESTAURANT_NAME · Vytvořeno s ❤️ od <a href="https://strankyprovas.cz">StránkyProVás</a></p>
+    <p class="footer-copy">Všechna práva vyhrazena</p>
+  </div>
+</footer>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Nahoru">↑</button>
+
+<script>
+(function(){ var img=new Image(); img.onload=function(){ var s=document.getElementById('special'); if(s) s.style.backgroundImage="url('SPECIAL_IMAGE')"; }; img.src='SPECIAL_IMAGE'; })();
+
+window.addEventListener('scroll', function(){
+  var h = document.documentElement.scrollHeight - innerHeight;
+  var p = document.getElementById('progress');
+  if (p && h > 0) p.style.transform = 'scaleX(' + (scrollY / h) + ')';
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60);
+  document.getElementById('back-top').classList.toggle('show', scrollY > 420);
+}, {passive:true});
+
+var ham = document.getElementById('ham'), mnav = document.getElementById('mobile-nav');
+ham.addEventListener('click', function(){ mnav.classList.add('open'); });
+document.getElementById('close-nav').addEventListener('click', function(){ mnav.classList.remove('open'); });
+mnav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mnav.classList.remove('open'); }); });
+
+var obs = new IntersectionObserver(function(es){
+  es.forEach(function(e,i){ if(e.isIntersecting){ setTimeout(function(){ e.target.classList.add('vis'); }, i*70); obs.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll('[data-r]').forEach(function(el){ obs.observe(el); });
+
+(function(){
+  var h = document.querySelector('#stat-hodnoceni b'), r = document.querySelector('#stat-recenze b');
+  if (h && (!h.textContent.trim() || h.textContent.trim() === '0')) document.getElementById('stat-hodnoceni').style.display = 'none';
+  if (r && (!r.textContent.trim() || r.textContent.trim() === '0')) document.getElementById('stat-recenze').style.display = 'none';
+})();
+
+(function(){
+  var photos = [GALLERY_PHOTOS_JS].filter(function(s){ return s && s.length; });
+  var grid = document.getElementById('gal-grid');
+  if (!photos.length) { document.getElementById('galerie').style.display = 'none'; return; }
+  photos.forEach(function(src){
+    var im = document.createElement('img');
+    im.src = '../stock_photos/' + src;
+    im.alt = 'RESTAURANT_NAME';
+    im.loading = 'lazy';
+    im.onerror = function(){ this.remove(); if (!grid.children.length) document.getElementById('galerie').style.display = 'none'; };
+    grid.appendChild(im);
+  });
+})();
+
+(function(){
+  var track = document.getElementById('test-track'), dots = document.getElementById('test-dots');
+  if (!track) return;
+  var n = track.children.length, i = 0;
+  for (var k = 0; k < n; k++) {
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', 'Recenze ' + (k+1));
+    b.addEventListener('click', (function(idx){ return function(){ jdi(idx); }; })(k));
+    dots.appendChild(b);
+  }
+  function jdi(x){ i = x; track.style.transform = 'translateX(-' + (i*100) + '%)';
+    Array.prototype.forEach.call(dots.children, function(d, di){ d.classList.toggle('on', di === i); }); }
+  jdi(0);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(function(){ jdi((i+1) % n); }, 6000);
+  }
+})();
+
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var el = document.querySelector(a.getAttribute('href'));
+    if (el) { e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>
