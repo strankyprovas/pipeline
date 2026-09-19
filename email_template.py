@@ -192,11 +192,11 @@ def pick_subject(name, category) -> tuple:
     varianta a A/B test nešel vyhodnotit ("Gmail draft vytvořen (varianta: )").
     """
     subjects = _subject_variants(name, category)
-    # Vážení dle reportu 1. 9. 2026 (reports/outreach-2026-09-01.md):
-    # A (personalizovaný s názvem) 4,1 % > B 3,1 % > C 2,5 %. Intervaly se
-    # zatím překrývají, proto C nerušíme úplně — jen přesouváme většinu
-    # kapacity na A a necháváme test doběhnout na větším vzorku.
-    i = random.choices(range(len(subjects)), weights=[60, 25, 15][:len(subjects)])[0]
+    # Vážení dle reportu 19. 9. 2026 (reports/outreach-2026-09-19.md, ~1 940
+    # mailů na variantu): C 2,6 % ≈ A 2,4 % (intervaly se překrývají — remíza),
+    # B 1,9 % konzistentně třetí v obou reportech. A navíc vede v proklicích
+    # na demo (110 vs 56). Proto A a C rovnocenně, B jen udržovací vzorek.
+    i = random.choices(range(len(subjects)), weights=[42, 16, 42][:len(subjects)])[0]
     return subjects[i], "ABC"[i] if i < 3 else str(i)
 
 
