@@ -59,6 +59,7 @@ NEVER_CONTACT_EMAILS = [
     "info@jc-sluzby.cz",            # ostré odmítnutí (18. 9.)
     "selskeleceni@gmail.com",       # na webu uvádí, že nepracuje (18. 9.)
     "cheesekarna@gmail.com",        # majitel sám webař, mají web + e-shop; férová kritika (19. 9.)
+    "info@foprosltm.cz",            # mají nové stránky, ostrá stížnost na nepravdivé tvrzení (19. 9.)
 ]
 
 # Slova v názvu podniku, která se NESHODUJÍ s cíleným oborem → scraper vrátil
