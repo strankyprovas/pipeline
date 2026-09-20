@@ -59,6 +59,10 @@ NEVER_CONTACT_EMAILS = [
     "info@jc-sluzby.cz",            # ostré odmítnutí (18. 9.)
     "selskeleceni@gmail.com",       # na webu uvádí, že nepracuje (18. 9.)
     "cheesekarna@gmail.com",        # majitel sám webař, mají web + e-shop; férová kritika (19. 9.)
+    "lucie@vitejzeno.cz",          # sama webařka, má web (19. 9.)
+    "simona@zahradavmisce.cz",     # nemá květinářství — špatné zacílení (19. 9.)
+    "glowup.studio102@gmail.com",  # salon trvale zavřený (19. 9.)
+    "alens@volny.cz",              # Studio Anela — spokojená se svým webem (19. 9.)
     "info@foprosltm.cz",            # mají nové stránky, ostrá stížnost na nepravdivé tvrzení (19. 9.)
 ]
 
