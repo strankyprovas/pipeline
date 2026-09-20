@@ -10,7 +10,8 @@ on:
     # Večerní start schválně: 3 obory × 180 min = až 9 h běhu. Přes den by to
     # drželo concurrency group a odesílací dávky by vůbec nenaskočily (stalo se
     # 4. 8. slotu 13:30). V noci je okno volné a drafty ráno čekají hotové.
-    - cron: '0 17 * * *'   # cca 19:30 UTC reálně (GitHub startuje se zpožděním)
+    - cron: '0 15 * * *'   # cca 17:30 UTC reálně; 3 obory × 240 min → konec ~05:30 UTC,
+                           # tj. před prvním slotem Send Drafts (7:02 UTC)
   workflow_dispatch:
     inputs:
       industry:
@@ -64,11 +65,16 @@ jobs:
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           echo "Dnešní odvětví: $MATRIX"
 
+  # 20. 9. 2026: timeout 180 → 240 min a target 6 → 10.
+  # Důvod: pipeline byla týden omylem vypnutá (disabled_manually) a zásoba
+  # draftů klesla na ~200. Cíl je ~500 nových draftů denně.
+  # ⚠️ max-parallel zůstává 1 — všechny obory sdílí JEDEN Google refresh token
+  # a souběžné obnovení ho už dvakrát zneplatnilo (viz send_drafts.yml).
   run-industry:
     name: ${{ matrix.industry }}
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -144,7 +150,7 @@ jobs:
         # env:
         #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 6
+          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 10
 
       - name: Dopush zbylá dema
         # Dema se pushují dávkově (max 1× za 10 min kvůli limitu buildů GitHub Pages).
