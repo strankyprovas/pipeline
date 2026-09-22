@@ -52,6 +52,8 @@ NEVER_CONTACT_NAMES = [
 # nebo lidé, kterým už jednou přišel špatně zacílený mail (další kontakt by
 # jen eskaloval). Rozšířeno 18. 9. 2026.
 NEVER_CONTACT_EMAILS = [
+    "prodejny@inpeko.cz",      # 22.9.2026 odpoved NEZASILAT
+    "pavel.muller@inpeko.cz",  # 22.9.2026 odpoved NEZASILAT
     "sekvent.d@seznam.cz",
     "z.souckova.pca@gmail.com",     # nechce být oslovována (20. 8.)
     "photo.hanny@gmail.com",        # fotografka — omylem penzionový mail (17. 9.)
