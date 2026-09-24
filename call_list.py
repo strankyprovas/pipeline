@@ -10,12 +10,16 @@ Použití:  python call_list.py [N]     # N = kolik čísel vypsat, výchozí 5
 Řazení:   klik na demo > otevření; novější oslovení dřív.
 """
 import sys
+from datetime import datetime
 from sheets import get_client, SHEET_NAME, _retry
 
 def main(limit=5):
     client = get_client()
     sheet = _retry(lambda: client.open(SHEET_NAME).sheet1)
-    rows = _retry(lambda: sheet.get_all_records())
+    # get_all_records padá na duplicitních prázdných hlavičkách → ručně
+    vsechna = _retry(lambda: sheet.get_all_values())
+    hlavicky = vsechna[0]
+    rows = [dict(zip(hlavicky, radek)) for radek in vsechna[1:]]
 
     kandidati = []
     for r in rows:
@@ -30,8 +34,16 @@ def main(limit=5):
         skore = 2 if "klik" in otevrel else 1
         kandidati.append((skore, str(r.get("Datum emailu", "")), r))
 
-    kandidati.sort(key=lambda x: (-x[0], x[1]), reverse=False)
-    kandidati.sort(key=lambda x: (-x[0],))
+    def cas(datum):
+        for fmt in ("%d.%m.%Y %H:%M", "%d.%m.%Y", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
+            try:
+                return datetime.strptime(datum.strip(), fmt).timestamp()
+            except ValueError:
+                continue
+        return 0.0  # bez data = stará kampaň → až na konec
+
+    # klik > otevření; uvnitř kategorie nejčerstvější oslovení první
+    kandidati.sort(key=lambda x: (-x[0], -cas(x[1])))
 
     if not kandidati:
         print("Žádní teplí kandidáti (nikdo s telefonem neotevřel bez odpovědi).")
