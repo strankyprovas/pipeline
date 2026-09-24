@@ -556,3 +556,158 @@ def slugify(name):
     slug = re.sub(r"[^a-z0-9]", "-", slug)
     slug = re.sub(r"-+", "-", slug).strip("-")
     return slug
+
+
+# ─── DOHLEDÁNÍ WEBU MIMO OSM (24. 9. 2026) ───────────────────────────────────
+# OSM u spousty podniků web nemá vyplněný → dřív rovnou "bez_webu" a mail
+# "zákazníci vás nenajdou" — podniky S webem to spolehlivě naštvalo (Dvorek,
+# KytiMiti, Mirovská…). Před zařazením do bez_webu proto web aktivně hledáme:
+# 1) odkaz na FB stránce, 2) DuckDuckGo (bez API klíče), 3) z katalogového
+# profilu (firmy.cz apod.) vytáhneme odkaz na web.
+
+_KATALOGY = (
+    "firmy.cz", "zlatestranky.cz", "najisto.cz", "zivefirmy.cz", "idatabaze.cz",
+    "mapy.cz", "menicka.cz", "restu.cz", "sluzby.cz", "podnikatel.cz", "ares.cz",
+)
+_NIKDY_WEB = (
+    "facebook.com", "fb.com", "instagram.com", "google.", "seznam.cz", "youtube.",
+    "tripadvisor.", "booking.com", "wolt.com", "foodora.cz", "damejidlo.cz",
+    "linkedin.com", "twitter.com", "x.com", "tiktok.com", "wikipedia.org",
+    "duckduckgo.com", "heureka.cz", "aukro.cz",
+)
+
+
+def _normalizuj(s: str) -> str:
+    import unicodedata
+    s = unicodedata.normalize("NFKD", s.lower())
+    return "".join(c for c in s if not unicodedata.combining(c))
+
+
+def _jmeno_sedi(html: str, name: str) -> bool:
+    """Stránka patří podniku, když obsahuje podstatné tokeny jeho názvu."""
+    stop = {"restaurace", "kavarna", "penzion", "salon", "studio", "masaze",
+            "kadernictvi", "pekarna", "kvetinarstvi", "bar", "cafe", "u", "na", "v",
+            "podnik", "firma", "shop", "obchod", "hotel", "cukrarna", "bistro"}
+    tokeny = [tk for tk in _normalizuj(name).replace("-", " ").split()
+              if len(tk) > 2 and tk not in stop]
+    if not tokeny:
+        return False
+    h = _normalizuj(html[:80000])
+    shody = sum(1 for tk in tokeny if tk in h)
+    # Prisne: u 1-2 tokenu musi sedet vsechny, u delsich nazvu aspon 2/3.
+    # Volnejsi prah drive prohlasil cizi web za shodu pres obecne slovo.
+    if len(tokeny) <= 2:
+        return shody == len(tokeny)
+    return shody * 3 >= len(tokeny) * 2
+
+
+def _web_z_katalogu(profil_url: str) -> str:
+    """Z katalogového profilu (firmy.cz…) zkusí vytáhnout odkaz na vlastní web."""
+    try:
+        html = requests.get(profil_url, timeout=8,
+                            headers={"User-Agent": "Mozilla/5.0"}).text
+    except Exception:
+        return ""
+    for m in re.finditer(r'href="(https?://[^"]+)"', html):
+        u = m.group(1)
+        dom = re.sub(r"^https?://(www\.)?", "", u).split("/")[0].lower()
+        if any(k in dom for k in _KATALOGY) or any(n in dom for n in _NIKDY_WEB):
+            continue
+        if any(x in u.lower() for x in ("cookie", "policy", "podminky", ".css", ".js", ".png", ".svg")):
+            continue
+        return u.split("?")[0]
+    return ""
+
+
+def discover_website(name: str, city: str = "", fb_url: str = "") -> str:
+    """Zkusí dohledat web podniku, který v OSM web vyplněný nemá.
+
+    Vrací URL webu, nebo "" když nic věrohodného nenajde. Radši vrátí ""
+    než špatný web — kvůli špatné shodě by mail tvrdil nesmysly.
+    """
+    from urllib.parse import unquote, quote_plus
+
+    kandidati = []
+
+    # 1) odkaz na FB stránce (best effort — FB často vrací login wall)
+    if fb_url:
+        try:
+            html = requests.get(fb_url, timeout=8,
+                                headers={"User-Agent": "Mozilla/5.0"}).text
+            for m in re.finditer(r'https?://(?:www\.)?([a-z0-9.-]+\.[a-z]{2,})(/[^\s"\\<>]*)?', html):
+                dom = m.group(1).lower()
+                if any(n in dom for n in _NIKDY_WEB) or any(k in dom for k in _KATALOGY):
+                    continue
+                if dom.endswith((".cz", ".sk", ".eu", ".com")):
+                    kandidati.append("https://" + dom)
+        except Exception:
+            pass
+
+    # 2) Seznam.cz — pro české podniky nejrelevantnější a nefiltruje datacentra
+    try:
+        q = quote_plus(f"{name} {city}".strip())
+        html = requests.get(f"https://search.seznam.cz/?q={q}", timeout=10,
+                            headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"}).text
+        for m in re.finditer(r'href="(https?://[^"]+)"', html):
+            u = m.group(1).replace("&amp;", "&")
+            dom = re.sub(r"^https?://(www\.)?", "", u).split("/")[0].lower()
+            if "seznam.cz" in dom or "szn.cz" in dom or "mapy.com" in dom:
+                continue
+            if any(n in dom for n in _NIKDY_WEB):
+                continue
+            if any(k in dom for k in _KATALOGY):
+                w = _web_z_katalogu(u)
+                if w:
+                    kandidati.append(w)
+                continue
+            kandidati.append(u.split("?")[0])
+            if len(kandidati) >= 10:
+                break
+    except Exception:
+        pass
+
+    # 3) DuckDuckGo HTML — záloha (z datacenter IP často blokuje)
+    try:
+        q = quote_plus(f"{name} {city}".strip())
+        html = requests.get(f"https://html.duckduckgo.com/html/?q={q}", timeout=10,
+                            headers={"User-Agent": "Mozilla/5.0"}).text
+        for m in re.finditer(r'uddg=([^&"]+)', html):
+            u = unquote(m.group(1))
+            dom = re.sub(r"^https?://(www\.)?", "", u).split("/")[0].lower()
+            if any(n in dom for n in _NIKDY_WEB):
+                continue
+            if any(k in dom for k in _KATALOGY):
+                # katalogový profil → zkus z něj vytáhnout web podniku
+                w = _web_z_katalogu(u)
+                if w:
+                    kandidati.append(w)
+                continue
+            kandidati.append(u.split("?")[0])
+            if len(kandidati) >= 8:
+                break
+    except Exception:
+        pass
+
+    # deduplikace pri zachovani poradi — klic je domena bez www, ale ULOZIME
+    # puvodni tvar hostitele (nektere weby bez www vraci anti-bot chybu)
+    videno, fronta = set(), []
+    for k in kandidati:
+        host = re.sub(r"^https?://", "", k).split("/")[0].lower()
+        klic = host[4:] if host.startswith("www.") else host
+        if klic not in videno:
+            videno.add(klic)
+            fronta.append("https://" + host)
+
+    # 4) overeni: web zije a obsahuje nazev podniku (zkusime i www variantu)
+    for kandidat in fronta[:4]:
+        host = kandidat.replace("https://", "")
+        varianta = ("https://" + host[4:]) if host.startswith("www.") else ("https://www." + host)
+        for url in (kandidat, varianta):
+            try:
+                resp = requests.get(url, timeout=8, allow_redirects=True,
+                                    headers={"User-Agent": "Mozilla/5.0"})
+                if resp.status_code < 400 and _jmeno_sedi(resp.text, name):
+                    return url
+            except Exception:
+                continue
+    return ""

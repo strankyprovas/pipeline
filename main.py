@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 from scraper import (
+    discover_website,
     search_restaurants,
     search_businesses,
     copy_stock_photos,
@@ -352,9 +353,24 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                     print(f"  🚫 Bez webu / nefunkční web ({email_domain_check})")
                     category = "bez_webu"
             else:
-                # Volná emailová služba (gmail atd.) a žádný web → OK, posíláme "bez_webu"
-                print(f"  🚫 Bez webu (free email doména)")
-                category = "bez_webu"
+                # Volná emailová služba (gmail atd.) a web není v OSM.
+                # 24. 9. 2026: OSM data jsou děravá — spousta podniků web MÁ,
+                # jen ho v OSM nemá vyplněný. "Nemáte web" u podniku s webem
+                # spolehlivě naštve (Dvorek, KytiMiti…), proto web nejdřív
+                # aktivně dohledáme (FB odkaz → DuckDuckGo → katalogy).
+                nalezeny = discover_website(name, city_real or city, website if (website and _is_facebook_url(website)) else "")
+                if nalezeny:
+                    print(f"  🔎 Web dohledán mimo OSM: {nalezeny}")
+                    website = nalezeny
+                    quality_score, category, reasons = assess_website(website)
+                    for r in reasons:
+                        print(f"    {r}")
+                    if category == "zavreno":
+                        print(f"  ⛔ Web hlásí ukončený provoz – přeskakuji\n")
+                        continue
+                else:
+                    print(f"  🚫 Bez webu (free email doména, dohledání bez výsledku)")
+                    category = "bez_webu"
 
         slug = slugify(name)
 

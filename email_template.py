@@ -500,7 +500,14 @@ def generate_email(restaurant, demo_url="", city="Praha"):
             f"pro {ind_name_gen} v Česku. Díval jsem se na {name}{' ' + city_loc if city_loc else ''} a napadlo mě, "
             f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
             f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
-            f"ale jako funkční základ podnikání.{rating_note}"
+            f"ale jako funkční základ podnikání.{rating_note}\n\n"
+            # Zjemnění (24. 9. 2026): detekce webu není neomylná (OSM data) a
+            # sebejisté "web nemáte" u podniku s webem spolehlivě naštve.
+            # Přiznaná nejistota reakce odzbrojí a i špatně zařazený mail
+            # může skončit bavením se o modernizaci.
+            f"(Vlastní web jsem k vám nikde nedohledal — jestli ho máte a já ho "
+            f"jen přehlédl, omlouvám se a klidně mě opravte; v tom případě se "
+            f"můžeme pobavit spíš o jeho modernizaci.)"
         )
     else:
         intro = (
