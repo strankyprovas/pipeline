@@ -38,6 +38,9 @@ INDUSTRY_TEMPLATES = {
     "autoservis":   "autoservis.html",
     "masaze":       "masaze.html",
     "psycholog":    "psycholog.html",
+    # 24. 9. 2026: fyzioterapie — pribuzny obor masazi (odezva 1,1 %),
+    # sablona i stock fotky se sdili s masazemi.
+    "fyzioterapie": "masaze.html",
 }
 
 # A/B test šablon pro masáže (14. 9. 2026). Tři varianty; kterou kontakt

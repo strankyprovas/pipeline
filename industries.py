@@ -374,6 +374,47 @@ INDUSTRIES = {
         ],
     },
 
+    "fyzioterapie": {
+        "name_cs": "fyzioterapie",
+        "name_genitive_pl": "fyzioterapeuty",   # do vety "weby pro ... v Cesku"
+        "name_cs_4": "fyzioterapii",
+        "search_query": "fyzioterapie {city}",
+        "places_type": "physiotherapist",
+        "osm_filter": '["healthcare"="physiotherapist"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom pacienti hledají fyzioterapeuta "
+            "online a rozhodují se podle specializace a důvěryhodnosti ještě před objednáním"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe prezentovat vaše terapie a umožnit snadné objednání "
+            "– pacienti to dnes očekávají"
+        ),
+        "email_cta": "Pracujeme s fyzioterapeuty a rehabilitačními pracovišti {city_phrase}.",
+        "taglines": [
+            "Pohyb bez bolesti",
+            "Návrat k pohybu, který vás baví",
+            "Terapie, která řeší příčinu, ne jen příznak",
+            "Vaše cesta zpět do kondice",
+            "Odborná péče o pohybový aparát",
+            "Když tělo potřebuje restart",
+        ],
+        "subtitles": [
+            "Individuální fyzioterapie zaměřená na příčinu potíží — od akutní bolesti po dlouhodobou rehabilitaci.",
+            "Moderní fyzioterapeutické metody a individuální přístup ke každému pacientovi.",
+            "Pomáháme od bolesti zad, po úrazech i operacích — a učíme tělo, jak se problémům vyhnout.",
+        ],
+        "about_texts": [
+            "Jsme fyzioterapeutické pracoviště s individuálním přístupem ke každému pacientovi. Nehledáme rychlá řešení, ale skutečnou příčinu potíží — a společně s vámi pracujeme na jejím odstranění.",
+            "Věříme, že pohyb je základ zdraví. Pomáháme pacientům od bolesti, po úrazech i operacích, a hlavně je učíme, jak se k potížím nevracet. Terapii vždy stavíme na důkladném vyšetření.",
+            "Naše praxe kombinuje osvědčené fyzioterapeutické postupy s moderními metodami. Každá terapie začíná rozhovorem a vyšetřením — protože stejná bolest může mít u každého jinou příčinu.",
+        ],
+        "about_short": [
+            "Individuální fyzioterapie zaměřená na příčinu potíží.",
+            "Odborná péče o pohybový aparát s lidským přístupem.",
+            "Fyzioterapie a rehabilitace pro všechny generace.",
+        ],
+    },
+
     "autoservis": {
         "name_cs": "autoservisy",
         "name_genitive_pl": "autoservisy",   # do vety "weby pro ... v Cesku"

@@ -40,6 +40,7 @@ PORTFOLIO_BY_INDUSTRY = {
     "kosmetika":    "bylinarstvimedunka.cz a petrakovalska.cz",
     "autoservis":   "sekventcar.cz a sojkafinance.cz",
     "masaze":       "lymfanelle.cz a petrakovalska.cz",
+    "fyzioterapie": "lymfanelle.cz a petrakovalska.cz",
     "zubni":        "proeste.cz a psychologiejurakova.cz",
     "psycholog":    "avis-terapie.cz, psychologiejurakova.cz a terapiepolacek.cz",
 }
@@ -73,6 +74,7 @@ SUBPAGE_BY_INDUSTRY = {
     "restaurace": ("https://strankyprovas.cz/restaurace/", "restaurace a kavárny"),
     "kavarna":    ("https://strankyprovas.cz/restaurace/", "kavárny a restaurace"),
     "masaze":     ("https://strankyprovas.cz/masaze/",     "masáže a terapie"),
+    "fyzioterapie": ("https://strankyprovas.cz/masaze/",   "masáže a terapie"),
     "psycholog":  ("https://strankyprovas.cz/terapeuti/",  "psychology a terapeuty"),
     "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
     "pekarna":    ("https://strankyprovas.cz/restaurace/",  "kavárny a cukrárny"),
@@ -431,6 +433,26 @@ INDUSTRY_TEXTS = {
             "víc nových klientů, kteří vás najdou při hledání masáží v okolí",
             "profesionální prezentace, která odliší váš salon od konkurence",
             "méně dotazů na ceny a volné termíny – vše na webu",
+        ],
+    },
+    "fyzioterapie": {
+        "co_delate": "provozujete fyzioterapeutickou praxi",
+        "zakaznici": "pacienty",
+        "co_web_ukaze": "vaše specializace, ceník a jak se objednat",
+        "problemy_bez_webu": [
+            "pacienti hledají fyzioterapeuta přes Google a doporučení – bez webu si vás nemají kde ověřit",
+            "bez vlastního webu není kde ukázat specializace, metody a proč si vybrat právě vás",
+            "vlastní web buduje důvěru — u terapie, kam pacient chodí opakovaně, rozhoduje",
+        ],
+        "reseni": [
+            "postavíme web s přehledem terapií, specializacemi a možností objednání",
+            "přidáme váš profesní příběh, certifikace a fotky pracoviště",
+            "lokální SEO pro dotazy jako 'fyzioterapie [město]' nebo 'rehabilitace [město]'",
+        ],
+        "prinosy": [
+            "víc pacientů, kteří vás najdou při hledání fyzioterapie v okolí",
+            "profesionální prezentace, která odliší vaši praxi od konkurence",
+            "méně dotazů na ceny, metody a volné termíny – vše na webu",
         ],
     },
     "zubni": {

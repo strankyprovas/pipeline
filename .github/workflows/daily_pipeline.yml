@@ -53,11 +53,13 @@ jobs:
             # (klasik/retro/ultra, viz generator.py) — na tři varianty
             # je potřeba nasbírat vzorek co nejrychleji.
             case "$(date -u +%u)" in
-              1) MATRIX='["masaze","psycholog","penzion"]' ;;
+              # 24. 9.: testovaci obor fyzioterapie (pribuzny masazim, 3 sloty/tyden
+              # misto casti penzionu a pekarny) — vyhodnotit po ~2 tydnech.
+              1) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
               2) MATRIX='["masaze","kvetinarstvi","pekarna"]' ;;
-              3) MATRIX='["masaze","psycholog","penzion"]' ;;
+              3) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
               4) MATRIX='["masaze","kvetinarstvi","penzion"]' ;;
-              5) MATRIX='["masaze","psycholog","pekarna"]' ;;
+              5) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
               6) MATRIX='["masaze","penzion","kvetinarstvi"]' ;;
               7) MATRIX='["masaze","psycholog","penzion"]' ;;
             esac
