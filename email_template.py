@@ -41,6 +41,7 @@ PORTFOLIO_BY_INDUSTRY = {
     "autoservis":   "sekventcar.cz a sojkafinance.cz",
     "masaze":       "lymfanelle.cz a petrakovalska.cz",
     "fyzioterapie": "lymfanelle.cz a petrakovalska.cz",
+    "elektrikari":  "sekventcar.cz a sojkafinance.cz",
     "zubni":        "proeste.cz a psychologiejurakova.cz",
     "psycholog":    "avis-terapie.cz, psychologiejurakova.cz a terapiepolacek.cz",
 }
@@ -78,6 +79,7 @@ SUBPAGE_BY_INDUSTRY = {
     "psycholog":  ("https://strankyprovas.cz/terapeuti/",  "psychology a terapeuty"),
     "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
     "pekarna":    ("https://strankyprovas.cz/restaurace/",  "kavárny a cukrárny"),
+    "elektrikari": ("https://strankyprovas.cz/sluzby/",     "řemesla a služby"),
 }
 SUBPAGE_DEFAULT = ("https://strankyprovas.cz/sluzby/", "řemesla a služby")
 
@@ -453,6 +455,26 @@ INDUSTRY_TEXTS = {
             "víc pacientů, kteří vás najdou při hledání fyzioterapie v okolí",
             "profesionální prezentace, která odliší vaši praxi od konkurence",
             "méně dotazů na ceny, metody a volné termíny – vše na webu",
+        ],
+    },
+    "elektrikari": {
+        "co_delate": "provozujete elektrikářskou firmu",
+        "zakaznici": "zákazníky",
+        "co_web_ukaze": "vaše služby, reference a kontakt",
+        "problemy_bez_webu": [
+            "zákazníci hledají elektrikáře přes Google a doporučení – bez webu si vás nemají kde ověřit",
+            "bez vlastního webu není kde ukázat reference, fotky z realizací a proč si vybrat právě vás",
+            "vlastní web buduje důvěru — u řemesla, kde si zákazník pouští cizího člověka domů, rozhoduje",
+        ],
+        "reseni": [
+            "postavíme web s přehledem služeb, referencemi a poptávkovým formulářem",
+            "přidáme fotky z vašich realizací a oblast, kde působíte",
+            "lokální SEO pro dotazy jako 'elektrikář [město]' nebo 'elektroinstalace [město]'",
+        ],
+        "prinosy": [
+            "víc poptávek od zákazníků, kteří vás najdou při hledání elektrikáře v okolí",
+            "profesionální prezentace, která odliší vaši firmu od konkurence",
+            "méně telefonátů s dotazy – zákazník pošle poptávku rovnou z webu",
         ],
     },
     "zubni": {

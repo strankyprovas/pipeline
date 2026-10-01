@@ -56,11 +56,13 @@ jobs:
               # 24. 9.: testovaci obor fyzioterapie (pribuzny masazim, 3 sloty/tyden
               # misto casti penzionu a pekarny) — vyhodnotit po ~2 tydnech.
               1) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
-              2) MATRIX='["masaze","kvetinarstvi","pekarna"]' ;;
+              # 1. 10.: testovaci obor elektrikari (prvni remeslo; sloty ut/ct/so
+              # na ukor pekarny a casti penzionu) — vyhodnotit po ~2 tydnech.
+              2) MATRIX='["masaze","kvetinarstvi","elektrikari"]' ;;
               3) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
-              4) MATRIX='["masaze","kvetinarstvi","penzion"]' ;;
+              4) MATRIX='["masaze","kvetinarstvi","elektrikari"]' ;;
               5) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
-              6) MATRIX='["masaze","penzion","kvetinarstvi"]' ;;
+              6) MATRIX='["masaze","penzion","elektrikari"]' ;;
               7) MATRIX='["masaze","psycholog","penzion"]' ;;
             esac
           fi

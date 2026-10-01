@@ -496,6 +496,47 @@ INDUSTRIES = {
             "Terapie přizpůsobená vašim individuálním potřebám.",
         ],
     },
+
+    "elektrikari": {
+        "name_cs": "elektrikáři",
+        "name_genitive_pl": "elektrikáře",   # do vety "weby pro ... v Cesku"
+        "name_cs_4": "elektrikářskou firmu",
+        "search_query": "elektrikář {city}",
+        "places_type": "electrician",
+        "osm_filter": '["craft"="electrician"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom zákazníci hledají elektrikáře "
+            "online a vybírají podle referencí a důvěryhodnosti ještě před prvním telefonátem"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe prezentovat vaše služby a reference "
+            "– zákazníci dnes řemeslníka hledají z telefonu"
+        ),
+        "email_cta": "Pracujeme s řemeslníky a elektrikáři {city_phrase}.",
+        "taglines": [
+            "Elektřina pod kontrolou",
+            "Poctivé řemeslo, férová cena",
+            "Od zásuvky po kompletní rozvody",
+            "Elektroinstalace, na které se spolehnete",
+            "Rychle, bezpečně, se zárukou",
+            "Váš elektrikář do domu i firmy",
+        ],
+        "subtitles": [
+            "Elektroinstalace, opravy a revize pro domácnosti i firmy — rychle a se zárukou.",
+            "Od výměny zásuvky po kompletní rozvody v novostavbě. Přijedeme, poradíme, naceníme předem.",
+            "Spolehlivý elektrikář pro váš dům, byt i provozovnu. Cena vždy předem.",
+        ],
+        "about_texts": [
+            "Jsme parta vyučených elektrikářů s praxí na stavbách i v domácnostech. Každou zakázku — malou i velkou — odvádíme pořádně, bezpečně a se zárukou. Cenu znáte předem a po práci po sobě uklidíme.",
+            "Elektřina je řemeslo, kde se nevyplácí šetřit na kvalitě. Pracujeme podle platných norem, používáme kvalitní materiál a za svou prací si stojíme. Od drobných oprav po kompletní elektroinstalace.",
+            "Věříme, že dobrý řemeslník se pozná podle toho, že přijede, kdy slíbil, a cena platí, jak se domluvila. Přesně tak pracujeme — proto se k nám zákazníci vracejí a doporučují nás dál.",
+        ],
+        "about_short": [
+            "Elektroinstalace, opravy a revize se zárukou.",
+            "Poctivé elektrikářské řemeslo pro domácnosti i firmy.",
+            "Váš spolehlivý elektrikář v okolí.",
+        ],
+    },
 }
 
 

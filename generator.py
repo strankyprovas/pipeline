@@ -41,6 +41,8 @@ INDUSTRY_TEMPLATES = {
     # 24. 9. 2026: fyzioterapie — pribuzny obor masazi (odezva 1,1 %),
     # sablona i stock fotky se sdili s masazemi.
     "fyzioterapie": "masaze.html",
+    # 1. 10. 2026: elektrikari — prvni remeslo na test (sablona odvozena z autoservisu).
+    "elektrikari": "elektrikari.html",
 }
 
 # A/B test šablon pro masáže (14. 9. 2026). Tři varianty; kterou kontakt
@@ -209,13 +211,29 @@ def generate_demo(restaurant_data, template_path=None):
     return html
 
 
+def pridej_beacon(html: str, slug: str) -> str:
+    """Vloží před </body> neviditelný beacon návštěv (1.10.2026).
+
+    Zapisuje do strankyprovas.cz/track/visits.log — kdo si demo otevřel,
+    je teplý lead a call list ho řadí nahoru. Roboti se na serveru filtrují.
+    """
+    if "track/d.php" in html:
+        return html
+    beacon = ('<img src="https://strankyprovas.cz/track/d.php?s=%s" alt="" '
+              'width="1" height="1" style="position:absolute;opacity:0" aria-hidden="true">'
+              % slug)
+    if "</body>" in html:
+        return html.replace("</body>", beacon + "\n</body>", 1)
+    return html + beacon
+
+
 def save_demo(restaurant_data, demos_dir):
     """Vygeneruje demo stránku a uloží ji do demos_dir/[slug]/index.html"""
     slug = restaurant_data.get("slug", "restaurace")
     demo_dir = os.path.join(demos_dir, slug)
     os.makedirs(demo_dir, exist_ok=True)
 
-    html = generate_demo(restaurant_data)
+    html = pridej_beacon(generate_demo(restaurant_data), slug)
     index_path = os.path.join(demo_dir, "index.html")
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
