@@ -43,3 +43,4 @@ add_missing_clients.py
 # 5. 9. 2026: pri commitu se omylem chystalo pushnout 985 kontaktu s maily a telefony.
 menicka-kampan/*.csv
 menicka-kampan/*.log
+beacon-inject/
