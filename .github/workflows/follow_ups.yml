@@ -22,7 +22,8 @@ on:
     # Send Drafts kazdou hodinu a sdilena concurrency fronta rusi cekajici
     # Follow-ups behy (novejsi pending vytlaci starsi). Po 16. hodine UTC
     # uz zadny Send Drafts nestartuje, takze kolize odpada.
-    - cron: '45 16 * * 2-4'
+    # 2. 10.: rozsireno na ut-pa kvuli beacon follow-upum (navstevy dem)
+    - cron: '45 16 * * 2-5'
   workflow_dispatch:
     inputs:
       limit:
@@ -84,3 +85,17 @@ jobs:
           fi
           echo "Spouštím: check_followups.py $FLAGS"
           python3 check_followups.py $FLAGS
+
+      # 2. 10. 2026: follow-up podle návštěv dem (beacon). Kdo si demo
+      # prohlédl a neodpověděl, dostane přednostní připomínku (drafty,
+      # odešle je hodinový Send Drafts). Stav → visit_followup.
+      - name: Follow-upy podle návštěv dem
+        if: ${{ github.event.inputs.sync_only != 'true' }}
+        env:
+          TRACK_KEY: ${{ secrets.TRACK_KEY }}
+          DRY: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          set -euo pipefail
+          FLAGS="--days 3 --limit 10"
+          if [ "$DRY" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
+          python3 visit_followup.py $FLAGS
