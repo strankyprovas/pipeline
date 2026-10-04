@@ -138,6 +138,8 @@ jobs:
             'masaze':       ('masaze',       'demos-masaze'),
             'zubni':        ('zubni',        'demos-zubni'),
             'psycholog':    ('psycholog',    'demos-psycholog'),
+            'fyzioterapie': ('masaze',       'demos-fyzioterapie'),
+            'elektrikari':  ('elektrikari',  'demos-elektrikari'),
           }
           industry = '${{ matrix.industry }}'
           repo, demo_dir = DEMO_DIRS[industry]
@@ -171,6 +173,7 @@ jobs:
             'kadernictvi':'demos-kadernictvi','kosmetika':'demos-kosmetika',
             'autoservis':'demos-autoservis','masaze':'demos-masaze',
             'zubni':'demos-zubni','psycholog':'demos-psycholog',
+            'fyzioterapie':'demos-fyzioterapie','elektrikari':'demos-elektrikari',
           }
           d = DIRS[industry]
           subprocess.run(['git','-C',d,'add','-A'], check=False)
@@ -221,6 +224,7 @@ jobs:
             'kadernictvi':'demos-kadernictvi','kosmetika':'demos-kosmetika',
             'autoservis':'demos-autoservis','masaze':'demos-masaze',
             'zubni':'demos-zubni','psycholog':'demos-psycholog',
+            'fyzioterapie':'demos-fyzioterapie','elektrikari':'demos-elektrikari',
           }
           d = DIRS[industry]
           out = subprocess.run(['git','-C',d,'log','origin/master..HEAD','--oneline'],
