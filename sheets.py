@@ -81,7 +81,8 @@ ROW_COLORS = {
     "bez_odpovědi":  {"red": 0.88, "green": 0.88, "blue": 0.88},  # šedá
     "nezájem":       {"red": 0.95, "green": 0.7,  "blue": 0.7},   # červená
     "manual":           {"red": 0.8,  "green": 0.9,  "blue": 1.0},   # modrá – čeká na manuální FB oslovení
-    "follow_up_odesl":  {"red": 1.0,  "green": 0.85, "blue": 0.6},   # oranžová – follow-up odeslán
+    "follow_up_odesl":  {"red": 1.0,  "green": 0.85, "blue": 0.6},
+    "follow_up2_odesl": {"red": 1.0,  "green": 0.85, "blue": 0.6},   # oranžová – follow-up odeslán
 }
 
 
@@ -342,6 +343,21 @@ def mark_followup_sent(sheet, email: str):
         _colorize_row(sheet, cell.row, "follow_up_odesl")
     except Exception as e:
         print(f"  Chyba při aktualizaci follow-up stavu: {e}")
+
+def mark_followup2_sent(sheet, email: str):
+    """Označí kontakt jako 'follow_up2_odesl' (poslední zpráva) a zapíše datum."""
+    import re as _re
+    m = _re.search(r'[\w.+-]+@[\w.-]+\.\w+', email)
+    clean_email = m.group(0).lower() if m else email.lower().strip()
+    try:
+        cell = sheet.find(clean_email)
+        sheet.update_cell(cell.row, HEADERS.index("Stav") + 1, "follow_up2_odesl")
+        sheet.update_cell(cell.row, HEADERS.index("Datum follow-up") + 1,
+                          datetime.now().strftime("%d.%m.%Y %H:%M"))
+        _colorize_row(sheet, cell.row, "follow_up2_odesl")
+    except Exception as e:
+        print(f"  Chyba při aktualizaci follow-up2 stavu: {e}")
+
 
 
 def get_sheet_url():

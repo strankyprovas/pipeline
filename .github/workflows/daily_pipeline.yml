@@ -41,6 +41,10 @@ jobs:
           else
             # 1 = pondělí … 7 = neděle (runner běží v UTC)
             #
+            # 7. 10. 2026: 4 obory/den po 180 min (stejné 12h okno jako 3×240).
+            # Důvod: DB výkonných oborů saturovaná (~90 čerstvých draftů/den
+            # místo cíle ~500) — šířka teď dává víc než hloubka. Vráceny
+            # pekarna (1,5 %) a zubni (0,9 %, jen 2 sloty).
             # Od 14. 9. 2026 JEN obory s nejlepší naměřenou odezvou
             # (report 1. 9., reports/outreach-2026-09-01.md, 15 862 mailů):
             #   psycholog 1,7 % ▲ | květinářství 2,0 % ▲ (malý vzorek 255)
@@ -55,15 +59,15 @@ jobs:
             case "$(date -u +%u)" in
               # 24. 9.: testovaci obor fyzioterapie (pribuzny masazim, 3 sloty/tyden
               # misto casti penzionu a pekarny) — vyhodnotit po ~2 tydnech.
-              1) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
+              1) MATRIX='["masaze","psycholog","fyzioterapie","pekarna"]' ;;
               # 1. 10.: testovaci obor elektrikari (prvni remeslo; sloty ut/ct/so
               # na ukor pekarny a casti penzionu) — vyhodnotit po ~2 tydnech.
-              2) MATRIX='["masaze","kvetinarstvi","elektrikari"]' ;;
-              3) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
-              4) MATRIX='["masaze","kvetinarstvi","elektrikari"]' ;;
-              5) MATRIX='["masaze","psycholog","fyzioterapie"]' ;;
-              6) MATRIX='["masaze","penzion","elektrikari"]' ;;
-              7) MATRIX='["masaze","psycholog","penzion"]' ;;
+              2) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna"]' ;;
+              3) MATRIX='["masaze","psycholog","fyzioterapie","zubni"]' ;;
+              4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion"]' ;;
+              5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi"]' ;;
+              6) MATRIX='["masaze","penzion","elektrikari","pekarna"]' ;;
+              7) MATRIX='["masaze","psycholog","penzion","zubni"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
@@ -78,7 +82,7 @@ jobs:
     name: ${{ matrix.industry }}
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       max-parallel: 1

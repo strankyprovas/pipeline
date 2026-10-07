@@ -22,7 +22,7 @@ except ImportError:
     # v Actions neinstalujeme. Bez tohohle obalu spadl celý follow-up běh
     # na ModuleNotFoundError ještě před prvním řádkem práce.
     anthropic = None
-from sheets import get_or_create_sheet, HEADERS, mark_followup_sent
+from sheets import get_or_create_sheet, HEADERS, mark_followup_sent, mark_followup2_sent
 from email.header import Header
 from email.utils import formataddr
 
@@ -80,7 +80,7 @@ def sync_replies(sheet, window_days: int = 60, max_pages: int = 20) -> int:
     pending = {
         r["Email"].lower(): i + 2  # +2 = 1 pro header + 1 pro 0-index
         for i, r in enumerate(records)
-        if r.get("Stav", "").strip() in ("osloveno", "follow_up_odesl")
+        if r.get("Stav", "").strip() in ("osloveno", "follow_up_odesl", "follow_up2_odesl")
         and not r.get("Odpověděl", "").strip()
         and r.get("Email", "").strip()
     }
@@ -331,6 +331,84 @@ Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.</p
     return subject, plain, html
 
 
+def get_followup2_candidates(sheet, days: int = 9, max_days: int = 45) -> list[dict]:
+    """
+    Kandidáti na DRUHOU (poslední) připomínku:
+    - Stav = 'follow_up_odesl' a od první připomínky uplynulo `days`+ dní
+    - Odpověděl = prázdné
+    Horní hranice `max_days` ze stejného důvodu jako u první připomínky.
+    """
+    records = _records(sheet)
+    cutoff = datetime.now() - timedelta(days=days)
+    oldest = datetime.now() - timedelta(days=max_days)
+    out = []
+    for r in records:
+        if r.get("Stav", "").strip() != "follow_up_odesl":
+            continue
+        if r.get("Odpověděl", "").strip():
+            continue
+        datum_str = r.get("Datum follow-up", "").strip()
+        if not datum_str:
+            continue
+        try:
+            fmt = "%d.%m.%Y %H:%M" if " " in datum_str else "%d.%m.%Y"
+            datum = datetime.strptime(datum_str, fmt)
+        except ValueError:
+            continue
+        if datum < cutoff and datum >= oldest:
+            out.append({
+                "name":     r.get("Název", ""),
+                "email":    r.get("Email", ""),
+                "demo_url": r.get("Demo URL", ""),
+                "industry": r.get("Odvětví", "restaurace"),
+                "sent":     datum_str,
+                "days_ago": (datetime.now() - datum).days,
+                "opened":   r.get("Otevřel email", ""),
+            })
+    out.sort(key=lambda x: x["days_ago"], reverse=True)
+    return out
+
+
+def make_followup2_body(contact: dict) -> tuple[str, str, str]:
+    """Poslední zpráva: deadline — ukázku příští týden stáhneme. Bez AI,
+    deterministická šablona (deadline musí znít vždy stejně věcně)."""
+    name = contact["name"]
+    demo_url = contact["demo_url"]
+    subject = f"Poslední zpráva – ukázku pro {name} příští týden stáhneme"
+
+    sub_url, sub_popis = industry_subpage(contact.get("industry", ""))
+
+    plain = (
+        f"Dobrý den,\n\n"
+        f"před časem jsem vám připravil ukázku webu pro {name} a poslal k ní "
+        f"i připomenutí. Protože se mi zatím neozýváte, beru to tak, že teď "
+        f"web nejspíš neřešíte — a to je úplně v pořádku.\n\n"
+        f"Jen férové upozornění: ukázku příští týden z kapacitních důvodů "
+        f"stáhneme, tak kdybyste si ji chtěli ještě prohlédnout nebo o ní "
+        f"popřemýšlet, tady je:\n→ {demo_url}\n\n"
+        f"Kdyby vás to zaujalo kdykoliv později, stačí napsat — ukázku vám "
+        f"obnovím. Jinak už vás nebudu dál obtěžovat.\n\n"
+        f"P.S. Web umíme i jednorázově od 6 000 Kč — zaplatíte jednou "
+        f"a web je váš.\n\n"
+        f"Hezký den,\n{SENDER_NAME}\n{SENDER_COMPANY}"
+    )
+
+    demo_link = f'<a href="{demo_url}">{demo_url}</a>' if demo_url else ""
+    html = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
+<p>Dobrý den,</p>
+<p>před časem jsem vám připravil ukázku webu pro {name} a poslal k ní i připomenutí.
+Protože se mi zatím neozýváte, beru to tak, že teď web nejspíš neřešíte — a to je úplně v pořádku.</p>
+<p>Jen férové upozornění: ukázku <b>příští týden z kapacitních důvodů stáhneme</b>,
+tak kdybyste si ji chtěli ještě prohlédnout, tady je:<br>→ {demo_link}</p>
+<p>Kdyby vás to zaujalo kdykoliv později, stačí napsat — ukázku vám obnovím.
+Jinak už vás nebudu dál obtěžovat.</p>
+<p style="color:#555">P.S. Web umíme i jednorázově od 6 000 Kč — zaplatíte jednou a web je váš.</p>
+<p style="color:#888; font-size:13px;">Co všechno děláme pro {sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>
+<p>Hezký den,<br>{SENDER_NAME}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
+</div>"""
+    return subject, plain, html
+
+
 def _send_email_now(service, to_email: str, subject: str, body_plain: str, body_html: str):
     """Odešle email přímo přes Gmail API (bez draftu)."""
     msg = MIMEMultipart("alternative")
@@ -366,6 +444,12 @@ if __name__ == "__main__":
                              "(default 60; na dopočet historie použij např. 250)")
     parser.add_argument("--sync-only", action="store_true",
                         help="Jen dopočítat odpovědi z Gmailu, follow-upy neřešit")
+    parser.add_argument("--days2", type=int, default=9,
+                        help="Dní od 1. připomínky před poslední zprávou (default: 9)")
+    parser.add_argument("--max-days2", type=int, default=45,
+                        help="Nejstarší 1. připomínka pro poslední zprávu (default: 45)")
+    parser.add_argument("--limit2", type=int, default=10,
+                        help="Max. počet posledních zpráv za běh (default: 10, 0 = vypnuto)")
     parser.add_argument("--delay", type=int, default=30,
                         help="Prodleva mezi emaily v sekundách při --send (default: 30)")
     args = parser.parse_args()
@@ -449,3 +533,41 @@ if __name__ == "__main__":
 
         else:
             print(f"\nTip: spusť s --send pro automatické odeslání, nebo --draft pro Gmail drafty")
+
+    # ---------- Follow-up č. 2: poslední zpráva (deadline) ----------
+    if args.limit2:
+        print(f"\n🔍 Hledám kontakty s 1. připomínkou starší {args.days2} dní bez odpovědi...")
+        cand2 = get_followup2_candidates(sheet, days=args.days2, max_days=args.max_days2)
+        if len(cand2) > args.limit2:
+            print(f"   (nalezeno {len(cand2)}, beru prvních {args.limit2})")
+            cand2 = cand2[:args.limit2]
+        if not cand2:
+            print("✅ Žádné poslední zprávy k řešení.")
+        else:
+            for c2 in cand2:
+                print(f"  • {c2['name']} <{c2['email']}> – 1. připomínka před {c2['days_ago']} dny")
+            if args.send:
+                service = get_gmail_service()
+                sent2 = 0
+                for c2 in cand2:
+                    try:
+                        subject, plain, html = make_followup2_body(c2)
+                        _send_email_now(service, c2["email"], subject, plain, html)
+                        mark_followup2_sent(sheet, c2["email"])
+                        print(f"  ✅ Poslední zpráva → {c2['email']} | {c2['name']}")
+                        sent2 += 1
+                        if sent2 < len(cand2):
+                            time.sleep(args.delay)
+                    except Exception as e:
+                        print(f"  ⚠️  Chyba pro {c2['name']}: {e}")
+                print(f"\n✅ Hotovo: {sent2} posledních zpráv odesláno")
+            elif args.draft:
+                for c2 in cand2:
+                    try:
+                        subject, plain, html = make_followup2_body(c2)
+                        create_draft(to_email=c2["email"], subject=subject,
+                                     body_plain=plain, body_html=html)
+                        print(f"  📨 Draft poslední zprávy: {c2['name']}")
+                    except Exception as e:
+                        print(f"  ⚠️  Chyba pro {c2['name']}: {e}")
+

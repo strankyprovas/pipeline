@@ -46,22 +46,38 @@ on:
     # chyběl Google), takže pověst je poškozená a tenhle skok jde proti
     # doporučenému postupnému náběhu. Rozhodnutí uživatele, zdokumentováno.
     #
+    # 7. 10. 2026: sloty zdvojeny na :00 i :30 (24/den) — GitHub crony
+    # vypadávají (7. 10. nespustil ANI JEDEN z 8 ranních slotů); víc
+    # pokusů = vyšší šance, že aspoň část projde. Objem dál hlídá
+    # --daily-cap 480, takže zdvojení slotů objem NEzvyšuje.
     # Sloty po 1,5 h, poslední v 14:30 UTC (reálně ~15:36) skončí kolem
     # 16:30 — s rezervou před 18:20, kdy si concurrency group bere pipeline.
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
     # před 18:20 UTC, kdy si stejnou concurrency group bere pipeline.
     - cron: '0 4 * * *'
+    - cron: '30 4 * * *'
     - cron: '0 5 * * *'
+    - cron: '30 5 * * *'
     - cron: '0 6 * * *'
+    - cron: '30 6 * * *'
     - cron: '0 7 * * *'
+    - cron: '30 7 * * *'
     - cron: '0 8 * * *'
+    - cron: '30 8 * * *'
     - cron: '0 9 * * *'
+    - cron: '30 9 * * *'
     - cron: '0 10 * * *'
+    - cron: '30 10 * * *'
     - cron: '0 11 * * *'
+    - cron: '30 11 * * *'
     - cron: '0 12 * * *'
+    - cron: '30 12 * * *'
     - cron: '0 13 * * *'
+    - cron: '30 13 * * *'
     - cron: '0 14 * * *'
+    - cron: '30 14 * * *'
     - cron: '0 15 * * *'
+    - cron: '30 15 * * *'
   workflow_dispatch:
     inputs:
       limit:
