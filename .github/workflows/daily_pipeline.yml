@@ -2,12 +2,14 @@ name: Daily Outreach Pipeline
 
 # Odvětví se střídají po dnech (2 denně) místo 9 naráz. Důvody:
 #   - 9 paralelních jobů narazilo na kvótu Google Sheets (chyba 429)
-#   - 180 min/obor: běh projde ~35 měst místo 9 (cca 5 min na město)
+#   - 75 min/obor (14.10.2026, dřív 180): 4 obory × 3 h = 12h řetěz držel zámek
+#     až do ~10:30 UTC a ranní odesílací sloty 13. a 14. 10. vůbec nenaskočily.
+#     4 × 75 min končí do ~01:45 UTC, ráno je volné; projde ~15 měst na obor.
 # Ruční spuštění: workflow_dispatch → pole "industry" (prázdné = dnešní dvojice).
 
 on:
   schedule:
-    # Večerní start schválně: 3 obory × 180 min = až 9 h běhu. Přes den by to
+    # Večerní start schválně: 4 obory × 75 min = do 5,5 h běhu. Přes den by to
     # drželo concurrency group a odesílací dávky by vůbec nenaskočily (stalo se
     # 4. 8. slotu 13:30). V noci je okno volné a drafty ráno čekají hotové.
     - cron: '0 15 * * *'   # cca 17:30 UTC reálně; 3 obory × 240 min → konec ~05:30 UTC,
@@ -82,7 +84,7 @@ jobs:
     name: ${{ matrix.industry }}
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       max-parallel: 1
