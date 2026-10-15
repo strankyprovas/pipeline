@@ -61,15 +61,17 @@ jobs:
             case "$(date -u +%u)" in
               # 24. 9.: testovaci obor fyzioterapie (pribuzny masazim, 3 sloty/tyden
               # misto casti penzionu a pekarny) — vyhodnotit po ~2 tydnech.
-              1) MATRIX='["masaze","psycholog","fyzioterapie","pekarna"]' ;;
-              # 1. 10.: testovaci obor elektrikari (prvni remeslo; sloty ut/ct/so
-              # na ukor pekarny a casti penzionu) — vyhodnotit po ~2 tydnech.
-              2) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna"]' ;;
+              # 15. 10.: rotace dle mir odpovedi (psycholog 2,6 %, kvetinarstvi 2,1 %,
+              # masaze 1,9 % > pekarna 1,7 % > penzion 1,2 % > zubni 1,0 %):
+              # psycholog 5x a kvetinarstvi 6x tydne, zubni/penzion po 1, pekarna 2.
+              # Testy fyzioterapie+elektrikari bezi dal (vyhodnotit po 2 tydnech).
+              1) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi"]' ;;
+              2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog"]' ;;
               3) MATRIX='["masaze","psycholog","fyzioterapie","zubni"]' ;;
               4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion"]' ;;
               5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi"]' ;;
-              6) MATRIX='["masaze","penzion","elektrikari","pekarna"]' ;;
-              7) MATRIX='["masaze","psycholog","penzion","zubni"]' ;;
+              6) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna"]' ;;
+              7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
