@@ -76,6 +76,11 @@ INDUSTRY_DEMOS_DIR = {
     # fyzioterapie sdili repo s masazemi (sablona i fotky), vlastni lokalni dir
     "fyzioterapie": os.path.join(BASE_DIR, "demos-fyzioterapie"),
     "elektrikari":  os.path.join(BASE_DIR, "demos-elektrikari"),
+    # 15. 10. 2026: logoped/vyziva/kouc sdili repo psycholog, veterinar vlastni
+    "logoped":   os.path.join(BASE_DIR, "demos-logoped"),
+    "vyziva":    os.path.join(BASE_DIR, "demos-vyziva"),
+    "kouc":      os.path.join(BASE_DIR, "demos-kouc"),
+    "veterinar": os.path.join(BASE_DIR, "demos-veterinar"),
 }
 
 INDUSTRY_PAGES_URL = {
@@ -92,6 +97,10 @@ INDUSTRY_PAGES_URL = {
     "psycholog":   "https://strankyprovas.github.io/psycholog",
     "fyzioterapie": "https://strankyprovas.github.io/masaze",
     "elektrikari":  "https://strankyprovas.github.io/elektrikari",
+    "logoped":   "https://strankyprovas.github.io/psycholog",
+    "vyziva":    "https://strankyprovas.github.io/psycholog",
+    "kouc":      "https://strankyprovas.github.io/psycholog",
+    "veterinar": "https://strankyprovas.github.io/veterinar",
 }
 
 DEMOS_DIR = os.path.join(BASE_DIR, "demos")   # default (restaurace)

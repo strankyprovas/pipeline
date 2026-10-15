@@ -44,6 +44,10 @@ PORTFOLIO_BY_INDUSTRY = {
     "elektrikari":  "sekventcar.cz a sojkafinance.cz",
     "zubni":        "proeste.cz a psychologiejurakova.cz",
     "psycholog":    "avis-terapie.cz, psychologiejurakova.cz a terapiepolacek.cz",
+    "logoped":      "avis-terapie.cz a terapiepolacek.cz",
+    "vyziva":       "bylinarstvimedunka.cz a petrakovalska.cz",
+    "kouc":         "avis-terapie.cz a terapiepolacek.cz",
+    "veterinar":    "proeste.cz a zubni-lipovec.cz",
 }
 # Fallback pro zpětnou kompatibilitu
 PORTFOLIO = PORTFOLIO_BY_INDUSTRY["restaurace"]
@@ -80,6 +84,9 @@ SUBPAGE_BY_INDUSTRY = {
     "penzion":    ("https://strankyprovas.cz/penziony/",   "penziony a ubytování"),
     "pekarna":    ("https://strankyprovas.cz/restaurace/",  "kavárny a cukrárny"),
     "elektrikari": ("https://strankyprovas.cz/sluzby/",     "řemesla a služby"),
+    "logoped":    ("https://strankyprovas.cz/terapeuti/",  "terapeuty a poradce"),
+    "vyziva":     ("https://strankyprovas.cz/terapeuti/",  "terapeuty a poradce"),
+    "kouc":       ("https://strankyprovas.cz/terapeuti/",  "terapeuty a poradce"),
 }
 SUBPAGE_DEFAULT = ("https://strankyprovas.cz/sluzby/", "řemesla a služby")
 
@@ -455,6 +462,86 @@ INDUSTRY_TEXTS = {
             "víc pacientů, kteří vás najdou při hledání fyzioterapie v okolí",
             "profesionální prezentace, která odliší vaši praxi od konkurence",
             "méně dotazů na ceny, metody a volné termíny – vše na webu",
+        ],
+    },
+    "logoped": {
+        "co_delate": "provozujete logopedickou praxi",
+        "zakaznici": "klienty",
+        "co_web_ukaze": "vaše služby, přístup a jak se objednat",
+        "problemy_bez_webu": [
+            "rodiče hledají logopeda přes Google a doporučení – bez webu si vás nemají kde ověřit",
+            "bez vlastního webu není kde ukázat váš přístup, specializaci a jak terapie probíhá",
+            "vlastní web buduje důvěru — u péče o děti rozhoduje první dojem",
+        ],
+        "reseni": [
+            "postavíme web s popisem terapií, vaším přístupem a možností objednání",
+            "přidáme informace pro rodiče — jak probíhá první návštěva a jak doma pomoci",
+            "lokální SEO pro dotazy jako 'logopedie [město]' nebo 'logoped pro děti [město]'",
+        ],
+        "prinosy": [
+            "víc klientů, kteří vás najdou při hledání logopeda v okolí",
+            "profesionální prezentace, která buduje důvěru rodičů ještě před objednáním",
+            "méně dotazů na průběh a ceny – vše na webu",
+        ],
+    },
+    "vyziva": {
+        "co_delate": "poskytujete výživové poradenství",
+        "zakaznici": "klienty",
+        "co_web_ukaze": "váš přístup, služby a výsledky klientů",
+        "problemy_bez_webu": [
+            "klienti hledají výživového poradce přes Google a sociální sítě – bez webu vás snadno přehlédnou",
+            "bez vlastního webu není kde ukázat váš přístup, výsledky a proč si vybrat právě vás",
+            "vlastní web buduje důvěru — u služby postavené na osobní spolupráci rozhoduje",
+        ],
+        "reseni": [
+            "postavíme web s popisem spolupráce, ceníkem a možností objednání konzultace",
+            "přidáme váš příběh, certifikace a ohlasy klientů",
+            "lokální SEO pro dotazy jako 'výživový poradce [město]' nebo 'hubnutí [město]'",
+        ],
+        "prinosy": [
+            "víc klientů, kteří vás najdou při hledání výživového poradenství",
+            "profesionální prezentace, která odliší vaši praxi od internetových diet",
+            "méně dotazů na průběh a ceny – vše na webu",
+        ],
+    },
+    "kouc": {
+        "co_delate": "působíte jako kouč",
+        "zakaznici": "klienty",
+        "co_web_ukaze": "váš příběh, metodu a reference",
+        "problemy_bez_webu": [
+            "klienti si kouče vybírají online – bez webu si vás nemají kde ověřit",
+            "bez vlastního webu není kde ukázat vaši osobnost, metodu a reference",
+            "vlastní web buduje důvěru — u koučinku si klient kupuje především vás",
+        ],
+        "reseni": [
+            "postavíme web s vaším příběhem, popisem spolupráce a referencemi",
+            "přidáme možnost objednat si nezávazný úvodní rozhovor",
+            "lokální SEO pro dotazy jako 'kouč [město]' nebo 'životní kouč [město]'",
+        ],
+        "prinosy": [
+            "víc klientů, kteří vás najdou a osloví napřímo",
+            "profesionální prezentace, která odliší vás od samozvaných koučů",
+            "web prodává vaši důvěryhodnost 24 hodin denně",
+        ],
+    },
+    "veterinar": {
+        "co_delate": "provozujete veterinární ordinaci",
+        "zakaznici": "majitele zvířat",
+        "co_web_ukaze": "vaše služby, ordinační hodiny a kontakt",
+        "problemy_bez_webu": [
+            "majitelé zvířat hledají veterináře přes Google a mapy – bez webu vás snadno přehlédnou",
+            "bez vlastního webu nejsou nikde spolehlivě vidět ordinační hodiny, pohotovost a kontakt",
+            "vlastní web buduje důvěru — majitel svěřuje do vašich rukou člena rodiny",
+        ],
+        "reseni": [
+            "postavíme web se službami, ordinačními hodinami a jasným kontaktem",
+            "přidáme informace o pohotovosti, očkování a preventivní péči",
+            "lokální SEO pro dotazy jako 'veterinář [město]' nebo 'veterina [město]'",
+        ],
+        "prinosy": [
+            "víc klientů, kteří vás najdou při hledání veterináře v okolí",
+            "méně telefonátů s dotazy na hodiny a ceny – vše na webu",
+            "profesionální prezentace, která odliší vaši ordinaci",
         ],
     },
     "elektrikari": {

@@ -43,6 +43,12 @@ INDUSTRY_TEMPLATES = {
     "fyzioterapie": "masaze.html",
     # 1. 10. 2026: elektrikari — prvni remeslo na test (sablona odvozena z autoservisu).
     "elektrikari": "elektrikari.html",
+    # 15. 10. 2026: nove obory — logoped/vyziva/kouc jedou na sablone psychologa,
+    # veterinar na sablone zubni (ordinace).
+    "logoped": "psycholog.html",
+    "vyziva": "psycholog.html",
+    "kouc": "psycholog.html",
+    "veterinar": "zubni.html",
 }
 
 # A/B test šablon pro masáže (14. 9. 2026). Tři varianty; kterou kontakt

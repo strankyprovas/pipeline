@@ -415,6 +415,173 @@ INDUSTRIES = {
         ],
     },
 
+    # 15. 10. 2026: ctyri nove obory pribuzne psychologum (odezva 2,6 %).
+    # logoped/vyziva/kouc sdili sablonu, repo i fotky s psychologem;
+    # veterinar ma vlastni repo (sablona zubni). Vyhodnotit po ~2 tydnech.
+    "logoped": {
+        "name_cs": "logopedie",
+        "name_genitive_pl": "logopedy",
+        "name_cs_4": "logopedii",
+        "search_query": "logopedie {city}",
+        "places_type": "health",
+        "osm_filter": '["healthcare"="speech_therapist"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom rodiče hledají logopeda online "
+            "a rozhodují se podle důvěryhodnosti a přístupu ještě před objednáním"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe představit vaši péči a usnadnit rodičům objednání "
+            "– u péče o děti rozhoduje důvěra na první pohled"
+        ),
+        "email_cta": "Pracujeme s logopedy a terapeuty {city_phrase}.",
+        "taglines": [
+            "Když slova potřebují pomoc",
+            "Řeč je brána do světa",
+            "Mluvit s radostí a bez obav",
+            "Péče o řeč pro děti i dospělé",
+            "Správná výslovnost, větší sebevědomí",
+            "Krok za krokem ke krásné řeči",
+        ],
+        "subtitles": [
+            "Logopedická péče pro děti i dospělé — trpělivě, hravě a s výsledky.",
+            "Pomáháme s výslovností, opožděným vývojem řeči i poruchami komunikace.",
+            "Individuální logopedická terapie v příjemném a bezpečném prostředí.",
+        ],
+        "about_texts": [
+            "Jsme logopedická praxe s individuálním přístupem ke každému klientovi. S dětmi pracujeme hravě a beze stresu, s dospělými diskrétně a efektivně — protože každá řeč si zaslouží být slyšet.",
+            "Věříme, že schopnost dobře komunikovat otevírá dveře. Pomáháme dětem s výslovností a vývojem řeči, dospělým po úrazech i s trémou z mluveného projevu. Terapii vždy stavíme na důkladné diagnostice.",
+            "Naše poradna kombinuje osvědčené logopedické postupy s hravými moderními metodami. Rodiče u nás vždy vědí, na čem pracujeme a jak mohou doma pomoci.",
+        ],
+        "about_short": [
+            "Logopedická péče pro děti i dospělé.",
+            "Trpělivá terapie řeči s individuálním přístupem.",
+            "Pomáháme najít cestu ke krásné a jisté řeči.",
+        ],
+    },
+
+    "vyziva": {
+        "name_cs": "výživové poradenství",
+        "name_genitive_pl": "výživové poradce",
+        "name_cs_4": "výživové poradenství",
+        "search_query": "výživový poradce {city}",
+        "places_type": "health",
+        "osm_filter": '["healthcare"="dietitian"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom klienti hledají výživového poradce "
+            "online a rozhodují se podle přístupu a výsledků ještě před první konzultací"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe představit váš přístup a výsledky klientů "
+            "– u služby postavené na důvěře rozhoduje první dojem"
+        ),
+        "email_cta": "Pracujeme s výživovými poradci a terapeuty {city_phrase}.",
+        "taglines": [
+            "Jídlo jako cesta ke zdraví",
+            "Změna, která vydrží",
+            "Bez diet a bez výčitek",
+            "Výživa šitá na míru vám",
+            "Zdraví začíná na talíři",
+            "Jezte lépe, žijte lépe",
+        ],
+        "subtitles": [
+            "Výživové poradenství postavené na vědě, ne na zázračných dietách.",
+            "Individuální jídelníčky a dlouhodobá podpora — pro hubnutí, zdraví i výkon.",
+            "Pomáháme změnit stravování tak, aby změna vydržela celý život.",
+        ],
+        "about_texts": [
+            "Jsme výživová poradna s individuálním přístupem. Nevěříme na zázračné diety — věříme na udržitelné změny, které sedí vašemu životu. Každé doporučení stavíme na důkladném rozboru vašich návyků.",
+            "Pomáháme klientům zhubnout, nabrat energii i zlepšit zdravotní výsledky. Jídelníček vždy skládáme z jídel, která vám chutnají — protože jen taková změna vydrží.",
+            "Naše poradenství kombinuje aktuální vědecké poznatky s praktickým přístupem. Žádné zákazy a tabulky navíc — jen srozumitelný plán a podpora, když ji potřebujete.",
+        ],
+        "about_short": [
+            "Výživové poradenství bez zázračných diet.",
+            "Individuální jídelníčky a dlouhodobá podpora.",
+            "Udržitelná změna stravování pro zdraví i postavu.",
+        ],
+    },
+
+    "kouc": {
+        "name_cs": "koučink",
+        "name_genitive_pl": "kouče",
+        "name_cs_4": "koučink",
+        "search_query": "kouč koučink {city}",
+        "places_type": "health",
+        "osm_filter": '["office"="coaching"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom klienti si kouče vybírají online "
+            "a rozhodují se podle osobnosti a referencí ještě před prvním sezením"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe představit váš příběh, metodu a reference "
+            "– u koučinku si klient kupuje především důvěru ve vás"
+        ),
+        "email_cta": "Pracujeme s kouči a terapeuty {city_phrase}.",
+        "taglines": [
+            "Od přemýšlení k činům",
+            "Váš potenciál, vaše pravidla",
+            "Průvodce na cestě ke změně",
+            "Otázky, které posouvají",
+            "Z místa, kde jste, tam, kde chcete být",
+            "Change začíná rozhovorem",
+        ],
+        "subtitles": [
+            "Profesionální koučink pro osobní i pracovní rozvoj.",
+            "Pomáhám lidem najít směr, odvahu a konkrétní kroky ke změně.",
+            "Individuální koučink postavený na důvěře a jasných cílech.",
+        ],
+        "about_texts": [
+            "Koučink vnímám jako partnerství. Nedávám hotové rady — pokládám otázky, které vám pomohou najít vlastní odpovědi. A pak vás podržím, když je proměňujete v činy.",
+            "Pracuji s lidmi, kteří chtějí růst — v kariéře, podnikání i osobním životě. Každá spolupráce začíná nezávazným rozhovorem, kde zjistíme, jestli si sedneme.",
+            "Věřím, že největší překážky i největší zdroje máme v sobě. Pomáhám klientům obojí objevit a využít — strukturovaně, s respektem a s humorem.",
+        ],
+        "about_short": [
+            "Koučink pro osobní i profesní rozvoj.",
+            "Partnerství na cestě ke změně.",
+            "Od cílů ke konkrétním krokům.",
+        ],
+    },
+
+    "veterinar": {
+        "name_cs": "veterina",
+        "name_genitive_pl": "veterináře",
+        "name_cs_4": "veterinu",
+        "search_query": "veterinář {city}",
+        "places_type": "veterinary_care",
+        "osm_filter": '["amenity"="veterinary"]',
+        "email_problem_no_web": (
+            "nemáte vlastní webové stránky – přitom majitelé zvířat hledají veterináře "
+            "online a potřebují rychle najít ordinační hodiny a kontakt"
+        ),
+        "email_problem_bad_web": (
+            "web by mohl lépe prezentovat vaše služby, ordinační hodiny a pohotovost "
+            "– majitelé zvířat je hledají hlavně z telefonu"
+        ),
+        "email_cta": "Pracujeme s veterinárními ordinacemi {city_phrase}.",
+        "taglines": [
+            "Péče, které váš mazlíček věří",
+            "Zdraví vašich zvířat na prvním místě",
+            "Veterina s lidským přístupem",
+            "Pro psy, kočky i drobná zvířata",
+            "Když je láska čtyřnohá",
+            "Moderní péče o vaše zvířata",
+        ],
+        "subtitles": [
+            "Kompletní veterinární péče — prevence, ošetření i chirurgie na jednom místě.",
+            "Moderní vybavení a laskavý přístup ke zvířatům i jejich pánům.",
+            "Preventivní prohlídky, očkování, ošetření i poradenství pro vaše mazlíčky.",
+        ],
+        "about_texts": [
+            "Jsme veterinární ordinace s laskavým přístupem ke zvířatům i jejich majitelům. Víme, že váš mazlíček je člen rodiny — a tak se k němu chováme při každém ošetření.",
+            "Naše ordinace poskytuje kompletní péči od prevence po chirurgii. Moderní vybavení nám umožňuje rychlou diagnostiku, klidné prostředí zase vyšetření beze stresu.",
+            "Ke každému zvířeti přistupujeme individuálně a majitelům vždy srozumitelně vysvětlíme, co jejich mazlíčka čeká. Prevence je u nás základ — nejlepší nemoc je ta, která nepřijde.",
+        ],
+        "about_short": [
+            "Kompletní veterinární péče pro vaše mazlíčky.",
+            "Veterina s moderním vybavením a laskavým přístupem.",
+            "Prevence, ošetření i poradenství na jednom místě.",
+        ],
+    },
+
     "autoservis": {
         "name_cs": "autoservisy",
         "name_genitive_pl": "autoservisy",   # do vety "weby pro ... v Cesku"
