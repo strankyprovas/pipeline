@@ -34,6 +34,14 @@ FIRMY_CATEGORY_SLUGS = {
     "masaze":       "?q=masaze",
     "zubni":        "?q=zubni+ordinace",
     "psycholog":    "?q=psycholog",
+    # 19. 10. 2026: chybejici obory — bez slugu Firmy.cz vracel prazdno a OSM
+    # na tyhle profese nema data (logoped/vyziva/kouc mely 0 nalezenych podniku).
+    "fyzioterapie": "?q=fyzioterapie",
+    "elektrikari":  "?q=elektrikar",
+    "logoped":      "?q=logopedie",
+    "vyziva":       "?q=vyzivovy+poradce",
+    "kouc":         "?q=kouc",
+    "veterinar":    "?q=veterinar",
 }
 
 FIRMY_BASE = "https://www.firmy.cz"
