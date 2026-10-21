@@ -66,14 +66,17 @@ jobs:
               # psycholog 5x a kvetinarstvi 6x tydne, zubni/penzion po 1, pekarna 2.
               # Testy fyzioterapie+elektrikari bezi dal (vyhodnotit po 2 tydnech).
               # 15. 10.: paty slot = nove obory na test (logoped/vyziva/kouc/veterinar).
+              # 21. 10.: vyziva+kouc VYRAZENY (0 nalezenych kontaktu - slug
+              #   Firmy.cz nesedi). Jejich sloty prevzaly logoped (2,4 %) a
+              #   fyzioterapie (2,0 %), ktere funguji. Vysledek: oba 4x/tyden.
               # 5 oboru x 75 min = 6,25 h — konci ~1:30 UTC, rano porad volne.
               1) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","logoped"]' ;;
               2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog","veterinar"]' ;;
-              3) MATRIX='["masaze","psycholog","fyzioterapie","zubni","vyziva"]' ;;
-              4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion","kouc"]' ;;
+              3) MATRIX='["masaze","psycholog","fyzioterapie","zubni","logoped"]' ;;
+              4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion","fyzioterapie"]' ;;
               5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","veterinar"]' ;;
               6) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna","logoped"]' ;;
-              7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi","vyziva"]' ;;
+              7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi","logoped"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
