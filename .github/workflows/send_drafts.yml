@@ -96,6 +96,10 @@ concurrency:
 jobs:
   send:
     name: Odeslat drafty
+    # ⏸️ POZASTAVENO 28.10.2026 – M365 tenant zablokován Microsoftem
+    # (TenantAccessBlockedException), odesílání se odráží. Znovu zapnout
+    # smazáním řádku `if: \${{ false }}` níže, až bude tenant odblokovaný.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     # 18. 9. 2026: timeout zvednut kvuli dorovnavacim davkam (limit až 250
     # při ~72 s/mail ≈ 5 h). Bezne slotove behy po 50 konci do hodiny.
