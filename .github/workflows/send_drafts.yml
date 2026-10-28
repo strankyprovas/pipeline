@@ -34,7 +34,7 @@ on:
     # 7. 9. 2026: 9 slotů × 50 = 450/den.
     # 10. 9. 2026: GitHub sloty spouští nespolehlivě — 8. 9. vypadl celý den,
     # ranní sloty vypadávají běžně; reálně se tak posílalo ~300/den. Proto je
-    # slotů 12 (po hodině, 4:00–15:00) a skutečný objem hlídá --daily-cap 480
+    # slotů 12 (po hodině, 4:00–15:00) a skutečný objem hlídá --daily-cap 60
     # ve skriptu: počítá dnešní odeslání z tabulky, takže funguje napříč běhy
     # a vypadlé sloty dohoní ty další. Poslední slot (reálně ~16:00) skončí
     # do ~16:50, s rezervou před večerní pipeline (18:20).
@@ -49,7 +49,7 @@ on:
     # 7. 10. 2026: sloty zdvojeny na :00 i :30 (24/den) — GitHub crony
     # vypadávají (7. 10. nespustil ANI JEDEN z 8 ranních slotů); víc
     # pokusů = vyšší šance, že aspoň část projde. Objem dál hlídá
-    # --daily-cap 480, takže zdvojení slotů objem NEzvyšuje.
+    # --daily-cap 60, takže zdvojení slotů objem NEzvyšuje.
     # Sloty po 1,5 h, poslední v 14:30 UTC (reálně ~15:36) skončí kolem
     # 16:30 — s rezervou před 18:20, kdy si concurrency group bere pipeline.
     # Čtvrtý slot je v 15:00 UTC (reálně ~16:06) — musí skončit s rezervou
@@ -127,7 +127,7 @@ jobs:
           # Dávka 50 × max 75 s ≈ 62 min → timeout zvednut na 80 min.
           # --skip-no-mx zahodí adresy, jejichž doména neexistuje — odrazy
           # kazí pověst odesílatele rychleji než cokoliv jiného.
-          FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT --daily-cap 480"
+          FLAGS="--delay 60 --jitter 0.25 --skip-no-mx --limit $LIMIT --daily-cap 60"
           if [ "$DRY" = "true" ]; then
             FLAGS="$FLAGS --dry-run"
           fi

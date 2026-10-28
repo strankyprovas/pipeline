@@ -695,7 +695,9 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     subpage_note = f"Co všechno děláme pro {sub_label}, najdete na {sub_url}"
 
     # Podpis
-    signature = f"S přátelským pozdravem,\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
+    signature = f"S přátelským pozdravem,\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE} | IČ 23572400"
+
+    optout = "Pokud si další e-maily ode mě nepřejete, napište prosím „odhlásit“ a víc vás kontaktovat nebudu."
 
     body = "\n\n".join([
         intro,
@@ -706,6 +708,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
         cta_section,
         subpage_note,
         signature,
+        optout,
     ])
 
     # HTML verze
@@ -739,6 +742,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 <p style="font-size:13px;color:#8a8a8a;">Co všechno děláme pro {sub_label}: <a href="{sub_url}" style="color:#8f6230;">{sub_url.replace("https://", "").rstrip("/")}</a></p>
 <p style="margin-top:24px;">S přátelským pozdravem,<br><strong>{SENDER_NAME}</strong><br>
 <a href="{SENDER_WEBSITE}">{SENDER_COMPANY}</a></p>
+<p style="font-size:12px;color:#9a9a9a;margin-top:18px;border-top:1px solid #eee;padding-top:12px;">StránkyProVás · IČ&nbsp;23572400 · Pokud si další e-maily nepřejete, odpovězte „odhlásit“ a víc vás kontaktovat nebudu.</p>
 {pixel}
 </div>"""
 
@@ -759,7 +763,8 @@ def generate_followup_email(name, demo_url):
         f"A pokud teď není vhodná doba, klidně to nechte být – ozvat se můžete kdykoliv později.\n\n"
         f"S pozdravem,\n"
         f"{SENDER_NAME}\n"
-        f"{SENDER_COMPANY}"
+        f"{SENDER_COMPANY}\n\n"
+        f"Pokud si další e-maily ode mě nepřejete, napište prosím „odhlásit“ a víc vás kontaktovat nebudu."
     )
 
     html_body = (
@@ -772,6 +777,7 @@ def generate_followup_email(name, demo_url):
         f"<p>S pozdravem,<br>"
         f"<strong>{SENDER_NAME}</strong><br>"
         f'<a href="{SENDER_WEBSITE}">{SENDER_COMPANY}</a></p>'
+        f'<p style="font-size:12px;color:#9a9a9a;margin-top:16px;">Pokud si další e-maily nepřejete, odpovězte „odhlásit“ a víc vás kontaktovat nebudu.</p>'
         f"</div>"
     )
 
