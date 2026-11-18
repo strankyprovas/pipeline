@@ -163,7 +163,7 @@ def generate_ai_email(restaurant: dict, demo_url: str = "", city: str = "Praha")
         demo_verb_text = "Pro ukázku jsem rovnou připravil"
         forma_rule = "- Ich-forma jako Matyáš Vrba (mluvíš za sebe a kamaráda Kryštofa)"
     else:
-        odesilatel_line = "Odesílatel: StránkyProVás — česká webová agentura, která už několik let dělá moderní weby pro místní podniky (píše tým, NE konkrétní osoba)"
+        odesilatel_line = "Odesílatel: StránkyProVás — česká agentura, která už několik let dělá moderní weby pro místní podniky (píše tým, NE konkrétní osoba)"
         struktura_1 = f'1. Začni: "Dobrý den," → prázdný řádek → odstavec kde se představíš jako StránkyProVás, česká agentura, která už několik let dělá moderní weby pro {ind_name} v Česku, a konkrétně zmíníš {name} v {city} + proč jim píšete ({problem_hint}). Piš v množném čísle (my), NEuváděj žádná křestní jména.'
         demo_verb_text = "Pro ukázku jsme rovnou připravili"
         forma_rule = "- My-forma (množné číslo) jménem agentury StránkyProVás; NIKDY neuváděj jména Matyáš ani Kryštof"
