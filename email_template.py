@@ -620,7 +620,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 
     # ── A/B FRAMING (50/50, stabilní podle příjemce) ──
     # osobní = "Matyáš + Kryštof" (ich-forma) · agentura = "StránkyProVás,
-    # česká webová agentura" (my-forma, bez jmen). Fallback kopíruje ai_email.
+    # česká agentura" (my-forma, bez jmen). Fallback kopíruje ai_email.
     _seed = (restaurant.get("email") or domain or name or "").lower()
     osobni = int(hashlib.md5(_seed.encode("utf-8")).hexdigest(), 16) % 2 == 0
     framing = "osobní" if osobni else "agentura"
