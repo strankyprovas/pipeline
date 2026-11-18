@@ -6,6 +6,7 @@ Fallback na email_template.generate_email() pokud API selže.
 """
 import os
 import random
+import hashlib
 import anthropic
 from email_template import generate_email, industry_subpage, SENDER_NAME, SENDER_COMPANY, SENDER_WEBSITE
 from config import PIXEL_BASE_URL
@@ -149,10 +150,28 @@ def generate_ai_email(restaurant: dict, demo_url: str = "", city: str = "Praha")
     }
     portfolio = INDUSTRY_PORTFOLIO.get(industry_key, INDUSTRY_PORTFOLIO["restaurace"])
 
+    # ── A/B FRAMING (50/50, stabilní podle příjemce) ──
+    # osobní = "Matyáš + Kryštof" (ich-forma) · agentura = "StránkyProVás, česká
+    # webová agentura" (my-forma, bez jmen). Zapisuje se do „AB Varianta".
+    _seed = (restaurant.get("email") or domain or name or "").lower()
+    osobni = int(hashlib.md5(_seed.encode("utf-8")).hexdigest(), 16) % 2 == 0
+    framing = "osobní" if osobni else "agentura"
+    signer = SENDER_NAME if osobni else "tým StránkyProVás"
+    if osobni:
+        odesilatel_line = "Odesílatel: Matyáš Vrba + kamarád Kryštof, firma StránkyProVás (webdesign pro místní podniky)"
+        struktura_1 = f'1. Začni: "Dobrý den," → prázdný řádek → odstavec kde se představíš jako Matyáš, zmíníš kamaráda Kryštofa, napíšeš že spolu už několik let děláte moderní weby pro {ind_name} v Česku, a konkrétně zmíníš {name} v {city} + proč jim píšeš ({problem_hint})'
+        demo_verb_text = "Pro ukázku jsem rovnou připravil"
+        forma_rule = "- Ich-forma jako Matyáš Vrba (mluvíš za sebe a kamaráda Kryštofa)"
+    else:
+        odesilatel_line = "Odesílatel: StránkyProVás — česká webová agentura, která už několik let dělá moderní weby pro místní podniky (píše tým, NE konkrétní osoba)"
+        struktura_1 = f'1. Začni: "Dobrý den," → prázdný řádek → odstavec kde se představíš jako StránkyProVás, česká agentura, která už několik let dělá moderní weby pro {ind_name} v Česku, a konkrétně zmíníš {name} v {city} + proč jim píšete ({problem_hint}). Piš v množném čísle (my), NEuváděj žádná křestní jména.'
+        demo_verb_text = "Pro ukázku jsme rovnou připravili"
+        forma_rule = "- My-forma (množné číslo) jménem agentury StránkyProVás; NIKDY neuváděj jména Matyáš ani Kryštof"
+
     prompt = f"""Napiš krátký cold email v češtině (max 5–8 vět, příjemce čte na mobilu). Drž se této struktury, ale piš stručně:
 
 KONTEXT:
-- Odesílatel: Matyáš Vrba + kamarád Kryštof, firma StránkyProVás (webdesign pro místní podniky)
+- {odesilatel_line}
 - Příjemce: majitel/provozovatel podniku {name} ({ind_name}) v {city}
 - {web_context}{demo_line}{extra_line}
 - Portfolio: {portfolio}
@@ -160,7 +179,7 @@ KONTEXT:
 
 STRUKTURA EMAILU (přesně dodržuj):
 
-1. Začni: "Dobrý den," → prázdný řádek → odstavec kde se představíš jako Matyáš, zmíníš Kryštofa, napíšeš že děláte weby pro {ind_name} v Česku, a konkrétně zmíníš {name} v {city} + proč jim píšeš ({problem_hint})
+{struktura_1}
 
 2. Sekce "Co je teď problém" (nadpis tučně, pak 3–4 odrážky • s konkrétními problémy pro {ind_name})
 
@@ -170,13 +189,13 @@ STRUKTURA EMAILU (přesně dodržuj):
 
 5. Portfolio + demo odkaz:
 "Naše poslední projekty jsou například {portfolio}."
-Pokud je demo URL: "Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:\\n→ [demo_url]\\nTexty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
+Pokud je demo URL: "{demo_verb_text}, jak by nový web {name} mohl vypadat:\\n→ [demo_url]\\nTexty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
 
 6. CTA odstavec: Zmíň cenu 500 Kč/měsíc se vším všudy. Nabídni konkrétní termín: "Hodí se vám krátký hovor v úterý nebo ve středu dopoledne? Stačí odpovědět na tento email." Nepiš nic o "zdarma připravit návrh" ani "cenovou nabídku" – ukázku už posíláme a cenu už zmiňujeme. Srdečný tón. 🙂
 
 DŮLEŽITÉ PRAVIDLA:
 - Piš KRÁTCE – celý email max 5–8 vět. Příjemce čte na mobilu mezi zákazníky.
-- Ich-forma jako Matyáš Vrba
+{forma_rule}
 - Používej správný pád města v češtině (např. "v Ostravě", "v Brně", "v Praze", "v Olomouci" – ne "v Ostrava")
 - Název firmy {name} používej přesně jak je, nesklonávej
 - NIKDY nepiš "s vašimi fotkami" – jsou to ukázkové fotografie
@@ -211,7 +230,7 @@ DŮLEŽITÉ PRAVIDLA:
 
         # Přidej podpis
         sub_url, sub_label = industry_subpage(restaurant.get("industry", "restaurace"))
-        signature_plain = f"\nS pozdravem,\n{SENDER_NAME}\n\nCo všechno děláme pro {sub_label}: {sub_url}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
+        signature_plain = f"\nS pozdravem,\n{signer}\n\nCo všechno děláme pro {sub_label}: {sub_url}\n\n--\n{signer}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
         body = ai_body + signature_plain
 
         # HTML verze
@@ -226,7 +245,7 @@ DŮLEŽITÉ PRAVIDLA:
         html_body = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>{ai_body_html}</p>
 <p style="font-size:13px;color:#8a8a8a;">Co všechno děláme pro {sub_label}: <a href="{sub_url}" style="color:#8f6230;">{sub_url.replace("https://", "").rstrip("/")}</a></p>
-<p style="color:#888; font-size:13px;">--<br>{SENDER_NAME}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
+<p style="color:#888; font-size:13px;">--<br>{signer}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
 {pixel}
 </div>"""
 
@@ -235,13 +254,14 @@ DŮLEŽITÉ PRAVIDLA:
             "body": body,
             "html_body": html_body,
             "to_name": name,
-            "ab_variant": ab_variant,
+            "ab_variant": framing,
+            "framing": framing,
         }
 
     except Exception as e:
         print(f"  ⚠️  AI email selhal ({e}), používám fallback šablonu")
         fallback = generate_email(restaurant, demo_url=demo_url, city=city)
-        fallback["ab_variant"] = "fallback"
+        # ab_variant zůstává = framing z template (kvůli čistému A/B vyhodnocení)
         return fallback
 
 
