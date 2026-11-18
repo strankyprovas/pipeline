@@ -3,6 +3,7 @@ Nový long-form cold email template (styl Vegeranda).
 Struktura: intro → problémy → řešení → přínosy → demo → CTA (cena se v mailu neuvádí)
 """
 import random
+import hashlib
 try:
     from config import PIXEL_BASE_URL
 except ImportError:
@@ -617,37 +618,63 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     ind_name_gen = ind.get("name_genitive_pl", "podniky")  # "restaurací", "kaváren"...
     domain = website.replace("https://", "").replace("http://", "").rstrip("/") if website else ""
 
+    # ── A/B FRAMING (50/50, stabilní podle příjemce) ──
+    # osobní = "Matyáš + Kryštof" (ich-forma) · agentura = "StránkyProVás,
+    # česká webová agentura" (my-forma, bez jmen). Fallback kopíruje ai_email.
+    _seed = (restaurant.get("email") or domain or name or "").lower()
+    osobni = int(hashlib.md5(_seed.encode("utf-8")).hexdigest(), 16) % 2 == 0
+    framing = "osobní" if osobni else "agentura"
+    signer = SENDER_NAME if osobni else "tým StránkyProVás"
+    demo_verb = "jsem rovnou připravil" if osobni else "jsme rovnou připravili"
+
     subject, ab_variant = pick_subject(name, category)
     rating_note = _rating_note(restaurant, category)
     texts = INDUSTRY_TEXTS.get(industry_key, INDUSTRY_TEXTS["restaurace"])
     portfolio = PORTFOLIO_BY_INDUSTRY.get(industry_key, PORTFOLIO_BY_INDUSTRY["restaurace"])
     city_loc = city_in_locative(city)
 
-    # Intro odstavec
+    # Intro odstavec — A/B framing: osobní (ich) vs agentura (my)
+    kdo = ("jmenuju se Matyáš a s mým kamarádem Kryštofem už několik let vytváříme moderní weby"
+           if osobni else
+           "jsme StránkyProVás — česká agentura, která už několik let tvoří moderní weby")
     if category == "bez_webu":
-        intro = (
-            f"Dobrý den,\n\n"
-            f"jmenuju se Matyáš a s mým kamarádem Kryštofem už několik let vytváříme moderní weby "
-            f"pro {ind_name_gen} v Česku. Díval jsem se na {name}{' ' + city_loc if city_loc else ''} a napadlo mě, "
-            f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
-            f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
-            f"ale jako funkční základ podnikání.{rating_note}\n\n"
-            # Zjemnění (24. 9. 2026): detekce webu není neomylná (OSM data) a
-            # sebejisté "web nemáte" u podniku s webem spolehlivě naštve.
-            # Přiznaná nejistota reakce odzbrojí a i špatně zařazený mail
-            # může skončit bavením se o modernizaci.
-            f"(Vlastní web jsem k vám nikde nedohledal — jestli ho máte a já ho "
-            f"jen přehlédl, omlouvám se a klidně mě opravte; v tom případě se "
-            f"můžeme pobavit spíš o jeho modernizaci.)"
-        )
+        if osobni:
+            intro = (
+                f"Dobrý den,\n\n"
+                f"{kdo} pro {ind_name_gen} v Česku. Díval jsem se na {name}{' ' + city_loc if city_loc else ''} a napadlo mě, "
+                f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
+                f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
+                f"ale jako funkční základ podnikání.{rating_note}\n\n"
+                f"(Vlastní web jsem k vám nikde nedohledal — jestli ho máte a já ho "
+                f"jen přehlédl, omlouvám se a klidně mě opravte; v tom případě se "
+                f"můžeme pobavit spíš o jeho modernizaci.)"
+            )
+        else:
+            intro = (
+                f"Dobrý den,\n\n"
+                f"{kdo} pro {ind_name_gen} v Česku. Dívali jsme se na {name}{' ' + city_loc if city_loc else ''} a napadlo nás, "
+                f"že byste hodně získali jednoduchým, ale moderním vlastním webem, který bude prodávat "
+                f"to, co děláte skvěle – ne jen jako zápis v katalozích a na sociálních sítích, "
+                f"ale jako funkční základ podnikání.{rating_note}\n\n"
+                f"(Vlastní web jsme u vás nikde nedohledali — jestli ho máte a my ho "
+                f"jen přehlédli, omlouváme se a klidně nás opravte; v tom případě se "
+                f"můžeme pobavit spíš o jeho modernizaci.)"
+            )
     else:
-        intro = (
-            f"Dobrý den,\n\n"
-            f"jmenuju se Matyáš a s mým kamarádem Kryštofem už několik let vytváříme moderní weby "
-            f"pro {ind_name_gen} v Česku. Díval jsem se na váš web {domain} a napadlo mě, "
-            f"že by zasloužil modernizaci – aby lépe fungoval na mobilech, rychleji se načítal "
-            f"a výš se zobrazoval ve vyhledávačích.{rating_note}"
-        )
+        if osobni:
+            intro = (
+                f"Dobrý den,\n\n"
+                f"{kdo} pro {ind_name_gen} v Česku. Díval jsem se na váš web {domain} a napadlo mě, "
+                f"že by zasloužil modernizaci – aby lépe fungoval na mobilech, rychleji se načítal "
+                f"a výš se zobrazoval ve vyhledávačích.{rating_note}"
+            )
+        else:
+            intro = (
+                f"Dobrý den,\n\n"
+                f"{kdo} pro {ind_name_gen} v Česku. Dívali jsme se na váš web {domain} a napadlo nás, "
+                f"že by zasloužil modernizaci – aby lépe fungoval na mobilech, rychleji se načítal "
+                f"a výš se zobrazoval ve vyhledávačích.{rating_note}"
+            )
 
     # Sekce problémů
     problems = texts["problemy_bez_webu"] if category == "bez_webu" else [
@@ -676,7 +703,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     if demo_url:
         demo_section = (
             f"{ref_sentence}\n\n"
-            f"Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:\n"
+            f"Pro ukázku {demo_verb}, jak by nový web {name} mohl vypadat:\n"
             f"→ {demo_url}\n"
             f"Texty z ukázky jsou samozřejmě vaše, fotky vyměníme za vaše vlastní."
         )
@@ -686,7 +713,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     # CTA. Cenu do studeného mailu schválně nepíšeme (rozhodnuto 5. 8. 2026) –
     # řeší se až v odpovědi, kdy je o čem mluvit. HTML verze cta_section přebírá.
     cta_section = (
-        f"Rád vám k tomu řeknu víc – hodí se vám krátký hovor v úterý nebo ve středu "
+        f"{'Rád vám k tomu řeknu víc' if osobni else 'Rádi vám k tomu řekneme víc'} – hodí se vám krátký hovor v úterý nebo ve středu "
         f"dopoledne? Stačí odpovědět na tento e-mail. 🙂"
     )
 
@@ -695,9 +722,11 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     subpage_note = f"Co všechno děláme pro {sub_label}, najdete na {sub_url}"
 
     # Podpis
-    signature = f"S přátelským pozdravem,\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE} | IČ 23572400"
+    signature = f"S přátelským pozdravem,\n{signer}\n{SENDER_COMPANY} | {SENDER_WEBSITE} | IČ 23572400"
 
-    optout = "Pokud si další e-maily ode mě nepřejete, napište prosím „odhlásit“ a víc vás kontaktovat nebudu."
+    optout = ("Pokud si další e-maily ode mě nepřejete, napište prosím „odhlásit“ a víc vás kontaktovat nebudu."
+              if osobni else
+              "Pokud si další e-maily od nás nepřejete, napište prosím „odhlásit“ a víc vás kontaktovat nebudeme.")
 
     body = "\n\n".join([
         intro,
@@ -720,7 +749,7 @@ def generate_email(restaurant, demo_url="", city="Praha"):
     if demo_url:
         demo_html = (
             f"{ref_sentence}<br><br>"
-            f"Pro ukázku jsem rovnou připravil, jak by nový web {name} mohl vypadat:<br>"
+            f"Pro ukázku {demo_verb}, jak by nový web {name} mohl vypadat:<br>"
             # Přímý odkaz na demo – žádný redirect. Klient v dřívějším obalu přes
             # Apps Script (`_click_tracking_url`) viděl dlouhou script.google.com
             # adresu, což působilo neduvěryhodně. Otevření mailu se pořád měří
@@ -740,13 +769,13 @@ def generate_email(restaurant, demo_url="", city="Praha"):
 <p>{demo_html}</p>
 <p>{cta_section.replace(chr(10)+chr(10), '</p><p>').replace(chr(10), '<br>')}</p>
 <p style="font-size:13px;color:#8a8a8a;">Co všechno děláme pro {sub_label}: <a href="{sub_url}" style="color:#8f6230;">{sub_url.replace("https://", "").rstrip("/")}</a></p>
-<p style="margin-top:24px;">S přátelským pozdravem,<br><strong>{SENDER_NAME}</strong><br>
+<p style="margin-top:24px;">S přátelským pozdravem,<br><strong>{signer}</strong><br>
 <a href="{SENDER_WEBSITE}">{SENDER_COMPANY}</a></p>
-<p style="font-size:12px;color:#9a9a9a;margin-top:18px;border-top:1px solid #eee;padding-top:12px;">StránkyProVás · IČ&nbsp;23572400 · Pokud si další e-maily nepřejete, odpovězte „odhlásit“ a víc vás kontaktovat nebudu.</p>
+<p style="font-size:12px;color:#9a9a9a;margin-top:18px;border-top:1px solid #eee;padding-top:12px;">StránkyProVás · IČ&nbsp;23572400 · Pokud si další e-maily nepřejete, odpovězte „odhlásit“ a víc vás kontaktovat {"nebudu" if osobni else "nebudeme"}.</p>
 {pixel}
 </div>"""
 
-    return {"subject": subject, "body": body, "html_body": html_body, "to_name": name, "ab_variant": ab_variant}
+    return {"subject": subject, "body": body, "html_body": html_body, "to_name": name, "ab_variant": framing, "framing": framing}
 
 
 def generate_followup_email(name, demo_url):
