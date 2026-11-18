@@ -194,6 +194,7 @@ def get_followup_candidates(sheet, days: int = 5, max_days: int = 30) -> list[di
                 "email":    r.get("Email", ""),
                 "demo_url": r.get("Demo URL", ""),
                 "industry": r.get("Odvětví", "restaurace"),
+                "framing":  r.get("AB Varianta", ""),
                 "sent":     datum_str,
                 "days_ago": days_ago,
                 "opened":   r.get("Otevřel email", ""),
@@ -220,11 +221,23 @@ def _generate_ai_followup(contact: dict) -> tuple[str, str] | None:
     # otevřel" působí jako sledování. Neutrální připomenutí je bezpečné vždy.
     opener_hint = f"Příjemce zatím neodpověděl (email odeslán před {days_ago} dny)."
 
+    # A/B framing follow-upu: agenturní příjemci množné číslo + podpis týmu
+    agentura = contact.get("framing") == "agentura"
+    signer = "tým StránkyProVás" if agentura else SENDER_NAME
+    if agentura:
+        kdo_jsi = "Jste StránkyProVás, česká agentura (webdesign) — píšeš jménem týmu"
+        akce = f'Před {days_ago} dny jste podniku "{name}" ({industry}) poslali nabídku s demo webem'
+        forma_rule = "- Piš v množném čísle (my, jménem agentury StránkyProVás); NEuváděj jména Matyáš ani Kryštof"
+    else:
+        kdo_jsi = "Jsi Matyáš Vrba z firmy StránkyProVás (webdesign)"
+        akce = f'Před {days_ago} dny jsi podniku "{name}" ({industry}) poslal/a nabídku s demo webem'
+        forma_rule = "- Ich-forma jako Matyáš Vrba"
+
     prompt = f"""Napiš krátký follow-up cold email (max 3 věty) v češtině.
 
 Kontext:
-- Jsi Matyáš Vrba z firmy StránkyProVás (webdesign)
-- Před {days_ago} dny jsi podniku "{name}" ({industry}) poslal/a nabídku s demo webem
+- {kdo_jsi}
+- {akce}
 - Demo stránka: {demo_url}
 - {opener_hint}
 
@@ -235,6 +248,7 @@ Požadavky:
 - Na konec přidej P.S. o jedné větě: web umíme udělat i jednorázově od 6 000 Kč — bez ročních poplatků, web je pak jejich
 - Podpis NEVKLÁDEJ (bude přidán automaticky)
 - Tón: přátelský, bez tlaku
+{forma_rule}
 - NIKDY nezmiňuj, že víš o otevření/přečtení předchozího mailu
 
 Napiš jen tělo emailu."""
@@ -253,7 +267,7 @@ Napiš jen tělo emailu."""
         podstranka_html = (f'<p style="color:#888; font-size:13px;">Co všechno děláme pro '
                            f'{sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>')
 
-        plain = ai_text + f"\n\n{podstranka_plain}\n\nS pozdravem,\n{SENDER_NAME}\n\n--\n{SENDER_NAME}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
+        plain = ai_text + f"\n\n{podstranka_plain}\n\nS pozdravem,\n{signer}\n\n--\n{signer}\n{SENDER_COMPANY} | {SENDER_WEBSITE}"
 
         html_body = ai_text.replace("\n", "<br>")
         if demo_url:
@@ -261,7 +275,7 @@ Napiš jen tělo emailu."""
         html = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>{html_body}</p>
 {podstranka_html}
-<p style="color:#888; font-size:13px;">--<br>{SENDER_NAME}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
+<p style="color:#888; font-size:13px;">--<br>{signer}<br>{SENDER_COMPANY} | <a href="{SENDER_WEBSITE}">{SENDER_WEBSITE}</a></p>
 </div>"""
 
         return plain, html
@@ -278,6 +292,11 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
 
     subject = f"Připomínám – demo stránka pro {name}"
 
+    agentura = contact.get("framing") == "agentura"
+    signer = "tým StránkyProVás" if agentura else SENDER_NAME
+    ujistit = "Chtěli jsme se jen ujistit" if agentura else "Chtěl jsem se jen ujistit"
+    obtezovat = "nebudeme dále obtěžovat" if agentura else "nebudu dále obtěžovat"
+
     # Zkus AI personalizaci
     ai_result = _generate_ai_followup(contact)
     if ai_result:
@@ -289,7 +308,7 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
     # tracking pixelu) byl odstraněn 18. 9. 2026 — pixel je nespolehlivý
     # (Gmail/Seznam proxují obrázky, viz report) a přiznání sledování působí
     # nepříjemně. Neutrální připomenutí funguje bez rizika.
-    opener = f"Před pár dny jsem vám posílal ukázku webu pro {name}."
+    opener = f"Před pár dny {'jsme' if agentura else 'jsem'} vám {'posílali' if agentura else 'posílal'} ukázku webu pro {name}."
 
     # Jednorázovka je aktuálně nejúčinnější protinabídka na "roční poplatky
     # nechci" (v týdnu 14.–18. 9. otočila tři odmítnutí na domluvu). Ve
@@ -305,27 +324,27 @@ def make_followup_body(contact: dict) -> tuple[str, str, str]:
     plain = (
         f"Dobrý den,\n\n"
         f"{opener}\n\n"
-        f"Chtěl jsem se jen ujistit, že vám zpráva nezapadla. "
+        f"{ujistit}, že vám zpráva nezapadla. "
         f"Demo stránka je stále k dispozici:\n"
         f"→ {demo_url}\n\n"
         f"Pokud máte zájem nebo otázky, stačí odpovědět. "
-        f"Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.\n\n"
+        f"Pokud ne, žádný problém – jen dejte vědět a {obtezovat}.\n\n"
         f"{ps}\n\n"
         f"{podstranka_plain}\n\n"
-        f"Hezký den,\n{SENDER_NAME}\n{SENDER_COMPANY}"
+        f"Hezký den,\n{signer}\n{SENDER_COMPANY}"
     )
 
     demo_link = f'<a href="{demo_url}">{demo_url}</a>' if demo_url else ""
     html = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>Dobrý den,</p>
 <p>{opener}</p>
-<p>Chtěl jsem se jen ujistit, že vám zpráva nezapadla.
+<p>{ujistit}, že vám zpráva nezapadla.
 Demo stránka je stále k dispozici:<br>→ {demo_link}</p>
 <p>Pokud máte zájem nebo otázky, stačí odpovědět.
-Pokud ne, žádný problém – jen dejte vědět a nebudu dále obtěžovat.</p>
+Pokud ne, žádný problém – jen dejte vědět a {obtezovat}.</p>
 <p style="color:#555">{ps}</p>
 <p style="color:#888; font-size:13px;">Co všechno děláme pro {sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>
-<p>Hezký den,<br>{SENDER_NAME}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
+<p>Hezký den,<br>{signer}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
 </div>"""
 
     return subject, plain, html
@@ -361,6 +380,7 @@ def get_followup2_candidates(sheet, days: int = 9, max_days: int = 45) -> list[d
                 "email":    r.get("Email", ""),
                 "demo_url": r.get("Demo URL", ""),
                 "industry": r.get("Odvětví", "restaurace"),
+                "framing":  r.get("AB Varianta", ""),
                 "sent":     datum_str,
                 "days_ago": (datetime.now() - datum).days,
                 "opened":   r.get("Otevřel email", ""),
@@ -376,35 +396,43 @@ def make_followup2_body(contact: dict) -> tuple[str, str, str]:
     demo_url = contact["demo_url"]
     subject = f"Poslední zpráva – ukázku pro {name} příští týden stáhneme"
 
+    agentura = contact.get("framing") == "agentura"
+    signer = "tým StránkyProVás" if agentura else SENDER_NAME
+    v_pripravil = "jsme vám připravili" if agentura else "jsem vám připravil"
+    v_poslal = "poslali" if agentura else "poslal"
+    v_neozyvate = "se nám zatím neozýváte, bereme to tak" if agentura else "se mi zatím neozýváte, beru to tak"
+    v_obnovim = "obnovíme" if agentura else "obnovím"
+    v_obtez = "nebudeme dál obtěžovat" if agentura else "nebudu dál obtěžovat"
+
     sub_url, sub_popis = industry_subpage(contact.get("industry", ""))
 
     plain = (
         f"Dobrý den,\n\n"
-        f"před časem jsem vám připravil ukázku webu pro {name} a poslal k ní "
-        f"i připomenutí. Protože se mi zatím neozýváte, beru to tak, že teď "
+        f"před časem {v_pripravil} ukázku webu pro {name} a {v_poslal} k ní "
+        f"i připomenutí. Protože {v_neozyvate}, že teď "
         f"web nejspíš neřešíte — a to je úplně v pořádku.\n\n"
         f"Jen férové upozornění: ukázku příští týden z kapacitních důvodů "
         f"stáhneme, tak kdybyste si ji chtěli ještě prohlédnout nebo o ní "
         f"popřemýšlet, tady je:\n→ {demo_url}\n\n"
         f"Kdyby vás to zaujalo kdykoliv později, stačí napsat — ukázku vám "
-        f"obnovím. Jinak už vás nebudu dál obtěžovat.\n\n"
+        f"{v_obnovim}. Jinak už vás {v_obtez}.\n\n"
         f"P.S. Web umíme i jednorázově od 6 000 Kč — zaplatíte jednou "
         f"a web je váš.\n\n"
-        f"Hezký den,\n{SENDER_NAME}\n{SENDER_COMPANY}"
+        f"Hezký den,\n{signer}\n{SENDER_COMPANY}"
     )
 
     demo_link = f'<a href="{demo_url}">{demo_url}</a>' if demo_url else ""
     html = f"""<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #222;">
 <p>Dobrý den,</p>
-<p>před časem jsem vám připravil ukázku webu pro {name} a poslal k ní i připomenutí.
-Protože se mi zatím neozýváte, beru to tak, že teď web nejspíš neřešíte — a to je úplně v pořádku.</p>
+<p>před časem {v_pripravil} ukázku webu pro {name} a {v_poslal} k ní i připomenutí.
+Protože {v_neozyvate}, že teď web nejspíš neřešíte — a to je úplně v pořádku.</p>
 <p>Jen férové upozornění: ukázku <b>příští týden z kapacitních důvodů stáhneme</b>,
 tak kdybyste si ji chtěli ještě prohlédnout, tady je:<br>→ {demo_link}</p>
-<p>Kdyby vás to zaujalo kdykoliv později, stačí napsat — ukázku vám obnovím.
-Jinak už vás nebudu dál obtěžovat.</p>
+<p>Kdyby vás to zaujalo kdykoliv později, stačí napsat — ukázku vám {v_obnovim}.
+Jinak už vás {v_obtez}.</p>
 <p style="color:#555">P.S. Web umíme i jednorázově od 6 000 Kč — zaplatíte jednou a web je váš.</p>
 <p style="color:#888; font-size:13px;">Co všechno děláme pro {sub_popis}: <a href="{sub_url}" style="color:#8f6230">{sub_url}</a></p>
-<p>Hezký den,<br>{SENDER_NAME}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
+<p>Hezký den,<br>{signer}<br><small style="color:#888">{SENDER_COMPANY}</small></p>
 </div>"""
     return subject, plain, html
 
