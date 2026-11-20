@@ -66,6 +66,7 @@ NEVER_CONTACT_EMAILS = [
     "glowup.studio102@gmail.com",  # salon trvale zavřený (19. 9.)
     "alens@volny.cz",              # Studio Anela — spokojená se svým webem (19. 9.)
     "info@foprosltm.cz",            # mají nové stránky, ostrá stížnost na nepravdivé tvrzení (19. 9.)
+    "blazek.iv@tiscali.cz",         # MUDr. Blažek — výslovný opt-out, žádá odstranění údajů (19. 11.)
 ]
 
 # Slova v názvu podniku, která se NESHODUJÍ s cíleným oborem → scraper vrátil
