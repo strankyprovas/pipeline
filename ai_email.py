@@ -286,3 +286,48 @@ if __name__ == "__main__":
     print("PŘEDMĚT:", result["subject"])
     print()
     print(result["body"])
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AI e-mailový asistent — outreach kampaň (50/50 split s webovými ukázkami)
+# Statický schválený text (viz strankyprovas.cz/asistent/). Bez dema.
+# ─────────────────────────────────────────────────────────────────────────────
+ASSISTANT_SUBJECT = "Odpovědi na e-maily připravené za vás"
+
+def generate_assistant_email(restaurant: dict, city: str = "Praha") -> dict:
+    name = restaurant.get("name", "")
+    body = (
+        "Dobrý den,\n\n"
+        "jmenuju se Matyáš a s kamarádem Kryštofem pomáháme menším podnikům v Česku "
+        "ušetřit čas, který jim ujídají e-maily.\n\n"
+        "Nastavíme vám asistenta, který hlídá vaši schránku a na zákaznické dotazy "
+        "připraví odpověď v tónu vašeho podniku — rovnou do vašich Konceptů. Vy ji jen "
+        "přečtete a odešlete. Nic se neodešle samo, máte to plně pod kontrolou.\n\n"
+        "Postupně ho nasazujeme podnikům, kterým e-maily berou spoustu času — třeba i "
+        "oční ordinaci v Brně, která to shrnula takhle:\n\n"
+        "„Naprostá spokojenost. Odpovědi se mi připravují rovnou do konceptů — jen "
+        "přečtu a odešlu. Ušetří mi to spoustu času a místo hodin nad e-maily se můžu "
+        "věnovat práci v ordinaci. Moc doporučuji.“ — Oční ordinace Hrnčířská, Brno\n\n"
+        "Rádi vám to nastavíme na měsíc zdarma a nezávazně, ať sami vidíte, jestli vám "
+        "to sedne. Víc tady: https://strankyprovas.cz/asistent/\n\n"
+        "Kdyby vás to zajímalo, stačí odepsat.\n\n"
+        "Hezký den,\n"
+        "Matyáš a Kryštof\n"
+        "StránkyProVás"
+    )
+    html_body = (
+        '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#222">'
+        '<p>Dobrý den,</p>'
+        '<p>jmenuju se Matyáš a s kamarádem Kryštofem pomáháme menším podnikům v Česku ušetřit čas, který jim ujídají e-maily.</p>'
+        '<p>Nastavíme vám asistenta, který hlídá vaši schránku a na zákaznické dotazy připraví odpověď <b>v tónu vašeho podniku — rovnou do vašich Konceptů</b>. Vy ji jen přečtete a odešlete. <b>Nic se neodešle samo</b>, máte to plně pod kontrolou.</p>'
+        '<p>Postupně ho nasazujeme podnikům, kterým e-maily berou spoustu času — třeba i oční ordinaci v Brně, která to shrnula takhle:</p>'
+        '<blockquote style="margin:0;padding:10px 16px;border-left:3px solid #3F6E60;color:#444;font-style:italic">'
+        '„Naprostá spokojenost. Odpovědi se mi připravují rovnou do konceptů — jen přečtu a odešlu. Ušetří mi to spoustu času a místo hodin nad e-maily se můžu věnovat práci v ordinaci. Moc doporučuji.“'
+        '<br><span style="font-style:normal;color:#666">— Oční ordinace Hrnčířská, Brno</span></blockquote>'
+        '<p>Rádi vám to nastavíme na <b>měsíc zdarma a nezávazně</b>, ať sami vidíte, jestli vám to sedne. Víc tady: <a href="https://strankyprovas.cz/asistent/">strankyprovas.cz/asistent/</a></p>'
+        '<p>Kdyby vás to zajímalo, stačí odepsat.</p>'
+        '<p>Hezký den,<br>Matyáš a Kryštof<br>StránkyProVás</p>'
+        '</div>'
+    )
+    return {"subject": ASSISTANT_SUBJECT, "body": body, "html_body": html_body,
+            "to_name": name, "ab_variant": "asistent", "framing": "asistent"}

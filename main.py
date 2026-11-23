@@ -22,7 +22,8 @@ from scraper import (
 from industries import get_industry, list_industries
 from generator import save_demo
 from website_analyzer import assess_website
-from ai_email import generate_ai_email
+import hashlib
+from ai_email import generate_ai_email, generate_assistant_email
 from gmail_draft import create_draft
 
 # ─── Dávkový push na GitHub Pages ────────────────────────────────────────────
@@ -412,6 +413,26 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
 
         # 4. Pokud špatný/bez webu → generuj demo + draft
         if category in ("bez_webu", "spatny_web"):
+            # Kampaň 50/50 (stabilně dle e-mailu): web (demo) vs asistent (pitch AI asistenta, bez dema)
+            _cseed = (email or name).lower()
+            _campaign = "asistent" if int(hashlib.md5(_cseed.encode("utf-8")).hexdigest(), 16) % 2 == 1 else "web"
+            if _campaign == "asistent":
+                print(f"  🤖 Kampaň: asistent (AI e-mailový asistent, bez dema)")
+                try:
+                    _ed = generate_assistant_email(row, city=city_real)
+                    create_draft(to_email=email, subject=_ed["subject"], body_plain=_ed["body"], body_html=_ed["html_body"])
+                    print(f"  📨 Gmail draft (asistent) vytvořen")
+                except Exception as e:
+                    print(f"  ⚠️  Draft (asistent) selhal: {e}")
+                from datetime import datetime as _dt, timedelta as _td
+                _fud = (_dt.now() + _td(days=5)).strftime("%Y-%m-%d")
+                if sheet:
+                    add_restaurant(sheet, {**row, "demo_url": "", "ab_variant": "asistent", "industry": industry, "follow_up_due": _fud})
+                sheet_emails.add(email.lower()); sheet_names.add(name.lower())
+                demos_done += 1
+                print(f"  🎯 Hotovo: {demos_done}/{target}\n")
+                continue
+
             print(f"  📸 Kopíruji stock fotky...")
             demo_photos_dir = os.path.join(demos_dir, slug, "photos")
             local_photos = copy_stock_photos(industry, demo_photos_dir, max_photos=5)
