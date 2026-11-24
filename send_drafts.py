@@ -343,13 +343,24 @@ def main():
 
         # Přeskoč pokud již osloveno nebo duplicitní v tomto běhu
         if to_email in already_sent:
-            # 24. 11. 2026: draft na už osloveného = navždy mrtvý → smazat,
-            # ať neucpává frontu (bývalo jich 54 v každé dávce).
-            print(f"[{ts}] [{i}/{len(drafts)}] 🗑️  Duplicitní draft (již osloveno) — mažu → {to}")
+            # 24. 11. 2026: draft na už osloveného = mrtvý → smazat, ať
+            # neucpává frontu (bývalo jich 54). ⚠️ Ale až po 2 dnech —
+            # Matyáš si občas píše ruční drafty kontaktům se stavem
+            # "osloveno" a maže je z Gmailu sám; nesmíme mu je sebrat.
             try:
-                service.users().drafts().delete(userId="me", id=draft_id).execute()
-            except Exception as e:
-                print(f"           ⚠️  Smazání selhalo: {e}")
+                meta = service.users().drafts().get(
+                    userId="me", id=draft_id, format="minimal").execute()
+                age_days = (time.time() - int(meta["message"]["internalDate"]) / 1000) / 86400
+            except Exception:
+                age_days = 0
+            if age_days > 2:
+                print(f"[{ts}] [{i}/{len(drafts)}] 🗑️  Duplicitní draft (již osloveno, {age_days:.0f} d) — mažu → {to}")
+                try:
+                    service.users().drafts().delete(userId="me", id=draft_id).execute()
+                except Exception as e:
+                    print(f"           ⚠️  Smazání selhalo: {e}")
+            else:
+                print(f"[{ts}] [{i}/{len(drafts)}] ⏭️  Přeskočeno (již osloveno) → {to}")
             skipped_count += 1
             continue
         if to_email in sent_this_run:
