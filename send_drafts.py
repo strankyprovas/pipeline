@@ -355,6 +355,24 @@ def main():
         # (GitHub Pages build zaostává za pushem; draft zůstane a pošle se příště.)
         demo_url = get_draft_demo_url(service, draft_id)
         if demo_url and not demo_is_live(demo_url):
+            # 24. 11. 2026: samočistka sirotků. Když je draft starší než 3 dny
+            # a demo pořád 404, demo už NIKDY nevznikne (soubory se ztratily
+            # při killnutém běhu pipeline — v repu vůbec nejsou). Takové drafty
+            # ucpávaly frontu donekonečna (~72 ks skipováno v každé dávce).
+            try:
+                meta = service.users().drafts().get(
+                    userId="me", id=draft_id, format="minimal").execute()
+                age_days = (time.time() - int(meta["message"]["internalDate"]) / 1000) / 86400
+            except Exception:
+                age_days = 0
+            if age_days > 3:
+                print(f"[{ts}] [{i}/{len(drafts)}] 🗑️  Sirotek (demo 404 už {age_days:.0f} dní) — mažu draft → {to} | {demo_url}")
+                try:
+                    service.users().drafts().delete(userId="me", id=draft_id).execute()
+                except Exception as e:
+                    print(f"           ⚠️  Smazání selhalo: {e}")
+                skipped_count += 1
+                continue
             print(f"[{ts}] [{i}/{len(drafts)}] ⏳ Demo ještě nenaběhlo (404) → {to} | {demo_url}")
             skipped_count += 1
             continue
