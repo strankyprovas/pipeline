@@ -343,7 +343,13 @@ def main():
 
         # Přeskoč pokud již osloveno nebo duplicitní v tomto běhu
         if to_email in already_sent:
-            print(f"[{ts}] [{i}/{len(drafts)}] ⏭️  Přeskočeno (již osloveno) → {to}")
+            # 24. 11. 2026: draft na už osloveného = navždy mrtvý → smazat,
+            # ať neucpává frontu (bývalo jich 54 v každé dávce).
+            print(f"[{ts}] [{i}/{len(drafts)}] 🗑️  Duplicitní draft (již osloveno) — mažu → {to}")
+            try:
+                service.users().drafts().delete(userId="me", id=draft_id).execute()
+            except Exception as e:
+                print(f"           ⚠️  Smazání selhalo: {e}")
             skipped_count += 1
             continue
         if to_email in sent_this_run:
@@ -378,7 +384,20 @@ def main():
             continue
 
         if args.skip_no_mx and not domena_prijima_postu(to_email):
-            print(f"[{ts}] [{i}/{len(drafts)}] ✗ Doména nepřijímá poštu (bez MX) → {to}")
+            try:
+                meta = service.users().drafts().get(
+                    userId="me", id=draft_id, format="minimal").execute()
+                age_days = (time.time() - int(meta["message"]["internalDate"]) / 1000) / 86400
+            except Exception:
+                age_days = 0
+            if age_days > 3:
+                print(f"[{ts}] [{i}/{len(drafts)}] 🗑️  Bez MX už {age_days:.0f} dní — mažu draft → {to}")
+                try:
+                    service.users().drafts().delete(userId="me", id=draft_id).execute()
+                except Exception as e:
+                    print(f"           ⚠️  Smazání selhalo: {e}")
+            else:
+                print(f"[{ts}] [{i}/{len(drafts)}] ✗ Doména nepřijímá poštu (bez MX) → {to}")
             skipped_count += 1
             continue
 
