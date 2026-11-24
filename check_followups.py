@@ -284,8 +284,47 @@ Napiš jen tělo emailu."""
         return None
 
 
+def make_asistent_followup(contact: dict, final: bool = False) -> tuple[str, str, str]:
+    """Follow-upy pro kampaň AI asistenta (AB Varianta='asistent').
+
+    Tihle příjemci NEDOSTALI demo webu, ale nabídku e-mailového asistenta —
+    webové follow-upy s demo URL by u nich byly nesmysl (24. 11. 2026).
+    """
+    name = contact["name"]
+    if final:
+        subject = "Poslední zpráva k asistentovi na e-maily"
+        plain = (
+            "Dobrý den,\n\n"
+            "naposledy se krátce připomínám k asistentovi, který připravuje odpovědi "
+            "na zákaznické e-maily rovnou do konceptů. Nechci vás zahlcovat, tak už "
+            "psát nebudu.\n\n"
+            "Kdyby se to někdy hodilo, stačí odepsat a měsíc zdarma vám rádi "
+            "nastavíme i později.\n\n"
+            "Hezký den,\nMatyáš a Kryštof\nStránkyProVás"
+        )
+    else:
+        subject = "Připomínám – asistent na e-maily, měsíc zdarma"
+        plain = (
+            "Dobrý den,\n\n"
+            "před pár dny jsem vám psal o asistentovi, který hlídá schránku a na "
+            "zákaznické dotazy připraví odpověď rovnou do vašich konceptů. Vy ji jen "
+            "přečtete a odešlete, nic se neodesílá samo.\n\n"
+            "Jen se chci ujistit, že zpráva nezapadla. Nastavení na měsíc zdarma "
+            "a nezávazně pořád platí, stačí odepsat.\n\n"
+            "Víc tady: https://strankyprovas.cz/asistent/\n\n"
+            "Hezký den,\nMatyáš a Kryštof\nStránkyProVás"
+        )
+    html = "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#222\">" + \
+        "".join(f"<p>{p}</p>" for p in plain.split("\n\n")) + "</div>"
+    html = html.replace("https://strankyprovas.cz/asistent/",
+                        '<a href="https://strankyprovas.cz/asistent/">strankyprovas.cz/asistent/</a>')
+    return subject, plain, html
+
+
 def make_followup_body(contact: dict) -> tuple[str, str, str]:
     """Vrátí (subject, plain_body, html_body) pro follow-up email."""
+    if contact.get("framing") == "asistent":
+        return make_asistent_followup(contact, final=False)
     name = contact["name"]
     demo_url = contact["demo_url"]
     opened = contact["opened"]
@@ -392,6 +431,8 @@ def get_followup2_candidates(sheet, days: int = 9, max_days: int = 45) -> list[d
 def make_followup2_body(contact: dict) -> tuple[str, str, str]:
     """Poslední zpráva: deadline — ukázku příští týden stáhneme. Bez AI,
     deterministická šablona (deadline musí znít vždy stejně věcně)."""
+    if contact.get("framing") == "asistent":
+        return make_asistent_followup(contact, final=True)
     name = contact["name"]
     demo_url = contact["demo_url"]
     subject = f"Poslední zpráva – ukázku pro {name} příští týden stáhneme"
