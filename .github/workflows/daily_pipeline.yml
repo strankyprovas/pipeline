@@ -70,13 +70,20 @@ jobs:
               #   Firmy.cz nesedi). Jejich sloty prevzaly logoped (2,4 %) a
               #   fyzioterapie (2,0 %), ktere funguji. Vysledek: oba 4x/tyden.
               # 5 oboru x 75 min = 6,25 h — konci ~1:30 UTC, rano porad volne.
-              1) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","logoped"]' ;;
-              2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog","veterinar"]' ;;
-              3) MATRIX='["masaze","psycholog","fyzioterapie","zubni","logoped"]' ;;
-              4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion","fyzioterapie"]' ;;
-              5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","veterinar"]' ;;
-              6) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna","logoped"]' ;;
-              7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi","logoped"]' ;;
+              # 24. 11. 2026: ŠÍŘKA — objem spadl (září 6 403 → říjen 1 819
+              # mailů), top obory (psycholog/květiny/masáže) mají malé a už
+              # projeté trhy. Přidán 6. slot/den s velkotržními obory se
+              # slušnou odezvou (report 1.11.): penzion 1,2 % (2 848 odesl.),
+              # kavarna 1,4 %, pekarna 2,3 %, zubni 0,9 %. 6 × ~87 min
+              # (75 job + setup) ≈ 8,7 h od ~17:30 UTC → konec ~02:15 UTC,
+              # stále před prvním slotem Send Drafts (7:02 UTC).
+              1) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","logoped","penzion"]' ;;
+              2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog","veterinar","kavarna"]' ;;
+              3) MATRIX='["masaze","psycholog","fyzioterapie","zubni","logoped","penzion"]' ;;
+              4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion","fyzioterapie","kavarna"]' ;;
+              5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","veterinar","pekarna"]' ;;
+              6) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna","logoped","kavarna"]' ;;
+              7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi","logoped","zubni"]' ;;
             esac
           fi
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
@@ -173,7 +180,7 @@ jobs:
         # env:
         #   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 10
+          python3 run_all_cities.py --industry ${{ matrix.industry }} --target 14
 
       - name: Dopush zbylá dema
         # Dema se pushují dávkově (max 1× za 10 min kvůli limitu buildů GitHub Pages).

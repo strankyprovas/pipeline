@@ -121,6 +121,11 @@ jobs:
         env:
           LIMIT: ${{ github.event.inputs.limit || '50' }}
           DRY: ${{ github.event.inputs.dry_run || 'false' }}
+          # M365 SMTP (doručitelnost): prázdné = jede Gmail jako dřív.
+          # Aktivace: nastavit secrets M365_SMTP_USER (matyas@strankyprovas.cz)
+          # a M365_SMTP_PASS + v M365 povolit "Authenticated SMTP" pro schránku.
+          M365_SMTP_USER: ${{ secrets.M365_SMTP_USER }}
+          M365_SMTP_PASS: ${{ secrets.M365_SMTP_PASS }}
         run: |
           set -euo pipefail
           # Takt ~1 mail/min (--delay 60, rozptyl ±25 % = 45–75 s).

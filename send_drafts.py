@@ -6,6 +6,7 @@ Použití: venv/bin/python3 send_drafts.py
 """
 import argparse
 import base64
+import os
 import re
 import random
 import time
@@ -117,8 +118,64 @@ def domena_prijima_postu(email: str) -> bool:
     return vysledek
 
 
+def _send_via_m365(service, draft_id):
+    """Odešle Gmail draft přes M365 SMTP (smtp.office365.com) a draft smaže.
+
+    Důvod: odesílání přes Gmail "send-as" matyas@strankyprovas.cz nemá
+    zarovnané SPF/DKIM s doménou → maily padají do spamu (viz [SPAM] tag
+    v odpovědi Penzionu Solaris, 20. 11. 2026). Přes M365 odchází mail
+    přímo ze serverů Microsoftu pro naši doménu → autentizace sedí.
+
+    Aktivuje se JEN když jsou nastavené env M365_SMTP_USER + M365_SMTP_PASS
+    (GitHub Secrets). Bez nich jede původní Gmail cesta beze změny.
+    Pozn.: odeslaný mail NEBUDE v Gmail "Odeslané" (kopie je v M365 Sent
+    Items); evidence v Sheetu i detekce odpovědí (chodí na
+    matyas@strankyprovas.cz s forwardem do Gmailu) fungují dál.
+    """
+    import base64 as _b64
+    import smtplib
+    from email import message_from_bytes
+    user = os.environ["M365_SMTP_USER"]
+    pwd = os.environ["M365_SMTP_PASS"]
+    draft = service.users().drafts().get(
+        userId="me", id=draft_id, format="raw").execute()
+    raw = _b64.urlsafe_b64decode(draft["message"]["raw"])
+    msg = message_from_bytes(raw)
+    # From musí odpovídat autentizovanému účtu, jinak to office365 odmítne
+    # (drafty už From: matyas@strankyprovas.cz mají — jen pojistka).
+    if (msg.get("From") or "").lower().find(user.lower()) == -1:
+        if msg["From"]:
+            del msg["From"]
+        msg["From"] = f"Matyáš Vrba <{user}>"
+    last_err = None
+    for attempt in range(3):
+        try:
+            with smtplib.SMTP("smtp.office365.com", 587, timeout=60) as smtp:
+                smtp.ehlo()
+                smtp.starttls()
+                smtp.ehlo()
+                smtp.login(user, pwd)
+                smtp.send_message(msg)
+            break
+        except smtplib.SMTPAuthenticationError:
+            raise  # špatné heslo / vypnutý SMTP AUTH — nemá smysl opakovat
+        except Exception as e:
+            last_err = e
+            print(f"           ⏳ M365 SMTP chyba, pokus {attempt+1}/3: {e}")
+            time.sleep(20 * (attempt + 1))
+    else:
+        raise last_err
+    # Odesláno → draft smazat, ať ho příští dávka nepošle znovu.
+    try:
+        service.users().drafts().delete(userId="me", id=draft_id).execute()
+    except Exception as e:
+        print(f"           ⚠️  Draft se nepodařilo smazat po odeslání: {e}")
+
+
 def send_draft(service, draft_id):
     import re
+    if os.environ.get("M365_SMTP_USER") and os.environ.get("M365_SMTP_PASS"):
+        return _send_via_m365(service, draft_id)
     for attempt in range(10):
         try:
             service.users().drafts().send(userId="me", body={"id": draft_id}).execute()

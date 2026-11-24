@@ -56,10 +56,11 @@ INDUSTRY_TEMPLATES = {
 # vygeneruje stejnému podniku stejnou variantu a nevznikne mišmaš.
 # Varianta se propisuje do Sheetu (sloupec „AB Varianta"), viz ai_email.py.
 AB_TEMPLATES = {
+    # 24. 11. 2026: A/B test masáží UKONČEN — vítěz "retro" (2,2 % vs klasik
+    # 0,9 %, ultra 1,6 % na malém vzorku; report 1. 11.). Jede jen retro,
+    # název varianty se dál zapisuje kvůli kontinuitě měření.
     "masaze": [
-        ("klasik", "masaze.html"),
         ("retro",  "masaze-retro.html"),
-        ("ultra",  "masaze-ultra.html"),
     ],
     # 18. 9. 2026: květinářství — obor s nejvyšší odezvou (2,0 %), druhá
     # varianta „botanická retro" (papír/lahvová/bordó, Cormorant).
