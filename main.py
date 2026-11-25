@@ -418,6 +418,7 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
             _campaign = "asistent" if int(hashlib.md5(_cseed.encode("utf-8")).hexdigest(), 16) % 2 == 1 else "web"
             if _campaign == "asistent":
                 print(f"  🤖 Kampaň: asistent (AI e-mailový asistent, bez dema)")
+                _ed = {}
                 try:
                     _ed = generate_assistant_email(row, city=city_real)
                     create_draft(to_email=email, subject=_ed["subject"], body_plain=_ed["body"], body_html=_ed["html_body"])
@@ -427,7 +428,7 @@ def process_restaurants(city="Praha", target=5, used_domains: set | None = None,
                 from datetime import datetime as _dt, timedelta as _td
                 _fud = (_dt.now() + _td(days=5)).strftime("%Y-%m-%d")
                 if sheet:
-                    add_restaurant(sheet, {**row, "demo_url": "", "ab_variant": "asistent", "industry": industry, "follow_up_due": _fud})
+                    add_restaurant(sheet, {**row, "demo_url": "", "ab_variant": _ed.get("ab_variant") or "asistent", "industry": industry, "follow_up_due": _fud})
                 sheet_emails.add(email.lower()); sheet_names.add(name.lower())
                 demos_done += 1
                 print(f"  🎯 Hotovo: {demos_done}/{target}\n")

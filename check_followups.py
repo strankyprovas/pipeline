@@ -323,7 +323,7 @@ def make_asistent_followup(contact: dict, final: bool = False) -> tuple[str, str
 
 def make_followup_body(contact: dict) -> tuple[str, str, str]:
     """Vrátí (subject, plain_body, html_body) pro follow-up email."""
-    if contact.get("framing") == "asistent":
+    if str(contact.get("framing") or "").startswith("asistent"):
         return make_asistent_followup(contact, final=False)
     name = contact["name"]
     demo_url = contact["demo_url"]
@@ -431,7 +431,7 @@ def get_followup2_candidates(sheet, days: int = 9, max_days: int = 45) -> list[d
 def make_followup2_body(contact: dict) -> tuple[str, str, str]:
     """Poslední zpráva: deadline — ukázku příští týden stáhneme. Bez AI,
     deterministická šablona (deadline musí znít vždy stejně věcně)."""
-    if contact.get("framing") == "asistent":
+    if str(contact.get("framing") or "").startswith("asistent"):
         return make_asistent_followup(contact, final=True)
     name = contact["name"]
     demo_url = contact["demo_url"]

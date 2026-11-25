@@ -295,7 +295,12 @@ if __name__ == "__main__":
 ASSISTANT_SUBJECT = "Odpovědi na e-maily připravené za vás"
 
 def generate_assistant_email(restaurant: dict, city: str = "Praha") -> dict:
+    """AB test těla mailu: 'asistent' (původní) vs 'asistent-b' (hook otázkou).
+    Výběr deterministicky dle e-mailu (sůl 'ab:'), nezávisle na splitu web/asistent."""
     name = restaurant.get("name", "")
+    _seed = "ab:" + (restaurant.get("email") or name).lower()
+    if int(hashlib.md5(_seed.encode("utf-8")).hexdigest(), 16) % 2 == 1:
+        return _assistant_email_b(name)
     body = (
         "Dobrý den,\n\n"
         "jmenuju se Matyáš a s kamarádem Kryštofem pomáháme menším podnikům v Česku "
@@ -331,3 +336,46 @@ def generate_assistant_email(restaurant: dict, city: str = "Praha") -> dict:
     )
     return {"subject": ASSISTANT_SUBJECT, "body": body, "html_body": html_body,
             "to_name": name, "ab_variant": "asistent", "framing": "asistent"}
+
+
+def _assistant_email_b(name: str) -> dict:
+    """Varianta B — otvírák otázkou na bolest, kratší citace, CTA otázkou."""
+    body = (
+        "Dobrý den,\n\n"
+        "trávíte každý den zbytečně moc času odpovídáním na e-maily od zákazníků?\n\n"
+        "Jmenuju se Matyáš a s kamarádem Kryštofem pomáháme českým podnikům přesně "
+        "s tímhle: nastavíme vám asistenta, který příchozí dotazy přečte a připraví "
+        "odpovědi v tónu vašeho podniku — rovnou do konceptů ve vaší schránce. Vy je "
+        "jen zkontrolujete a odešlete. Nic se neodesílá samo, všechno máte plně pod "
+        "kontrolou.\n\n"
+        "Asistenta využívá například oční ordinace v Brně:\n\n"
+        "„Ušetří mi to spoustu času a místo hodin nad e-maily se můžu věnovat práci "
+        "v ordinaci. Moc doporučuji.“ — Oční ordinace Hrnčířská, Brno\n\n"
+        "Rádi vám ho nastavíme na celý měsíc zdarma a bez závazků, ať si sami "
+        "vyzkoušíte, kolik času vám ušetří. Víc tady: "
+        "https://strankyprovas.cz/asistent/\n\n"
+        "Měli byste zájem si ho nezávazně vyzkoušet?\n\n"
+        "Hezký den,\n"
+        "Matyáš a Kryštof\n"
+        "StránkyProVás"
+    )
+    html_body = (
+        '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#222">'
+        '<p>Dobrý den,</p>'
+        '<p>trávíte každý den zbytečně moc času odpovídáním na e-maily od zákazníků?</p>'
+        '<p>Jmenuju se Matyáš a s kamarádem Kryštofem pomáháme českým podnikům přesně s tímhle: '
+        'nastavíme vám asistenta, který příchozí dotazy přečte a připraví odpovědi '
+        '<b>v tónu vašeho podniku — rovnou do konceptů ve vaší schránce</b>. Vy je jen '
+        'zkontrolujete a odešlete. <b>Nic se neodesílá samo</b>, všechno máte plně pod kontrolou.</p>'
+        '<p>Asistenta využívá například oční ordinace v Brně:</p>'
+        '<blockquote style="margin:0;padding:10px 16px;border-left:3px solid #3F6E60;color:#444;font-style:italic">'
+        '„Ušetří mi to spoustu času a místo hodin nad e-maily se můžu věnovat práci v ordinaci. Moc doporučuji.“'
+        '<br><span style="font-style:normal;color:#666">— Oční ordinace Hrnčířská, Brno</span></blockquote>'
+        '<p>Rádi vám ho nastavíme na <b>celý měsíc zdarma a bez závazků</b>, ať si sami vyzkoušíte, '
+        'kolik času vám ušetří. Víc tady: <a href="https://strankyprovas.cz/asistent/">strankyprovas.cz/asistent/</a></p>'
+        '<p>Měli byste zájem si ho nezávazně vyzkoušet?</p>'
+        '<p>Hezký den,<br>Matyáš a Kryštof<br>StránkyProVás</p>'
+        '</div>'
+    )
+    return {"subject": ASSISTANT_SUBJECT, "body": body, "html_body": html_body,
+            "to_name": name, "ab_variant": "asistent-b", "framing": "asistent"}
