@@ -73,15 +73,17 @@ jobs:
               # 24. 11. 2026: ŠÍŘKA — objem spadl (září 6 403 → říjen 1 819
               # mailů), top obory (psycholog/květiny/masáže) mají malé a už
               # projeté trhy. Přidán 6. slot/den s velkotržními obory se
+              # 26. 11. 2026: veterinar VYŘAZEN (0,6 % na 500 odesl., report 26.11.)
+              # → út slot zubni (1,1 %, velký trh), pá slot kavarna (1,5 %, velký trh).
               # slušnou odezvou (report 1.11.): penzion 1,2 % (2 848 odesl.),
               # kavarna 1,4 %, pekarna 2,3 %, zubni 0,9 %. 6 × ~87 min
               # (75 job + setup) ≈ 8,7 h od ~17:30 UTC → konec ~02:15 UTC,
               # stále před prvním slotem Send Drafts (7:02 UTC).
               1) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","logoped","penzion"]' ;;
-              2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog","veterinar","kavarna"]' ;;
+              2) MATRIX='["masaze","kvetinarstvi","elektrikari","psycholog","zubni","kavarna"]' ;;
               3) MATRIX='["masaze","psycholog","fyzioterapie","zubni","logoped","penzion"]' ;;
               4) MATRIX='["masaze","kvetinarstvi","elektrikari","penzion","fyzioterapie","kavarna"]' ;;
-              5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","veterinar","pekarna"]' ;;
+              5) MATRIX='["masaze","psycholog","fyzioterapie","kvetinarstvi","kavarna","pekarna"]' ;;
               6) MATRIX='["masaze","kvetinarstvi","elektrikari","pekarna","logoped","kavarna"]' ;;
               7) MATRIX='["masaze","psycholog","pekarna","kvetinarstvi","logoped","zubni"]' ;;
             esac
