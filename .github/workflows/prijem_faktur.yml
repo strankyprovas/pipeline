@@ -1,0 +1,50 @@
+name: Příjem faktur e-mailem
+
+# Čte schránku faktury@strankyprovas.cz, vytěží přílohy a založí faktury
+# v aplikaci na schvalování. Běží každou půlhodinu v pracovní době.
+#
+# ⚠️ NEsdílí concurrency group `google-oauth-token` — nesahá na Google token,
+# takže může běžet souběžně s outreach workflow.
+
+on:
+  schedule:
+    - cron: '7,37 5-16 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Jen vypsat, nic nezakládat'
+        type: boolean
+        default: false
+
+concurrency:
+  group: prijem-faktur
+  cancel-in-progress: false
+
+jobs:
+  prijem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Závislosti
+        run: pip install --quiet anthropic requests
+
+      - name: Načíst faktury ze schránky
+        env:
+          FAKTURY_IMAP: wes1-imap.wedos.net
+          FAKTURY_USER: ${{ secrets.FAKTURY_USER }}
+          FAKTURY_PASS: ${{ secrets.FAKTURY_PASS }}
+          FAKTURY_APP: https://strankyprovas.cz/schvalovani-demo/
+          FAKTURY_KLIC: ${{ secrets.FAKTURY_KLIC }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            python3 prijem_faktur.py --dry-run
+          else
+            python3 prijem_faktur.py
+          fi
