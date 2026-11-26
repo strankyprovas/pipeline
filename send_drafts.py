@@ -150,11 +150,16 @@ def _m365_accounts():
             p = ":".join(casti[1:])
             if u and p:
                 ucty.extend([(u, p)] * vaha)
-        if not ucty:
-            u = os.environ.get("M365_SMTP_USER")
-            p = os.environ.get("M365_SMTP_PASS")
-            if u and p:
-                ucty.append((u, p))
+        # Hlavní schránka (M365_SMTP_USER/PASS) je v rotaci vždy a s vyšší
+        # váhou — má vybudovanou reputaci, nové adresy se teprve zahřívají.
+        u = os.environ.get("M365_SMTP_USER")
+        p = os.environ.get("M365_SMTP_PASS")
+        if u and p and not any(x[0].lower() == u.lower() for x in ucty):
+            try:
+                vaha_hl = max(1, int(os.environ.get("M365_MAIN_WEIGHT", "4")))
+            except ValueError:
+                vaha_hl = 4
+            ucty = [(u, p)] * vaha_hl + ucty
         _M365_ACCOUNTS = ucty
     return _M365_ACCOUNTS
 
