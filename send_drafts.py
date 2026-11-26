@@ -118,6 +118,39 @@ def domena_prijima_postu(email: str) -> bool:
     return vysledek
 
 
+_M365_ACCOUNTS = None
+_M365_RR = 0
+
+
+def _m365_accounts():
+    """Seznam (user, heslo) odesílacích schránek pro rotaci.
+
+    `M365_ACCOUNTS` = "user1:heslo1|user2:heslo2|..." (GitHub Secret).
+    Bez něj se použije původní jediná schránka M365_SMTP_USER/PASS.
+
+    Proč rotace: každá schránka má u Microsoftu vlastní reputaci i limity;
+    rozložení objemu mezi víc adres drží doručitelnost a hlavní firemní
+    schránku mimo riziko (26. 11. 2026, doména stranky-pro-vas.cz).
+    """
+    global _M365_ACCOUNTS
+    if _M365_ACCOUNTS is None:
+        ucty = []
+        for kus in os.environ.get("M365_ACCOUNTS", "").split("|"):
+            kus = kus.strip()
+            if not kus:
+                continue
+            u, _, p = kus.partition(":")
+            if u.strip() and p:
+                ucty.append((u.strip(), p))
+        if not ucty:
+            u = os.environ.get("M365_SMTP_USER")
+            p = os.environ.get("M365_SMTP_PASS")
+            if u and p:
+                ucty.append((u, p))
+        _M365_ACCOUNTS = ucty
+    return _M365_ACCOUNTS
+
+
 def _send_via_m365(service, draft_id):
     """Odešle Gmail draft přes M365 SMTP (smtp.office365.com) a draft smaže.
 
@@ -135,18 +168,26 @@ def _send_via_m365(service, draft_id):
     import base64 as _b64
     import smtplib
     from email import message_from_bytes
-    user = os.environ["M365_SMTP_USER"]
-    pwd = os.environ["M365_SMTP_PASS"]
+    global _M365_RR
+    ucty = _m365_accounts()
+    if not ucty:
+        raise RuntimeError("Není nastavená žádná odesílací schránka (M365_ACCOUNTS ani M365_SMTP_USER).")
+    user, pwd = ucty[_M365_RR % len(ucty)]
+    _M365_RR += 1
     draft = service.users().drafts().get(
         userId="me", id=draft_id, format="raw").execute()
     raw = _b64.urlsafe_b64decode(draft["message"]["raw"])
     msg = message_from_bytes(raw)
-    # From musí odpovídat autentizovanému účtu, jinak to office365 odmítne
-    # (drafty už From: matyas@strankyprovas.cz mají — jen pojistka).
+    # From musí odpovídat autentizovanému účtu, jinak to office365 odmítne.
     if (msg.get("From") or "").lower().find(user.lower()) == -1:
         if msg["From"]:
             del msg["From"]
         msg["From"] = f"Matyáš Vrba <{user}>"
+    # Odpovědi sbíráme na hlavní adrese (odtud forward do Gmailu → detekce
+    # odpovědí a follow-upy fungují i při odesílání z jiných domén).
+    reply_to = os.environ.get("M365_REPLY_TO", "matyas@strankyprovas.cz")
+    if reply_to and not msg.get("Reply-To"):
+        msg["Reply-To"] = reply_to
     last_err = None
     for attempt in range(3):
         try:
@@ -157,8 +198,21 @@ def _send_via_m365(service, draft_id):
                 smtp.login(user, pwd)
                 smtp.send_message(msg)
             break
-        except smtplib.SMTPAuthenticationError:
-            raise  # špatné heslo / vypnutý SMTP AUTH — nemá smysl opakovat
+        except smtplib.SMTPAuthenticationError as e:
+            # Vyřadit vadnou schránku a zkusit další (jedna rozbitá schránka
+            # nesmí položit celou dávku).
+            print(f"           ⚠️  {user}: autentizace selhala, vyřazuji ze rotace ({e})")
+            zbyle = [u for u in _M365_ACCOUNTS if u[0] != user]
+            if not zbyle:
+                raise
+            _M365_ACCOUNTS[:] = zbyle
+            user, pwd = _M365_ACCOUNTS[_M365_RR % len(_M365_ACCOUNTS)]
+            _M365_RR += 1
+            if msg["From"]:
+                del msg["From"]
+            msg["From"] = f"Matyáš Vrba <{user}>"
+            last_err = e
+            continue
         except Exception as e:
             last_err = e
             print(f"           ⏳ M365 SMTP chyba, pokus {attempt+1}/3: {e}")
@@ -174,7 +228,7 @@ def _send_via_m365(service, draft_id):
 
 def send_draft(service, draft_id):
     import re
-    if os.environ.get("M365_SMTP_USER") and os.environ.get("M365_SMTP_PASS"):
+    if _m365_accounts():
         return _send_via_m365(service, draft_id)
     for attempt in range(10):
         try:

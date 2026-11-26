@@ -126,6 +126,12 @@ jobs:
           # a M365_SMTP_PASS + v M365 povolit "Authenticated SMTP" pro schránku.
           M365_SMTP_USER: ${{ secrets.M365_SMTP_USER }}
           M365_SMTP_PASS: ${{ secrets.M365_SMTP_PASS }}
+          # 26. 11. 2026: rotace víc odesílacích schránek (druhá doména
+          # stranky-pro-vas.cz) — formát "user:heslo|user:heslo|...".
+          # Když je vyplněné, má přednost před M365_SMTP_USER/PASS výše.
+          M365_ACCOUNTS: ${{ secrets.M365_ACCOUNTS }}
+          # Odpovědi sbíráme na hlavní adrese (forward do Gmailu → detekce odpovědí).
+          M365_REPLY_TO: matyas@strankyprovas.cz
         run: |
           set -euo pipefail
           # Takt ~1 mail/min (--delay 60, rozptyl ±25 % = 45–75 s).
