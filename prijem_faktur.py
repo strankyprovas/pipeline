@@ -118,12 +118,14 @@ def main():
     ap.add_argument("--limit", type=int, default=20)
     args = ap.parse_args()
 
+    # Dokud není schránka založená a přístupy uložené, jen tiše skončíme —
+    # workflow běží každou půlhodinu a nemá smysl kvůli tomu hlásit chybu.
     if not (IMAP_USER and IMAP_PASS):
-        print("❌ Chybí FAKTURY_USER / FAKTURY_PASS.")
-        return 1
+        print("⏭️  Schránka na faktury zatím není nastavená (FAKTURY_USER / FAKTURY_PASS) — přeskakuji.")
+        return 0
     if not APP_KLIC and not args.dry_run:
-        print("❌ Chybí FAKTURY_KLIC (klíč k API aplikace).")
-        return 1
+        print("⏭️  Chybí FAKTURY_KLIC (klíč k API aplikace) — přeskakuji.")
+        return 0
 
     posta = imaplib.IMAP4_SSL(IMAP_SERVER)
     posta.login(IMAP_USER, IMAP_PASS)
