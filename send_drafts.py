@@ -139,9 +139,17 @@ def _m365_accounts():
             kus = kus.strip()
             if not kus:
                 continue
-            u, _, p = kus.partition(":")
-            if u.strip() and p:
-                ucty.append((u.strip(), p))
+            # "user:heslo" nebo "user:heslo:váha" (váha = kolikrát je schránka
+            # v rotaci; nové schránky dostávají nižší váhu kvůli zahřívání).
+            casti = kus.split(":")
+            vaha = 1
+            if len(casti) >= 3 and casti[-1].strip().isdigit():
+                vaha = max(1, int(casti[-1].strip()))
+                casti = casti[:-1]
+            u = casti[0].strip()
+            p = ":".join(casti[1:])
+            if u and p:
+                ucty.extend([(u, p)] * vaha)
         if not ucty:
             u = os.environ.get("M365_SMTP_USER")
             p = os.environ.get("M365_SMTP_PASS")
