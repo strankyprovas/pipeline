@@ -12,7 +12,10 @@ on:
     # Večerní start schválně: 4 obory × 75 min = do 5,5 h běhu. Přes den by to
     # drželo concurrency group a odesílací dávky by vůbec nenaskočily (stalo se
     # 4. 8. slotu 13:30). V noci je okno volné a drafty ráno čekají hotové.
-    - cron: '37 15 * * *'   # cca 17:30 UTC reálně; 3 obory × 240 min → konec ~05:30 UTC,
+    # 26. 11. 2026: cron na :37 nestačil, GitHub generaci nespustil 3 dny po sobě.
+    # Dvě okna — když vypadne první, druhé to dožene (skript jede od uložené pozice).
+    - cron: '37 15 * * *'
+    - cron: '23 17 * * *'   # cca 17:30 UTC reálně; 3 obory × 240 min → konec ~05:30 UTC,
                            # tj. před prvním slotem Send Drafts (7:02 UTC)
   workflow_dispatch:
     inputs:
