@@ -98,7 +98,8 @@ jobs:
     name: ${{ matrix.industry }}
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    # 26.11.2026: 75 → 90 min/obor (Matyáš chce víc draftů; okno: start ~16-18 UTC +9h = konec do ~03 UTC, sloty 04:00)
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       max-parallel: 1
