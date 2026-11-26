@@ -144,3 +144,38 @@ jobs:
           fi
           echo "Spouštím: send_drafts.py $FLAGS"
           python3 send_drafts.py $FLAGS
+
+      # ── Pojistka proti nespolehlivému plánovači GitHubu ──
+      # GitHub scheduled běhy běžně vynechá (26. 11. 2026 třetí den po sobě),
+      # a bez noční generace nemá ráno co odesílat. Odesílací slot proto sám
+      # zkontroluje, kdy naposledy běžela generace, a když je to přes 20 hodin,
+      # spustí ji. Jen odpoledne, ať negeneruje přes odesílací okno.
+      # Musí jít přes GH_PAT: běh spuštěný výchozím GITHUB_TOKENem nový
+      # workflow nenastartuje.
+      - name: Pojistka — dohnat zmeškanou generaci
+        if: always() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          set -euo pipefail
+          HODINA=$(date -u +%H)
+          if [ "$HODINA" -lt 15 ]; then
+            echo "Je $HODINA:00 UTC — na generaci je brzy, přeskakuji."
+            exit 0
+          fi
+          POSLEDNI=$(gh run list --workflow daily_pipeline.yml --limit 1 \
+            --json createdAt --jq '.[0].createdAt // empty' || true)
+          if [ -z "$POSLEDNI" ]; then
+            echo "Generace zatím nikdy neběžela, spouštím."
+            gh workflow run daily_pipeline.yml && exit 0
+          fi
+          STARI=$(( ( $(date -u +%s) - $(date -u -d "$POSLEDNI" +%s 2>/dev/null || python3 -c "
+import datetime,sys
+print(int(datetime.datetime.fromisoformat('$POSLEDNI'.replace('Z','+00:00')).timestamp()))") ) / 3600 ))
+          echo "Poslední generace před $STARI h ($POSLEDNI)."
+          if [ "$STARI" -ge 20 ]; then
+            echo "::warning::Generace neběžela $STARI h — spouštím ji z odesílacího slotu."
+            gh workflow run daily_pipeline.yml
+          else
+            echo "Generace je čerstvá, nic nespouštím."
+          fi
