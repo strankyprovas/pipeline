@@ -169,9 +169,8 @@ jobs:
             echo "Generace zatím nikdy neběžela, spouštím."
             gh workflow run daily_pipeline.yml && exit 0
           fi
-          STARI=$(( ( $(date -u +%s) - $(date -u -d "$POSLEDNI" +%s 2>/dev/null || python3 -c "
-import datetime,sys
-print(int(datetime.datetime.fromisoformat('$POSLEDNI'.replace('Z','+00:00')).timestamp()))") ) / 3600 ))
+          # Runner je Ubuntu, takže GNU date rozumí ISO tvaru "...Z" přímo.
+          STARI=$(( ( $(date -u +%s) - $(date -u -d "$POSLEDNI" +%s) ) / 3600 ))
           echo "Poslední generace před $STARI h ($POSLEDNI)."
           if [ "$STARI" -ge 20 ]; then
             echo "::warning::Generace neběžela $STARI h — spouštím ji z odesílacího slotu."
