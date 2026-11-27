@@ -120,6 +120,7 @@ def domena_prijima_postu(email: str) -> bool:
 
 _M365_ACCOUNTS = None
 _M365_RR = 0
+_M365_POCTY = {}  # kolik mailů odešlo z které schránky (kontrola warm-upu)
 
 
 def _m365_accounts():
@@ -210,6 +211,8 @@ def _send_via_m365(service, draft_id):
                 smtp.ehlo()
                 smtp.login(user, pwd)
                 smtp.send_message(msg)
+            _M365_POCTY[user] = _M365_POCTY.get(user, 0) + 1
+            print(f"           ✉️  odesláno přes {user}")
             break
         except smtplib.SMTPAuthenticationError as e:
             # Vyřadit vadnou schránku a zkusit další (jedna rozbitá schránka
@@ -518,6 +521,10 @@ def main():
                 time.sleep(pauza)
 
     print(f"\nHotovo! {'(dry run)' if args.dry_run else f'Odesláno {sent_count}, přeskočeno {skipped_count}.'}")
+    if _M365_POCTY:
+        print("Rozdělení podle schránek (warm-up):")
+        for adresa, pocet in sorted(_M365_POCTY.items(), key=lambda x: -x[1]):
+            print(f"   {adresa}: {pocet}")
 
 
 if __name__ == "__main__":
