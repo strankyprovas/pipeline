@@ -1,0 +1,33 @@
+name: Test doručitelnosti
+
+# Z každé odesílací schránky pošle jeden zkušební mail na zadané adresy.
+# Spouští se jen ručně. Nesahá na Google token → NEsdílí `google-oauth-token`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      komu:
+        description: 'Kam poslat (adresy oddělené čárkou)'
+        required: true
+
+concurrency:
+  group: test-dorucitelnosti
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Poslat zkušební maily
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Odeslat z každé schránky
+        env:
+          KOMU: ${{ github.event.inputs.komu }}
+          M365_SMTP_USER: ${{ secrets.M365_SMTP_USER }}
+          M365_SMTP_PASS: ${{ secrets.M365_SMTP_PASS }}
+          M365_ACCOUNTS: ${{ secrets.M365_ACCOUNTS }}
+          M365_REPLY_TO: matyas@strankyprovas.cz
+        run: python3 test_dorucitelnosti.py --komu "$KOMU"
