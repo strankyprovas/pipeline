@@ -165,6 +165,19 @@ def _m365_accounts():
     return _M365_ACCOUNTS
 
 
+def _od_koho(user):
+    """Hlavička From se jménem s diakritikou.
+
+    Jméno se MUSÍ zakódovat zvlášť a adresa zůstat čitelná. Když se celý
+    řetězec "Matyáš Vrba <adresa>" přiřadí jako prostý text, knihovna ho
+    zakóduje vcelku i s adresou, Exchange pak From nerozpozná a odešle mail
+    BEZ odesílatele — Gmail takový mail odmítá (550 5.7.1, 'From' header is
+    missing). Stávalo se to od 26. 11. 2026 u všech mailů z nových schránek.
+    """
+    from email.utils import formataddr
+    return formataddr(("Matyáš Vrba", user), charset="utf-8")
+
+
 def _send_via_m365(service, draft_id):
     """Odešle Gmail draft přes M365 SMTP (smtp.office365.com) a draft smaže.
 
@@ -196,7 +209,7 @@ def _send_via_m365(service, draft_id):
     if (msg.get("From") or "").lower().find(user.lower()) == -1:
         if msg["From"]:
             del msg["From"]
-        msg["From"] = f"Matyáš Vrba <{user}>"
+        msg["From"] = _od_koho(user)
     # Odpovědi sbíráme na hlavní adrese (odtud forward do Gmailu → detekce
     # odpovědí a follow-upy fungují i při odesílání z jiných domén).
     reply_to = os.environ.get("M365_REPLY_TO", "matyas@strankyprovas.cz")
@@ -226,7 +239,7 @@ def _send_via_m365(service, draft_id):
             _M365_RR += 1
             if msg["From"]:
                 del msg["From"]
-            msg["From"] = f"Matyáš Vrba <{user}>"
+            msg["From"] = _od_koho(user)
             last_err = e
             continue
         except Exception as e:

@@ -13,7 +13,7 @@ import smtplib
 import sys
 import time
 from email.mime.text import MIMEText
-from email.utils import formatdate, make_msgid
+from email.utils import formataddr, formatdate, make_msgid
 
 
 def schranky():
@@ -55,7 +55,7 @@ def main():
             )
             msg = MIMEText(telo, "plain", "utf-8")
             msg["Subject"] = f"Zkouška doručení ze schránky {user}"
-            msg["From"] = f"Matyáš Vrba <{user}>"
+            msg["From"] = formataddr(("Matyáš Vrba", user), charset="utf-8")
             msg["To"] = adresa
             msg["Reply-To"] = os.environ.get("M365_REPLY_TO", "matyas@strankyprovas.cz")
             msg["Date"] = formatdate(localtime=False)
