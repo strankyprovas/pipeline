@@ -1,0 +1,38 @@
+name: Faktury — denní údržba
+
+# Každou hodinu ťukne na aplikaci pro schvalování faktur. Ta si sama hlídá,
+# aby záloha databází i upomínky proběhly nejvýš jednou za den, takže nevadí,
+# když GitHub běh zpozdí nebo vynechá.
+#
+# ⚠️ Výstup aplikace se do logu NEVYPISUJE — obsahuje e-mailové adresy firem
+# a logy tohoto repa jsou veřejné.
+# ⚠️ NEsdílí concurrency group `google-oauth-token` (nesahá na Google token).
+
+on:
+  schedule:
+    - cron: '20 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: faktury-udrzba
+  cancel-in-progress: false
+
+jobs:
+  udrzba:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Zavolat denní údržbu
+        env:
+          KLIC: ${{ secrets.FAKTURY_KLIC }}
+        run: |
+          if [ -z "$KLIC" ]; then
+            echo "Chybí secret FAKTURY_KLIC — přeskakuji."
+            exit 0
+          fi
+          KOD=$(curl -s -o odpoved.txt -w '%{http_code}' --max-time 120 \
+            --get --data-urlencode "cron=denne" --data-urlencode "klic=$KLIC" \
+            "https://strankyprovas.cz/schvalovani-demo/")
+          echo "Aplikace odpověděla HTTP $KOD, řádků: $(wc -l < odpoved.txt)"
+          rm -f odpoved.txt
+          [ "$KOD" = "200" ]
