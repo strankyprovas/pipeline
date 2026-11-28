@@ -78,6 +78,12 @@ on:
     - cron: '30 14 * * *'
     - cron: '0 15 * * *'
     - cron: '30 15 * * *'
+    # 28. 11. 2026: hlídací sloty. Mimo odesílací okno nic neodešlou, jen
+    # zkontrolují, jestli už běžela noční generace, a když ne, spustí ji.
+    # Jsou tu proto, že GitHub plánované běhy zpožďuje jednou o hodinu a jindy
+    # o osm, takže na konkrétní čas cronu se nedá spolehnout.
+    - cron: '15 16-23 * * *'
+    - cron: '15 0-2 * * *'
   workflow_dispatch:
     inputs:
       limit:
@@ -89,14 +95,85 @@ on:
         required: false
         default: 'false'
 
-concurrency:
-  group: google-oauth-token
-  cancel-in-progress: false
-
+# 28. 11. 2026: zámek `google-oauth-token` je nově jen na jobu `send`, ne na
+# celém workflow. Běh, který nemá co odeslat (mimo okno), tak do fronty vůbec
+# nevstoupí a nevytlačí z ní čekající generaci ani follow-upy.
 jobs:
+  okno:
+    name: Brána — smí se teď odesílat?
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      odesilat: ${{ steps.cas.outputs.odesilat }}
+    steps:
+      # Rozhoduje SKUTEČNÝ čas, ne čas cronu. GitHub sloty zpožďuje až o 8 h,
+      # takže ranní slot klidně dorazí o půlnoci. Odesílá se 5:00–18:00 UTC
+      # (6–19 h našeho zimního času); zbytek dne patří generaci.
+      - name: Kolik je doopravdy hodin
+        id: cas
+        env:
+          UDALOST: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          HODINA=$((10#$(date -u +%H)))
+          if [ "$UDALOST" = "workflow_dispatch" ]; then
+            echo "Ruční spuštění — odesílám bez ohledu na čas."
+            echo "odesilat=true" >> "$GITHUB_OUTPUT"
+          elif [ "$HODINA" -ge 5 ] && [ "$HODINA" -lt 18 ]; then
+            echo "Je $HODINA h UTC — odesílací okno, pouštím odesílání."
+            echo "odesilat=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Je $HODINA h UTC — mimo odesílací okno (5–18 UTC), neodesílám."
+            echo "odesilat=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Noční generace se spouští odsud ──
+      # Vlastní cron generace GitHub buď vynechal (26. 11. třetí den po sobě),
+      # nebo doručil o 8 h později, a ta pak běžela přes odesílací okno
+      # (28. 11. se kvůli tomu neodeslalo nic). Proto generaci startuje první
+      # slot, který dorazí po konci odesílacího okna. Když už dnes v noci
+      # běžela, nespustí se podruhé.
+      # Musí jít přes GH_PAT: běh spuštěný výchozím GITHUB_TOKENem nový
+      # workflow nenastartuje.
+      - name: Spustit noční generaci, pokud ještě neběžela
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          HHMM=$((10#$(date -u +%H%M)))
+          # 18:10–02:59 UTC. Těch 10 minut je rezerva, aby generace nevstoupila
+          # do fronty dřív než poslední odesílací běh z konce okna.
+          if [ "$HHMM" -lt 1810 ] && [ "$HHMM" -ge 300 ]; then
+            echo "Je $(date -u +%H:%M) UTC — generace se spouští až 18:10–03:00, přeskakuji."
+            exit 0
+          fi
+          POSLEDNI=$(gh run list --workflow daily_pipeline.yml --limit 1 \
+            --json createdAt --jq '.[0].createdAt // empty' || true)
+          if [ -z "$POSLEDNI" ]; then
+            echo "Generace zatím nikdy neběžela, spouštím."
+            gh workflow run daily_pipeline.yml
+            exit 0
+          fi
+          # Runner je Ubuntu, takže GNU date rozumí ISO tvaru "...Z" přímo.
+          STARI=$(( ( $(date -u +%s) - $(date -u -d "$POSLEDNI" +%s) ) / 3600 ))
+          echo "Poslední generace spuštěna před $STARI h ($POSLEDNI)."
+          if [ "$STARI" -ge 14 ]; then
+            echo "Dnes v noci ještě neběžela — spouštím ji."
+            gh workflow run daily_pipeline.yml
+          else
+            echo "Generace už dnes v noci běžela nebo běží, nic nespouštím."
+          fi
+
   send:
     name: Odeslat drafty
+    needs: okno
+    if: needs.okno.outputs.odesilat == 'true'
     runs-on: ubuntu-latest
+    concurrency:
+      group: google-oauth-token
+      cancel-in-progress: false
     # 18. 9. 2026: timeout zvednut kvuli dorovnavacim davkam (limit až 250
     # při ~72 s/mail ≈ 5 h). Bezne slotove behy po 50 konci do hodiny.
     timeout-minutes: 350
@@ -144,37 +221,3 @@ jobs:
           fi
           echo "Spouštím: send_drafts.py $FLAGS"
           python3 send_drafts.py $FLAGS
-
-      # ── Pojistka proti nespolehlivému plánovači GitHubu ──
-      # GitHub scheduled běhy běžně vynechá (26. 11. 2026 třetí den po sobě),
-      # a bez noční generace nemá ráno co odesílat. Odesílací slot proto sám
-      # zkontroluje, kdy naposledy běžela generace, a když je to přes 20 hodin,
-      # spustí ji. Jen odpoledne, ať negeneruje přes odesílací okno.
-      # Musí jít přes GH_PAT: běh spuštěný výchozím GITHUB_TOKENem nový
-      # workflow nenastartuje.
-      - name: Pojistka — dohnat zmeškanou generaci
-        if: always() && github.event_name == 'schedule'
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
-          set -euo pipefail
-          HODINA=$(date -u +%H)
-          if [ "$HODINA" -lt 15 ]; then
-            echo "Je $HODINA:00 UTC — na generaci je brzy, přeskakuji."
-            exit 0
-          fi
-          POSLEDNI=$(gh run list --workflow daily_pipeline.yml --limit 1 \
-            --json createdAt --jq '.[0].createdAt // empty' || true)
-          if [ -z "$POSLEDNI" ]; then
-            echo "Generace zatím nikdy neběžela, spouštím."
-            gh workflow run daily_pipeline.yml && exit 0
-          fi
-          # Runner je Ubuntu, takže GNU date rozumí ISO tvaru "...Z" přímo.
-          STARI=$(( ( $(date -u +%s) - $(date -u -d "$POSLEDNI" +%s) ) / 3600 ))
-          echo "Poslední generace před $STARI h ($POSLEDNI)."
-          if [ "$STARI" -ge 20 ]; then
-            echo "::warning::Generace neběžela $STARI h — spouštím ji z odesílacího slotu."
-            gh workflow run daily_pipeline.yml
-          else
-            echo "Generace je čerstvá, nic nespouštím."
-          fi

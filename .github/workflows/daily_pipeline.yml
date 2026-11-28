@@ -8,15 +8,13 @@ name: Daily Outreach Pipeline
 # Ruční spuštění: workflow_dispatch → pole "industry" (prázdné = dnešní dvojice).
 
 on:
-  schedule:
-    # Večerní start schválně: 4 obory × 75 min = do 5,5 h běhu. Přes den by to
-    # drželo concurrency group a odesílací dávky by vůbec nenaskočily (stalo se
-    # 4. 8. slotu 13:30). V noci je okno volné a drafty ráno čekají hotové.
-    # 26. 11. 2026: cron na :37 nestačil, GitHub generaci nespustil 3 dny po sobě.
-    # Dvě okna — když vypadne první, druhé to dožene (skript jede od uložené pozice).
-    - cron: '37 15 * * *'
-    - cron: '23 17 * * *'   # cca 17:30 UTC reálně; 3 obory × 240 min → konec ~05:30 UTC,
-                           # tj. před prvním slotem Send Drafts (7:02 UTC)
+  # 28. 11. 2026: vlastní cron ZRUŠEN. GitHub ho buď vynechal, nebo doručil
+  # o 8 h později; generace pak běžela dvakrát za noc a ta druhá držela zámek
+  # přes celé odesílací okno. Generaci teď spouští Send Drafts (job `okno`)
+  # prvním slotem po 18:10 UTC, nejvýš jednou za noc.
+  # Okno: start ~18:10 UTC, 6 oborů × 90 min → konec ~03:10 UTC. Obor, který by
+  # začínal po 03:00 UTC, se už nespustí (viz krok „Hlídej okno"), takže
+  # v 5:00 UTC je zámek vždy volný pro odesílání.
   workflow_dispatch:
     inputs:
       industry:
@@ -41,8 +39,14 @@ jobs:
           MANUAL: ${{ github.event.inputs.industry }}
         run: |
           set -euo pipefail
+          HODINA=$((10#$(date -u +%H)))
           if [ -n "${MANUAL:-}" ]; then
             MATRIX="[\"$MANUAL\"]"
+          elif [ "$HODINA" -ge 3 ] && [ "$HODINA" -lt 17 ]; then
+            # Běh, který se dostal na řadu až ráno (čekal ve frontě), by držel
+            # zámek přes odesílací okno. Radši dnes negenerovat nic.
+            echo "::warning::Je $HODINA h UTC — na generaci je pozdě, přeskakuji, ať se může odesílat."
+            MATRIX='[]'
           else
             # 1 = pondělí … 7 = neděle (runner běží v UTC)
             #
@@ -102,6 +106,7 @@ jobs:
   run-industry:
     name: ${{ matrix.industry }}
     needs: plan
+    if: needs.plan.outputs.matrix != '[]'
     runs-on: ubuntu-latest
     # 26.11.2026: 75 → 90 min/obor (Matyáš chce víc draftů; okno: start ~16-18 UTC +9h = konec do ~03 UTC, sloty 04:00)
     timeout-minutes: 90
@@ -112,6 +117,25 @@ jobs:
         industry: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
     steps:
+      # Obor nesmí začít po 03:00 UTC: trvá 90 min a v 5:00 UTC začíná
+      # odesílací okno, které potřebuje stejný zámek. Když je pozdě, zruší se
+      # celý zbytek běhu a zámek se uvolní. Ruční spuštění s vybraným oborem
+      # se nehlídá.
+      - name: Hlídej okno
+        if: github.event.inputs.industry == ''
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          HODINA=$((10#$(date -u +%H)))
+          if [ "$HODINA" -ge 3 ] && [ "$HODINA" -lt 17 ]; then
+            echo "::warning::Je $HODINA h UTC — obor ${{ matrix.industry }} už nezačínám, ruším zbytek generace."
+            gh run cancel ${{ github.run_id }}
+            sleep 120
+            exit 1
+          fi
+          echo "Je $HODINA h UTC — v okně, pokračuji."
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
